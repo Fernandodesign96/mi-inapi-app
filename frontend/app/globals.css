@@ -1,0 +1,195 @@
+@import "tailwindcss";
+
+/* ============================================
+   MiINAPI Design System — globals.css v1.0.0
+   Instituto Nacional de Propiedad Industrial
+   ============================================ */
+
+/* === PALETA BASE INSTITUCIONAL === */
+:root {
+  --color-primary: #1a56db;
+  --color-primary-dark: #1e3a8a;
+  --color-primary-foreground: #ffffff;
+  --color-accent: #7c3aed;
+  --color-accent-light: #ede9fe;
+  --color-accent-foreground: #ffffff;
+
+  /* === SISTEMA SEMÁFORO INAPI === */
+  --semaphore-danger: #dc2626;
+  --semaphore-danger-bg: #fee2e2;
+  --semaphore-warning: #d97706;
+  --semaphore-warning-bg: #fef3c7;
+  --semaphore-info: #2563eb;
+  --semaphore-info-bg: #dbeafe;
+  --semaphore-success: #059669;
+  --semaphore-success-bg: #d1fae5;
+
+  /* === NEUTROS DE UI === */
+  --background: #f9fafb;
+  --surface: #ffffff;
+  --surface-elevated: #f3f4f6;
+  --foreground: #111827;
+  --foreground-secondary: #4b5563;
+  --foreground-muted: #9ca3af;
+  --border: #e5e7eb;
+  --border-strong: #d1d5db;
+  --ring: #1a56db;
+
+  /* === TIPOGRAFÍA === */
+  --font-sans: "DM Sans", system-ui, sans-serif;
+  --font-mono: "DM Mono", "Courier New", monospace;
+
+  /* === BORDER RADIUS === */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+
+  /* === SHADOWS === */
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-elevated: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-modal: 0 8px 24px rgba(0, 0, 0, 0.15);
+  --shadow-frame: 0 8px 32px rgba(0, 0, 0, 0.15);
+  --shadow-fab: 0 4px 16px rgba(124, 58, 237, 0.35);
+
+  /* === LAYOUT === */
+  --topbar-height: 56px;
+  --bottomnav-height: 64px;
+  --app-max-width: 390px;
+}
+
+/* === DARK MODE (mejora progresiva) === */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0f172a;
+    --surface: #1e293b;
+    --surface-elevated: #263548;
+    --foreground: #f8fafc;
+    --foreground-secondary: #cbd5e1;
+    --foreground-muted: #64748b;
+    --border: #334155;
+    --border-strong: #475569;
+  }
+}
+
+/* === REDUCCIÓN DE MOVIMIENTO === */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* === BASE === */
+html,
+body {
+  font-family: var(--font-sans);
+  background-color: var(--background);
+  color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* === APP FRAME === */
+.app-frame {
+  max-width: var(--app-max-width);
+  margin: 0 auto;
+  min-height: 100dvh;
+  background: var(--surface);
+  position: relative;
+}
+
+@media (min-width: 640px) {
+  body {
+    background: #e2e8f0;
+  }
+  .app-frame {
+    box-shadow: var(--shadow-frame);
+    min-height: 100vh;
+  }
+}
+
+/* === SHIMMER SKELETON === */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #f3f4f6 25%,
+    #e5e7eb 50%,
+    #f3f4f6 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-lg);
+}
+
+/* === TOAST ANIMATION === */
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toast-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+.toast-enter {
+  animation: toast-in 350ms ease-out forwards;
+}
+
+.toast-exit {
+  animation: toast-out 200ms ease-in forwards;
+}
+
+/* === SCREEN FADE === */
+@keyframes screen-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.screen-enter {
+  animation: screen-fade-in 200ms ease-in-out forwards;
+}
+
+/* === SCROLLBAR HIDE === */
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* === SAFE AREA === */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
