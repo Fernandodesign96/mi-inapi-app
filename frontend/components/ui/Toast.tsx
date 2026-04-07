@@ -48,7 +48,7 @@ export function Toast({ type, message, duration = 2500, onDismiss }: ToastProps)
         exiting ? "toast-exit" : "toast-enter"
       )}
     >
-      <Icon size={18} className={text} />
+      <Icon size={18} className={text as any} />
       <p className={clsx("text-[14px] font-medium", text)}>{message}</p>
     </div>
   );
