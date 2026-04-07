@@ -1,7 +1,8 @@
-// Perfil stub — fuera del scope del MVP Fase 1
+"use client";
+
 import { User, Settings, LogOut, FileText, HelpCircle } from "lucide-react";
 import TopBar from "@/components/ui/TopBar";
-import { redirect } from "next/navigation";
+import Link from 'next/link';
 
 export default function PerfilPage() {
   return (
@@ -30,7 +31,7 @@ export default function PerfilPage() {
           ].map((item) => {
             const Icon = item.icon;
             return (
-              <a
+              <Link
                 key={item.label}
                 href={item.href}
                 className="flex items-center gap-3 px-4 py-3.5 hover:bg-[#F9FAFB] transition-colors focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#1A56DB]"
@@ -38,19 +39,19 @@ export default function PerfilPage() {
                 <Icon size={20} color="#4B5563" />
                 <span className="text-[15px] text-[#111827] font-medium">{item.label}</span>
                 <span className="ml-auto text-[#9CA3AF] text-[18px]">›</span>
-              </a>
+              </Link>
             );
           })}
         </div>
 
         {/* Logout */}
-        <a
+        <Link
           href="/login"
           className="flex items-center justify-center gap-2 w-full h-12 rounded-full border border-[#E5E7EB] text-[#DC2626] text-[15px] font-semibold hover:bg-[#FEE2E2] transition-colors focus:outline-none focus:ring-2 focus:ring-[#DC2626]"
         >
           <LogOut size={18} />
           Cerrar Sesión
-        </a>
+        </Link>
 
         <p className="text-center text-[11px] text-[#9CA3AF]">
           MiINAPI v0.1.0-mvp · INAPI © 2026
