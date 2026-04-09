@@ -1,8 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Eliminamos basePath y output: 'export' para facilitar el desarrollo local
-  // Si necesitas desplegar en GitHub Pages, puedes volver a agregarlos o usar variables de entorno
+  output: 'export',
+  basePath: '/mi-inapi-app',
   images: {
     unoptimized: true,
   },
