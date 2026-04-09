@@ -13,7 +13,6 @@ import {
   AlertCircle,
   ExternalLink
 } from "lucide-react";
-import TopBar from "@/components/ui/TopBar";
 import SemaphoreCard from "@/components/ui/SemaphoreCard";
 import StepperProgress from "@/components/ui/StepperProgress";
 import StatusBadge from "@/components/ui/StatusBadge";
@@ -48,7 +47,7 @@ export default function SolicitudDetalleClient({ solicitud }: { solicitud: Solic
             <div className="flex justify-between items-start">
               <div className="space-y-1">
                 <StatusBadge 
-                  variant={solicitud.urgency as any} 
+                  variant={solicitud.urgency as "danger" | "warning" | "info" | "success"} 
                   label={solicitud.estado.replace('_', ' ')} 
                 />
                 <h1 className="text-[24px] font-extrabold text-[#111827] leading-tight">
@@ -66,7 +65,7 @@ export default function SolicitudDetalleClient({ solicitud }: { solicitud: Solic
                 solicitud.etapa === 'EXAMEN' ? ['completed', 'current', 'pending'] :
                 ['completed', 'completed', 'current']
               }
-              urgency={solicitud.urgency as any}
+              urgency={solicitud.urgency as "danger" | "warning" | "info" | "success"}
             />
           </div>
 
@@ -163,7 +162,7 @@ export default function SolicitudDetalleClient({ solicitud }: { solicitud: Solic
   );
 }
 
-function DetailItem({ icon: Icon, label, value, isMono }: { icon: any, label: string, value: string, isMono?: boolean }) {
+function DetailItem({ icon: Icon, label, value, isMono }: { icon: React.ElementType, label: string, value: string, isMono?: boolean }) {
   return (
     <div className="bg-white rounded-xl border border-[#E5E7EB] p-3 shadow-sm">
       <div className="flex items-center gap-1.5 mb-1">

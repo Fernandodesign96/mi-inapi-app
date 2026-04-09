@@ -18,6 +18,7 @@ import CTAButton from "@/components/ui/CTAButton";
 import { useAppStore } from "@/lib/store";
 import { mockUser, mockSolicitudes } from "@/lib/mockData";
 import { clsx } from "clsx";
+import React from "react";
 
 export default function InicioPage() {
   const router = useRouter();
@@ -191,7 +192,7 @@ function SummaryCard({
   count: number; 
   label: string; 
   variant: "info" | "danger" | "success" | "neutral"; 
-  icon?: any;
+  icon?: React.ElementType;
 }) {
   const styles = {
     info: "text-[#2563EB] bg-white",
@@ -219,7 +220,7 @@ function QuickAccessCard({
   label, 
   onClick 
 }: { 
-  icon: any; 
+  icon: React.ElementType; 
   label: string; 
   onClick: () => void;
 }) {
@@ -241,7 +242,7 @@ function QuickAccessGhost({
   label, 
   onClick 
 }: { 
-  icon: any; 
+  icon: React.ElementType; 
   label: string; 
   onClick: () => void;
 }) {

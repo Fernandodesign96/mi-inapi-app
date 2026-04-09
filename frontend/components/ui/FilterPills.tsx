@@ -1,7 +1,7 @@
 "use client";
 
 import { clsx } from "clsx";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 
 interface FilterOption {
   value: string;

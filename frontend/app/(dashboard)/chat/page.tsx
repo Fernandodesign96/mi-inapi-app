@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { ArrowLeft, Plus, Send, MessageSquare, Share2, MoreVertical, Sparkles } from "lucide-react";
 import TopBar from "@/components/ui/TopBar";
 import SemaphoreCard from "@/components/ui/SemaphoreCard";
@@ -46,7 +45,6 @@ const mockSessions: ChatSession[] = [
 ];
 
 export default function ChatIAPage() {
-  const router = useRouter();
   const [view, setView] = useState<ViewMode>("history");
   const [activeChat, setActiveChat] = useState<ChatSession | null>(null);
   const [inputText, setInputText] = useState("");

@@ -1,8 +1,11 @@
 import type { NextConfig } from "next";
 
+const isProd = process.env.NODE_ENV === 'production';
+
 const nextConfig: NextConfig = {
-  output: 'export',
-  basePath: '/mi-inapi-app',
+  // Solo aplicamos export y basePath en producción (GitHub Pages)
+  output: isProd ? 'export' : undefined,
+  basePath: isProd ? '/mi-inapi-app' : '',
   images: {
     unoptimized: true,
   },

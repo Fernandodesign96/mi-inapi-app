@@ -59,7 +59,7 @@ export default function LoginPage() {
     formState: { errors },
   } = useForm<LoginForm>({ resolver: zodResolver(loginSchema) });
 
-  const onSubmit = async (_data: LoginForm) => {
+  const onSubmit = async () => {
     setIsLoading(true);
     await new Promise((r) => setTimeout(r, 800));
     setIsLoading(false);

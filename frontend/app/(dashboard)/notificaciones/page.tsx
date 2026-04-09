@@ -11,6 +11,7 @@ import { useAppStore } from "@/lib/store";
 import { mockNotificaciones } from "@/lib/mockData";
 
 type FilterType = "todas" | "urgente" | "info" | "exito";
+type UrgencyType = "danger" | "warning" | "info" | "success";
 
 const filterOptions = [
   { value: "todas", label: "Todas" },
@@ -75,14 +76,14 @@ export default function NotificacionesPage() {
             return (
               <CollapsibleCard
                 key={notif.id}
-                variant={notif.urgency as any}
+                variant={notif.urgency as UrgencyType}
                 isOpen={isOpen}
                 onToggle={() => setExpandedId(isOpen ? null : notif.id)}
                 header={
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
                       <StatusBadge
-                        variant={notif.urgency as any}
+                        variant={notif.urgency as UrgencyType}
                         label={notif.tipo.replace("_", " ")}
                         showIcon={notif.urgency === "danger" || notif.urgency === "warning"}
                       />

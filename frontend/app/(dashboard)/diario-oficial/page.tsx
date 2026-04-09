@@ -6,17 +6,12 @@ import {
   ArrowLeft, 
   Search, 
   ChevronRight, 
-  ExternalLink,
-  Filter,
-  Calendar,
   FileText
 } from "lucide-react";
-import TopBar from "@/components/ui/TopBar";
 import FilterPills from "@/components/ui/FilterPills";
 import SemaphoreCard from "@/components/ui/SemaphoreCard";
 import StatusBadge from "@/components/ui/StatusBadge";
 import { useAppStore } from "@/lib/store";
-import { mockSolicitudes } from "@/lib/mockData";
 
 export default function DiarioOficialPage() {
   const router = useRouter();

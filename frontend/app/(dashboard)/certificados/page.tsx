@@ -9,7 +9,6 @@ import StatusBadge from "@/components/ui/StatusBadge";
 import SemaphoreCard from "@/components/ui/SemaphoreCard";
 import FilterPills from "@/components/ui/FilterPills";
 import EmptyState from "@/components/ui/EmptyState";
-import { clsx } from "clsx";
 
 type FilterType = "todos" | "marcas" | "patentes" | "diseños";
 

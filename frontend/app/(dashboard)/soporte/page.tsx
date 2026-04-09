@@ -145,7 +145,7 @@ export default function SoportePage() {
                   <div className="space-y-4">
                     <div className="space-y-2">
                       <span className="text-[10px] font-bold text-[#9CA3AF] uppercase">TU CONSULTA</span>
-                      <p className="text-body-sm text-[#4B5563] italic">"{item.consulta}"</p>
+                      <p className="text-body-sm text-[#4B5563] italic">&quot;{item.consulta}&quot;</p>
                     </div>
                     <div className="space-y-2 pt-3 border-t border-[#E5E7EB]">
                       <span className="text-[10px] font-bold text-[#9CA3AF] uppercase">RESPUESTA INAPI</span>

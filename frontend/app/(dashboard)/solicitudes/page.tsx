@@ -1,9 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Search, Clock, ChevronRight, ExternalLink } from "lucide-react";
-import TopBar from "@/components/ui/TopBar";
+import { Search, Clock, ChevronRight } from "lucide-react";
 import SemaphoreCard from "@/components/ui/SemaphoreCard";
 import StepperProgress from "@/components/ui/StepperProgress";
 import StatusBadge from "@/components/ui/StatusBadge";
@@ -13,6 +11,7 @@ import { useAppStore } from "@/lib/store";
 import { mockSolicitudes } from "@/lib/mockData";
 
 type FilterType = "todas" | "marca" | "patente" | "diseño";
+type UrgencyType = "danger" | "warning" | "info" | "success";
 
 const filterOptions = [
   { value: "todas", label: "Todas" },
@@ -22,12 +21,11 @@ const filterOptions = [
 ];
 
 export default function SolicitudesPage() {
-  const router = useRouter();
   const { userState } = useAppStore();
   const [activeFilter, setActiveFilter] = useState<FilterType>("todas");
 
   const filteredSolicitudes = mockSolicitudes
-    .filter(s => {
+    .filter((s) => {
       // 1. State-based filtering
       if (userState === 'new') return false;
       if (userState === 'active-no-urgent' && s.id === '2024-00123') return false;
@@ -37,14 +35,12 @@ export default function SolicitudesPage() {
       return s.tipo === activeFilter;
     })
     .sort((a, b) => {
-      const order = { danger: 0, warning: 1, info: 2, success: 3 };
-      return order[a.urgency as keyof typeof order] - order[b.urgency as keyof typeof order];
+      const order: Record<UrgencyType, number> = { danger: 0, warning: 1, info: 2, success: 3 };
+      return order[a.urgency as UrgencyType] - order[b.urgency as UrgencyType];
     });
 
   return (
     <div className="flex flex-col min-h-screen bg-[#F9FAFB]">
-      <TopBar variant="section" title="Mis Solicitudes" />
-
       <div className="flex-1 overflow-y-auto pb-24 screen-enter">
         {/* Header Block */}
         <div className="px-6 pt-6 pb-2">
@@ -69,7 +65,7 @@ export default function SolicitudesPage() {
             filteredSolicitudes.map((solicitud) => (
               <SemaphoreCard 
                 key={solicitud.id} 
-                urgency={solicitud.urgency as any}
+                urgency={solicitud.urgency as UrgencyType}
                 onClick={() => {}}
               >
                 <div className="space-y-4">
@@ -78,7 +74,7 @@ export default function SolicitudesPage() {
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <StatusBadge 
-                          variant={solicitud.urgency as any} 
+                          variant={solicitud.urgency as UrgencyType} 
                           label={solicitud.estado.replace('_', ' ')} 
                         />
                       </div>
@@ -96,7 +92,7 @@ export default function SolicitudesPage() {
                       solicitud.etapa === 'EXAMEN' ? ['completed', 'current', 'pending'] :
                       ['completed', 'completed', 'current']
                     }
-                    urgency={solicitud.urgency as any}
+                    urgency={solicitud.urgency as "danger" | "warning" | "info" | "success"}
                   />
 
                   {/* Footer Info Row */}

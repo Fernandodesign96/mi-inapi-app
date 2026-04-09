@@ -1,12 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Book, PlayCircle, Download, FileText, ExternalLink } from "lucide-react";
+import { Search, Book, PlayCircle, FileText, ExternalLink } from "lucide-react";
 import TopBar from "@/components/ui/TopBar";
 import StatusBadge from "@/components/ui/StatusBadge";
 import FilterPills from "@/components/ui/FilterPills";
 import SemaphoreCard from "@/components/ui/SemaphoreCard";
-import CTAButton from "@/components/ui/CTAButton";
 import EmptyState from "@/components/ui/EmptyState";
 import { clsx } from "clsx";
 
