@@ -1,52 +1,57 @@
 import { clsx } from "clsx";
-import { SemaphoreVariant } from "./StatusBadge";
+
+export type Urgency = "danger" | "warning" | "info" | "success" | "neutral";
 
 interface SemaphoreCardProps {
-  variant: SemaphoreVariant;
   children: React.ReactNode;
-  onClick?: () => void;
+  urgency?: Urgency;
   className?: string;
-  noPadding?: boolean;
+  onClick?: () => void;
 }
 
-const borderColors: Record<SemaphoreVariant, string> = {
-  danger: "border-l-[#DC2626]",
-  warning: "border-l-[#D97706]",
-  info: "border-l-[#2563EB]",
-  success: "border-l-[#059669]",
+const variantStyles: Record<Urgency, { border: string; bg: string }> = {
+  danger: {
+    border: "border-l-[#DC2626]",
+    bg: "bg-[linear-gradient(to_right,#FFF5F5_0%,#FFFFFF_40%)]",
+  },
+  warning: {
+    border: "border-l-[#D97706]",
+    bg: "bg-[linear-gradient(to_right,#FFFBEB_0%,#FFFFFF_40%)]",
+  },
+  info: {
+    border: "border-l-[#2563EB]",
+    bg: "bg-[linear-gradient(to_right,#EFF6FF_0%,#FFFFFF_40%)]",
+  },
+  success: {
+    border: "border-l-[#059669]",
+    bg: "bg-[linear-gradient(to_right,#F0FDF4_0%,#FFFFFF_40%)]",
+  },
+  neutral: {
+    border: "border-l-[#E5E7EB]",
+    bg: "bg-[#FFFFFF]",
+  },
 };
 
 export default function SemaphoreCard({
-  variant,
   children,
-  onClick,
+  urgency = "neutral",
   className,
-  noPadding = false,
+  onClick,
 }: SemaphoreCardProps) {
-  const isClickable = Boolean(onClick);
+  const styles = variantStyles[urgency];
 
   return (
     <div
-      role={isClickable ? "button" : undefined}
-      tabIndex={isClickable ? 0 : undefined}
       onClick={onClick}
-      onKeyDown={
-        isClickable
-          ? (e) => {
-              if (e.key === "Enter" || e.key === " ") onClick?.();
-            }
-          : undefined
-      }
       className={clsx(
-        "bg-white rounded-lg border-l-4 shadow-card",
-        borderColors[variant],
-        !noPadding && "p-4",
-        isClickable &&
-          "cursor-pointer transition-shadow duration-150 hover:shadow-elevated active:scale-[0.99] focus:outline-none focus:ring-2 focus:ring-[#1A56DB]",
+        "rounded-[14px] border-l-4 shadow-card transition-card",
+        styles.border,
+        styles.bg,
+        onClick && "cursor-pointer hover:shadow-elevated active:scale-[0.99]",
         className
       )}
     >
-      {children}
+      <div className="p-4">{children}</div>
     </div>
   );
 }

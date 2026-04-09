@@ -1,14 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "export",
-  trailingSlash: true,
+  // Eliminamos basePath y output: 'export' para facilitar el desarrollo local
+  // Si necesitas desplegar en GitHub Pages, puedes volver a agregarlos o usar variables de entorno
   images: {
     unoptimized: true,
   },
-  basePath: "/mi-inapi-app",
-  assetPrefix: "/mi-inapi-app/",
-  // AGREGA ESTO PARA IGNORAR ERRORES EN EL DEPLOY:
   eslint: {
     ignoreDuringBuilds: true,
   },

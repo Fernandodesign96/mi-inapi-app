@@ -1,128 +1,91 @@
-"use client";
-
-import { ArrowLeft, Bell, Settings, Search } from "lucide-react";
-import { clsx } from "clsx";
-
-export type TopBarVariant = "home" | "section" | "detail";
+import { Bell, User, ChevronLeft } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface TopBarProps {
-  variant?: TopBarVariant;
+  variant?: "home" | "section";
   title?: string;
-  subtitle?: string;
+  showNotifications?: boolean;
+  showProfile?: boolean;
+  hasUnreadNotifications?: boolean;
   onBack?: () => void;
-  onBell?: () => void;
-  onSearch?: () => void;
-  showBell?: boolean;
-  showSearch?: boolean;
-  showSettings?: boolean;
-  notificationCount?: number;
-  className?: string;
-}
-
-/** Logo cuadrado INAPI */
-function INAPILogo() {
-  return (
-    <div className="w-7 h-7 rounded-[6px] bg-[#1E3A8A] flex items-center justify-center shrink-0">
-      <span className="text-white font-bold text-sm leading-none">I</span>
-    </div>
-  );
+  rightAction?: React.ReactNode;
 }
 
 export default function TopBar({
   variant = "home",
   title,
-  subtitle,
+  showNotifications = true,
+  showProfile = true,
+  hasUnreadNotifications = true,
   onBack,
-  onBell,
-  onSearch,
-  showBell = false,
-  showSearch = false,
-  showSettings = false,
-  notificationCount = 0,
-  className,
+  rightAction,
 }: TopBarProps) {
+  const router = useRouter();
+
+  const handleBack = () => {
+    if (onBack) {
+      onBack();
+    } else {
+      router.back();
+    }
+  };
+
   return (
-    <header
-      className={clsx(
-        "fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-app bg-white border-b border-[#E5E7EB] z-40",
-        className
-      )}
-      style={{ maxWidth: "390px" }}
-    >
-      <div className="flex items-center h-[56px] px-4 gap-3">
-        {/* Left: back arrow or logo */}
-        {variant === "home" ? (
-          <div className="flex items-center gap-2">
-            <INAPILogo />
-            <div>
-              <p className="text-[16px] font-semibold text-[#111827] leading-none">
-                MiINAPI
-              </p>
-              {subtitle && (
-                <p className="text-[10px] text-[#9CA3AF] leading-none mt-0.5">
-                  {subtitle}
-                </p>
-              )}
-            </div>
-          </div>
+    <header className="h-[56px] bg-white border-b border-[#E5E7EB] flex items-center px-4 sticky top-0 z-40 w-full shrink-0">
+      <div className="flex-1 flex items-center">
+        {variant === "section" ? (
+          <button
+            onClick={handleBack}
+            className="w-11 h-11 -ml-2 flex items-center justify-center text-[#111827] active:opacity-60 transition-opacity"
+            aria-label="Volver"
+          >
+            <ChevronLeft size={24} strokeWidth={2.5} />
+          </button>
         ) : (
-          <div className="flex items-center gap-2">
-            {onBack && (
-              <button
-                onClick={onBack}
-                aria-label="Volver"
-                className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-[#F3F4F6] transition-colors focus:outline-none focus:ring-2 focus:ring-[#1A56DB]"
-              >
-                <ArrowLeft size={22} strokeWidth={2} color="#4B5563" />
-              </button>
-            )}
-            <div>
-              {title && (
-                <p className="text-[17px] font-semibold text-[#111827] leading-none">
-                  {title}
-                </p>
-              )}
-              {subtitle && (
-                <p className="text-[11px] text-[#9CA3AF] leading-none mt-0.5">
-                  {subtitle}
-                </p>
-              )}
+          <div className="flex items-center">
+            <div className="w-7 h-7 bg-[#1E3A8A] rounded-[6px] flex items-center justify-center text-white font-sans font-bold text-[14px]">
+              I
             </div>
+            <span className="ml-2 font-sans font-semibold text-[16px] text-[#111827] tracking-tight">
+              MiINAPI
+            </span>
           </div>
         )}
+      </div>
 
-        {/* Right actions */}
-        <div className="ml-auto flex items-center gap-1">
-          {showSearch && (
-            <button
-              onClick={onSearch}
-              aria-label="Buscar"
-              className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-[#F3F4F6] transition-colors focus:outline-none focus:ring-2 focus:ring-[#1A56DB]"
-            >
-              <Search size={20} strokeWidth={2} color="#4B5563" />
-            </button>
-          )}
-          {showSettings && (
-            <button
-              aria-label="Configuración"
-              className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-[#F3F4F6] transition-colors focus:outline-none focus:ring-2 focus:ring-[#1A56DB]"
-            >
-              <Settings size={20} strokeWidth={2} color="#4B5563" />
-            </button>
-          )}
-          {showBell && (
-            <button
-              onClick={onBell}
-              aria-label={`Notificaciones${notificationCount > 0 ? `, ${notificationCount} sin leer` : ""}`}
-              className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-[#F3F4F6] transition-colors relative focus:outline-none focus:ring-2 focus:ring-[#1A56DB]"
-            >
-              <Bell size={20} strokeWidth={2} color="#4B5563" />
-              {notificationCount > 0 && (
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#DC2626]" />
-              )}
-            </button>
-          )}
+      {variant === "section" && title && (
+        <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center w-max">
+          <h1 className="text-h3 text-[#111827]">{title}</h1>
         </div>
+      )}
+
+      <div className="flex-1 flex items-center justify-end gap-1">
+        {rightAction ? (
+          rightAction
+        ) : (
+          <>
+            {showNotifications && (
+              <Link
+                href="/notificaciones"
+                className="w-11 h-11 flex items-center justify-center text-[#4B5563] relative active:opacity-60 transition-opacity"
+              >
+                <Bell size={22} strokeWidth={2} />
+                {hasUnreadNotifications && (
+                  <div className="absolute top-[10px] right-[10px] w-2 h-2 bg-[#DC2626] rounded-full border border-white" />
+                )}
+              </Link>
+            )}
+            {showProfile && (
+              <Link
+                href="/perfil"
+                className="w-11 h-11 flex items-center justify-center text-[#4B5563] active:opacity-60 transition-opacity"
+              >
+                <User size={22} strokeWidth={2} />
+              </Link>
+            )}
+          </>
+        )}
       </div>
     </header>
   );

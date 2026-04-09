@@ -1,68 +1,58 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { CheckCircle, XCircle, Info } from "lucide-react";
 import { clsx } from "clsx";
-
-export type ToastType = "success" | "error" | "info";
+import { useEffect } from "react";
+import { CheckCircle, XCircle, Info, LucideIcon } from "lucide-react";
 
 interface ToastProps {
-  type: ToastType;
   message: string;
-  duration?: number;
-  onDismiss?: () => void;
+  type?: "success" | "error" | "info";
+  onDismiss: () => void;
 }
 
-const toastStyles: Record<ToastType, { bg: string; text: string; Icon: React.ComponentType<{ size?: number }> }> = {
-  success: { bg: "bg-[#D1FAE5] border-[#059669]", text: "text-[#065F46]", Icon: CheckCircle },
-  error: { bg: "bg-[#FEE2E2] border-[#DC2626]", text: "text-[#991B1B]", Icon: XCircle },
-  info: { bg: "bg-[#DBEAFE] border-[#2563EB]", text: "text-[#1E40AF]", Icon: Info },
+const config: Record<string, { bg: string; text: string; icon: LucideIcon; iconColor: string }> = {
+  success: {
+    bg: "bg-[#D1FAE5]",
+    text: "text-[#065F46]",
+    icon: CheckCircle,
+    iconColor: "#059669",
+  },
+  error: {
+    bg: "bg-[#FEE2E2]",
+    text: "text-[#991B1B]",
+    icon: XCircle,
+    iconColor: "#DC2626",
+  },
+  info: {
+    bg: "bg-[#DBEAFE]",
+    text: "text-[#1E40AF]",
+    icon: Info,
+    iconColor: "#2563EB",
+  },
 };
 
-export function Toast({ type, message, duration = 2500, onDismiss }: ToastProps) {
-  const [visible, setVisible] = useState(true);
-  const [exiting, setExiting] = useState(false);
-  const { bg, text, Icon } = toastStyles[type];
-
+export default function Toast({ message, type = "success", onDismiss }: ToastProps) {
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setExiting(true);
-      setTimeout(() => {
-        setVisible(false);
-        onDismiss?.();
-      }, 200);
-    }, duration);
+    const timer = setTimeout(onDismiss, 2500);
     return () => clearTimeout(timer);
-  }, [duration, onDismiss]);
+  }, [onDismiss]);
 
-  if (!visible) return null;
+  const { bg, text, icon: Icon, iconColor } = config[type];
 
   return (
-    <div
-      role="status"
-      aria-live="polite"
-      className={clsx(
-        "fixed left-4 right-4 mx-auto max-w-[358px] z-50 rounded-xl border p-3 flex items-center gap-3 shadow-modal",
-        "bottom-[84px]",
+    <div className={clsx(
+      "fixed z-60 left-1/2 -translate-x-1/2 w-full px-4",
+      "bottom-[calc(64px+16px+env(safe-area-inset-bottom))]",
+      "max-w-[390px]"
+    )}>
+      <div className={clsx(
+        "toast-enter flex items-center gap-[10px] w-full p-4 rounded-[12px] shadow-lg",
         bg,
-        exiting ? "toast-exit" : "toast-enter"
-      )}
-    >
-      <Icon size={18} className={text as any} />
-      <p className={clsx("text-[14px] font-medium", text)}>{message}</p>
+        text
+      )}>
+        <Icon size={18} color={iconColor} strokeWidth={2.5} />
+        <p className="text-[14px] font-sans font-medium">{message}</p>
+      </div>
     </div>
   );
-}
-
-// Hook para gestionar toasts fácilmente
-export function useToast() {
-  const [toast, setToast] = useState<{ type: ToastType; message: string } | null>(null);
-
-  const showToast = (type: ToastType, message: string) => {
-    setToast({ type, message });
-  };
-
-  const dismissToast = () => setToast(null);
-
-  return { toast, showToast, dismissToast };
 }

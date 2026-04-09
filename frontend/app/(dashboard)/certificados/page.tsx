@@ -1,183 +1,155 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Download, CheckSquare, Lightbulb, Palette } from "lucide-react";
+import { Search, Download, FileText } from "lucide-react";
 import TopBar from "@/components/ui/TopBar";
-import FilterPills from "@/components/ui/FilterPills";
-import StatusBadge from "@/components/ui/StatusBadge";
+import Toast from "@/components/ui/Toast";
 import CTAButton from "@/components/ui/CTAButton";
-import { Toast, useToast } from "@/components/ui/Toast";
+import StatusBadge from "@/components/ui/StatusBadge";
+import SemaphoreCard from "@/components/ui/SemaphoreCard";
+import FilterPills from "@/components/ui/FilterPills";
 import EmptyState from "@/components/ui/EmptyState";
-import {
-  certificadosMock,
-  Certificado,
-  getCertificadosByTipo,
-  searchCertificados,
-  CertificadoTipo,
-} from "@/lib/mock/certificados";
+import { clsx } from "clsx";
 
-type FilterTipo = "todos" | CertificadoTipo;
+type FilterType = "todos" | "marcas" | "patentes" | "diseños";
 
-const tipoIcon: Record<CertificadoTipo, React.ComponentType<{ size?: number; color?: string }>> = {
-  marca: CheckSquare,
-  patente: Lightbulb,
-  diseno: Palette,
-};
-
-function CertificadoCard({
-  cert,
-  onDownload,
-}: {
-  cert: Certificado;
-  onDownload: (id: string) => void;
-}) {
-  const [loading, setLoading] = useState(false);
-  const [done, setDone] = useState(false);
-  const Icon = tipoIcon[cert.tipo];
-
-  const handle = async () => {
-    setLoading(true);
-    await new Promise((r) => setTimeout(r, 700));
-    setLoading(false);
-    setDone(true);
-    onDownload(cert.id);
-    setTimeout(() => setDone(false), 2000);
-  };
-
-  return (
-    <div className="bg-white rounded-lg shadow-card p-4 space-y-3">
-      {/* Header */}
-      <div className="flex items-center gap-3">
-        <div
-          className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
-          style={{ background: cert.iconBg }}
-        >
-          <Icon size={24} color={cert.iconColor} />
-        </div>
-        <div className="flex-1 min-w-0">
-          <StatusBadge
-            variant={
-              cert.tipo === "marca" ? "info" : cert.tipo === "patente" ? "info" : "success"
-            }
-            label={cert.tipoLabel}
-          />
-          <h3 className="text-[16px] font-bold text-[#111827] mt-1 leading-tight uppercase tracking-wide">
-            {cert.nombre}
-          </h3>
-        </div>
-      </div>
-
-      {/* Meta */}
-      <div className="flex items-center justify-between">
-        <span className="font-mono text-[13px] text-[#9CA3AF]">
-          Registro: {cert.registro}
-        </span>
-        {cert.emision && (
-          <span className="text-[11px] font-semibold uppercase tracking-wide text-[#9CA3AF]">
-            Emisión: {cert.emision}
-          </span>
-        )}
-      </div>
-
-      {/* CTA */}
-      <button
-        onClick={handle}
-        disabled={loading}
-        className="w-full h-11 rounded-full bg-[#1E3A8A] text-white font-semibold text-[14px] flex items-center justify-center gap-2 transition-all hover:bg-[#173280] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-[#1A56DB] disabled:opacity-60"
-      >
-        {loading ? (
-          <span className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
-        ) : done ? (
-          <>✓ Descargando...</>
-        ) : (
-          <>
-            <Download size={16} />
-            Descargar PDF
-          </>
-        )}
-      </button>
-    </div>
-  );
+interface Certificate {
+  id: string;
+  name: string;
+  type: string;
+  typeLabel: FilterType;
+  registration: string;
+  emission: string;
 }
 
-export default function CertificadosPage() {
-  const [filterTipo, setFilterTipo] = useState<FilterTipo>("todos");
-  const [query, setQuery] = useState("");
-  const { toast, showToast, dismissToast } = useToast();
+const mockCertificados: Certificate[] = [
+  { id: "1", name: "Aura Cosmetics", type: "Marca Comercial", typeLabel: "marcas", registration: "1234567", emission: "12 MAR 2024" },
+  { id: "2", name: "Eco-Tech Solutions", type: "Marca Comercial", typeLabel: "marcas", registration: "7654321", emission: "05 ENE 2024" },
+  { id: "3", name: "Turbina Eólica v2", type: "Patente de Inv.", typeLabel: "patentes", registration: "9988776", emission: "20 OCT 2023" },
+  { id: "4", name: "Envase Sustentable", type: "Diseño Industrial", typeLabel: "diseños", registration: "5544332", emission: "15 SEP 2023" },
+];
 
-  const filtered = query
-    ? searchCertificados(query)
-    : getCertificadosByTipo(filterTipo === "todos" ? "todos" : filterTipo);
+export default function CertificadosPage() {
+  const [activeFilter, setActiveFilter] = useState<FilterType>("todos");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
+
+  const filtered = mockCertificados.filter(c => {
+    const matchesFilter = activeFilter === 'todos' || c.typeLabel === activeFilter;
+    const matchesSearch = c.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                         c.registration.includes(searchQuery);
+    return matchesFilter && matchesSearch;
+  });
+
+  const handleDownload = (id: string) => {
+    setDownloadingId(id);
+    setTimeout(() => {
+      setDownloadingId(null);
+      setToast({ message: "Certificado descargado con éxito", type: "success" });
+    }, 1500);
+  };
+
+  const filterOptions = [
+    { value: "todos", label: "Todos" },
+    { value: "marcas", label: "Marcas" },
+    { value: "patentes", label: "Patentes" },
+    { value: "diseños", label: "Diseños" },
+  ];
 
   return (
-    <>
-      <TopBar variant="home" title="Certificados Digitales" />
+    <div className="flex flex-col min-h-screen bg-[#F9FAFB]">
+      <TopBar variant="section" title="Certificados" />
 
-      <div className="px-4 pt-4 pb-6 space-y-4">
-        <div>
-          <h1 className="text-[24px] font-bold text-[#111827]">
-            Certificados Digitales
-          </h1>
-          <p className="text-[14px] text-[#4B5563]">
-            Descarga tus registros y títulos vigentes con firma electrónica.
+      <div className="flex-1 overflow-y-auto pb-24 screen-enter">
+        {/* Header Block */}
+        <div className="px-6 pt-6 pb-2">
+          <h1 className="text-h1 text-[#111827]">Títulos y Registros</h1>
+          <p className="text-body-sm text-[#4B5563] mt-1">
+            Descarga tus certificados con firma electrónica avanzada.
           </p>
         </div>
 
-        {/* Search */}
-        <div className="relative">
-          <Search
-            size={18}
-            color="#9CA3AF"
-            className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
-          />
-          <input
-            type="search"
-            placeholder="Buscar marca o registro..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="w-full h-11 rounded-[10px] bg-[#F3F4F6] pl-10 pr-4 text-[14px] text-[#111827] placeholder:text-[#9CA3AF] outline-none focus:ring-2 focus:ring-[#1A56DB]"
+        {/* Search and Filters */}
+        <div className="sticky top-[56px] z-30 bg-[#F9FAFB]/80 backdrop-blur-md px-6 py-4 space-y-4">
+          <div className="relative">
+            <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
+            <input 
+              type="text" 
+              placeholder="Buscar por nombre o registro..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full h-[48px] bg-white border border-[#E5E7EB] rounded-[10px] pl-10 pr-4 text-[14px] font-sans focus:border-[#1A56DB] transition-all outline-none shadow-sm"
+            />
+          </div>
+          <FilterPills
+            options={filterOptions}
+            activeValue={activeFilter}
+            onChange={(v) => setActiveFilter(v as FilterType)}
           />
         </div>
 
-        {/* Filter pills */}
-        <FilterPills
-          options={[
-            { value: "todos", label: "Todos" },
-            { value: "marca", label: "Marcas" },
-            { value: "patente", label: "Patentes" },
-            { value: "diseno", label: "Diseños" },
-          ]}
-          activeValue={filterTipo}
-          onChange={(v) => {
-            setFilterTipo(v as FilterTipo);
-            setQuery("");
-          }}
-        />
+        {/* List */}
+        <div className="px-6 space-y-4">
+          {filtered.length > 0 ? (
+            filtered.map((cert) => (
+              <SemaphoreCard key={cert.id} urgency="neutral">
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-[#F3F4F6] flex items-center justify-center shrink-0">
+                      <FileText size={24} className="text-[#9CA3AF]" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <span className="text-label text-[#9CA3AF]">{cert.type}</span>
+                        <StatusBadge variant="success" label="VIGENTE" />
+                      </div>
+                      <h3 className="text-[16px] font-bold text-[#111827] mt-[2px] truncate uppercase">
+                        {cert.name}
+                      </h3>
+                    </div>
+                  </div>
 
-        {/* Cards */}
-        {filtered.length === 0 ? (
-          <EmptyState
-            icon={<Search size={32} />}
-            title="Sin resultados"
-            description="No encontramos certificados con ese criterio. Intenta con otro nombre o número de registro."
-            action={{ label: "Ver todos", onClick: () => { setQuery(""); setFilterTipo("todos"); } }}
-          />
-        ) : (
-          <div className="space-y-3">
-            {filtered.map((cert) => (
-              <CertificadoCard
-                key={cert.id}
-                cert={cert}
-                onDownload={() => showToast("info", "Descargando certificado...")}
-              />
-            ))}
-          </div>
-        )}
+                  <div className="flex items-center justify-between pt-1">
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-bold text-[#9CA3AF] uppercase">N° REGISTRO</span>
+                      <span className="text-mono text-[#111827]">{cert.registration}</span>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-[10px] font-bold text-[#9CA3AF] uppercase">EMISIÓN</span>
+                      <p className="text-timestamp font-bold text-[#4B5563]">{cert.emission}</p>
+                    </div>
+                  </div>
+
+                  <CTAButton 
+                    label="Descargar Certificado"
+                    variant="primary-dark"
+                    fullWidth
+                    size="md"
+                    isLoading={downloadingId === cert.id}
+                    onClick={() => handleDownload(cert.id)}
+                    icon={<Download size={18} />}
+                  />
+                </div>
+              </SemaphoreCard>
+            ))
+          ) : (
+            <EmptyState
+              icon={FileText}
+              title="No hay certificados"
+              description="No encontramos certificados vigentes que coincidan con tu búsqueda."
+            />
+          )}
+        </div>
       </div>
 
       {toast && (
-        <Toast type={toast.type} message={toast.message} onDismiss={dismissToast} />
+        <Toast 
+          message={toast.message} 
+          type={toast.type}
+          onDismiss={() => setToast(null)} 
+        />
       )}
-    </>
+    </div>
   );
 }

@@ -1,50 +1,58 @@
-import { AlertTriangle, AlertCircle, RefreshCw, CheckCircle } from "lucide-react";
-import { clsx } from "clsx";
+"use client";
 
-export type SemaphoreVariant = "danger" | "warning" | "info" | "success";
+import { clsx } from "clsx";
+import { AlertTriangle, AlertCircle, RefreshCw, CheckCircle, LucideIcon } from "lucide-react";
+
+export type BadgeVariant = 'danger' | 'warning' | 'info' | 'success';
 
 interface StatusBadgeProps {
-  variant: SemaphoreVariant;
+  variant: BadgeVariant;
   label: string;
-  size?: "sm" | "md";
   showIcon?: boolean;
-  className?: string;
 }
 
-const variantStyles: Record<SemaphoreVariant, string> = {
-  danger: "bg-[#FEE2E2] text-[#DC2626]",
-  warning: "bg-[#FEF3C7] text-[#D97706]",
-  info: "bg-[#DBEAFE] text-[#2563EB]",
-  success: "bg-[#D1FAE5] text-[#059669]",
-};
-
-const variantIcons: Record<SemaphoreVariant, React.ComponentType<{ size?: number; className?: string }>> = {
-  danger: AlertTriangle,
-  warning: AlertCircle,
-  info: RefreshCw,
-  success: CheckCircle,
+const variantConfig: Record<BadgeVariant, { bg: string; text: string; icon: LucideIcon }> = {
+  danger: {
+    bg: "bg-[#FEE2E2]",
+    text: "text-[#DC2626]",
+    icon: AlertTriangle,
+  },
+  warning: {
+    bg: "bg-[#FEF3C7]",
+    text: "text-[#D97706]",
+    icon: AlertCircle,
+  },
+  info: {
+    bg: "bg-[#DBEAFE]",
+    text: "text-[#2563EB]",
+    icon: RefreshCw,
+  },
+  success: {
+    bg: "bg-[#D1FAE5]",
+    text: "text-[#059669]",
+    icon: CheckCircle,
+  },
 };
 
 export default function StatusBadge({
   variant,
   label,
-  size = "sm",
-  showIcon = false,
-  className,
+  showIcon = true,
 }: StatusBadgeProps) {
-  const Icon = variantIcons[variant];
+  const config = variantConfig[variant];
+  const Icon = config.icon;
 
   return (
-    <span
+    <div
       className={clsx(
-        "inline-flex items-center gap-1 rounded-full font-semibold uppercase tracking-wider",
-        variantStyles[variant],
-        size === "sm" ? "px-2.5 py-0.5 text-[11px]" : "px-3 py-1 text-xs",
-        className
+        "inline-flex items-center gap-1 px-[10px] py-[2px] rounded-full",
+        "font-sans text-[11px] font-semibold uppercase tracking-[0.05em]",
+        config.bg,
+        config.text
       )}
     >
-      {showIcon && <Icon size={10} />}
-      {label}
-    </span>
+      {showIcon && <Icon size={14} strokeWidth={2.5} />}
+      <span>{label}</span>
+    </div>
   );
 }

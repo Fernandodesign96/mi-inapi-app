@@ -1,92 +1,78 @@
 import { clsx } from "clsx";
-import { SemaphoreVariant } from "./StatusBadge";
+import { Check, Dot } from "lucide-react";
 
 export type StepState = "completed" | "current" | "pending";
 
 interface StepperProgressProps {
   steps?: string[];
-  currentStep: number;
   stepStates: StepState[];
-  currentVariant?: SemaphoreVariant;
+  urgency?: "danger" | "warning" | "info" | "success";
 }
-
-const currentColors: Record<SemaphoreVariant, string> = {
-  danger: "bg-[#DC2626] border-[#DC2626]",
-  warning: "bg-[#D97706] border-[#D97706]",
-  info: "bg-[#2563EB] border-[#2563EB]",
-  success: "bg-[#059669] border-[#059669]",
-};
 
 const DEFAULT_STEPS = ["INGRESO", "EXAMEN", "RESOLUCIÓN"];
 
+const urgencyColors = {
+  danger: "#DC2626",
+  warning: "#D97706",
+  info: "#2563EB",
+  success: "#059669",
+};
+
 export default function StepperProgress({
   steps = DEFAULT_STEPS,
-  currentStep,
   stepStates,
-  currentVariant = "info",
+  urgency = "info",
 }: StepperProgressProps) {
+  const currentColor = urgencyColors[urgency];
+
   return (
-    <div className="flex items-center w-full gap-0 my-3">
+    <div className="flex items-center w-full gap-0 mt-3 mb-2">
       {steps.map((step, i) => {
         const state = stepStates[i];
         const isLast = i === steps.length - 1;
 
         return (
-          <div key={step} className="flex items-center flex-1">
-            {/* Dot + label */}
-            <div className="flex flex-col items-center gap-1 shrink-0">
+          <div key={`${step}-${i}`} className={clsx("flex flex-col flex-1", !isLast && "mr-0")}>
+            <div className="flex items-center">
+              {/* Circle */}
               <div
                 className={clsx(
-                  "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors",
-                  state === "completed" &&
-                    "bg-[#059669] border-[#059669]",
-                  state === "current" && currentColors[currentVariant],
-                  state === "pending" && "bg-white border-[#E5E7EB]"
+                  "w-5 h-5 rounded-full flex items-center justify-center shrink-0 transition-colors",
+                  state === "completed" && "bg-[#059669]",
+                  state === "current" && "bg-current",
+                  state === "pending" && "bg-[#E5E7EB] border-2 border-[#D1D5DB]"
                 )}
+                style={state === "current" ? { backgroundColor: currentColor } : {}}
               >
-                {state === "completed" && (
-                  <svg
-                    width="10"
-                    height="10"
-                    viewBox="0 0 10 10"
-                    fill="none"
-                  >
-                    <path
-                      d="M2 5l2.5 2.5L8 3"
-                      stroke="white"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                )}
-                {state === "current" && (
-                  <div className="w-2 h-2 rounded-full bg-white" />
-                )}
+                {state === "completed" && <Check size={12} strokeWidth={3} className="text-white" />}
+                {state === "current" && <Dot size={18} strokeWidth={4} className="text-white" />}
               </div>
-              <span
-                className={clsx(
-                  "text-[10px] font-medium uppercase tracking-wide text-center leading-tight",
-                  state === "completed" && "text-[#059669]",
-                  state === "current" && "text-[#111827] font-semibold",
-                  state === "pending" && "text-[#9CA3AF]"
-                )}
-              >
-                {step}
-              </span>
+
+              {/* Connector Line */}
+              {!isLast && (
+                <div
+                  className={clsx(
+                    "flex-1 h-[2px] transition-colors",
+                    state === "completed" && stepStates[i + 1] !== "pending"
+                      ? "bg-[#059669]"
+                      : "bg-[#E5E7EB]"
+                  )}
+                />
+              )}
             </div>
 
-            {/* Connector line */}
-            {!isLast && (
-              <div
-                className={clsx(
-                  "flex-1 h-0.5 mx-1 mb-4",
-                  stepStates[i] === "completed" && stepStates[i + 1] !== "pending"
-                    ? "bg-[#059669]"
-                    : "bg-[#E5E7EB]"
-                )}
-              />
-            )}
+            {/* Label */}
+            <span
+              className={clsx(
+                "mt-1 text-[10px] uppercase font-sans tracking-tight",
+                state === "completed" && "text-[#059669] font-medium",
+                state === "current" && "font-bold",
+                state === "pending" && "text-[#9CA3AF] font-normal"
+              )}
+              style={state === "current" ? { color: currentColor } : {}}
+            >
+              {step}
+            </span>
           </div>
         );
       })}

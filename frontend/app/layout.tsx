@@ -5,14 +5,14 @@ import "./globals.css";
 const dmSans = DM_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
-  variable: "--font-sans",
+  variable: "--font-dm-sans",
   display: "swap",
 });
 
 const dmMono = DM_Mono({
   subsets: ["latin"],
   weight: ["400", "500"],
-  variable: "--font-mono",
+  variable: "--font-dm-mono",
   display: "swap",
 });
 
@@ -45,7 +45,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es-CL" className={`${dmSans.variable} ${dmMono.variable}`}>
-      <body className="font-sans antialiased bg-[--background]">
+      <body className="font-sans antialiased bg-[--bg-base]">
         <div className="app-frame">{children}</div>
       </body>
     </html>

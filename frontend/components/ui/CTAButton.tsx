@@ -5,6 +5,7 @@ import { clsx } from "clsx";
 
 export type ButtonVariant =
   | "primary"
+  | "primary-dark"
   | "danger"
   | "warning"
   | "info"
@@ -23,24 +24,24 @@ interface CTAButtonProps {
   size?: "sm" | "md" | "lg";
   type?: "button" | "submit" | "reset";
   className?: string;
+  id?: string;
 }
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: "bg-[#1A56DB] text-white hover:bg-[#1E3A8A] active:bg-[#1730A0]",
-  danger: "bg-[#DC2626] text-white hover:bg-[#B91C1C] active:bg-[#991B1B]",
-  warning: "bg-[#D97706] text-white hover:bg-[#B45309] active:bg-[#92400E]",
-  info: "bg-[#2563EB] text-white hover:bg-[#1D4ED8] active:bg-[#1E40AF]",
-  success: "bg-[#059669] text-white hover:bg-[#047857] active:bg-[#065F46]",
-  outline:
-    "bg-transparent text-[#1A56DB] border border-[#E5E7EB] hover:bg-[#F3F4F6] active:bg-[#E5E7EB]",
-  ghost:
-    "bg-transparent text-[#4B5563] hover:bg-[#F3F4F6] active:bg-[#E5E7EB]",
+  primary: "bg-[#1A56DB] text-white hover:bg-[#1E3A8A]",
+  "primary-dark": "bg-[#1E3A8A] text-white opacity-100 hover:opacity-90",
+  danger: "bg-[#DC2626] text-white hover:bg-[#B91C1C]",
+  warning: "bg-[#D97706] text-white hover:bg-[#B45309]",
+  info: "bg-[#2563EB] text-white hover:bg-[#1D4ED8]",
+  success: "bg-[#059669] text-white hover:bg-[#047857]",
+  outline: "bg-transparent border-2 border-[#E5E7EB] text-[#1A56DB] hover:border-[#1A56DB]",
+  ghost: "bg-transparent text-[#4B5563] hover:bg-[#F3F4F6]",
 };
 
 const sizeClasses: Record<string, string> = {
-  sm: "h-9 px-4 text-[13px]",
-  md: "h-12 px-6 text-[15px]",
-  lg: "h-[52px] px-7 text-[15px]",
+  sm: "px-4 py-2 text-[14px] min-h-[36px]",
+  md: "px-6 py-3 text-[15px] min-h-[48px]",
+  lg: "px-7 py-3.5 text-[15px] min-h-[52px]",
 };
 
 export default function CTAButton({
@@ -54,29 +55,36 @@ export default function CTAButton({
   size = "md",
   type = "button",
   className,
+  id,
 }: CTAButtonProps) {
   const disabled = isDisabled || isLoading;
 
   return (
     <button
+      id={id}
       type={type}
       onClick={onClick}
       disabled={disabled}
       className={clsx(
-        "rounded-full font-semibold inline-flex items-center justify-center gap-2 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1A56DB] active:scale-[0.98]",
+        "rounded-full font-sans font-semibold inline-flex items-center justify-center gap-2 transition-all duration-150",
+        "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1A56DB] active:scale-[0.98]",
         variantClasses[variant],
         sizeClasses[size],
         fullWidth && "w-full",
-        disabled && "opacity-40 cursor-not-allowed pointer-events-none",
+        disabled && "opacity-40 cursor-not-allowed",
+        isLoading && variant === "primary-dark" && "opacity-70",
         className
       )}
     >
       {isLoading ? (
-        <Loader2 size={18} className="animate-spin" />
+        <div className="flex items-center gap-2">
+          <Loader2 size={18} className="animate-spin" />
+          {variant === "primary-dark" && <span>Descargando...</span>}
+        </div>
       ) : (
         <>
           {icon && <span className="shrink-0">{icon}</span>}
-          {label}
+          <span>{label}</span>
         </>
       )}
     </button>

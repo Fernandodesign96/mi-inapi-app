@@ -1,8 +1,9 @@
 import { clsx } from "clsx";
 import CTAButton from "./CTAButton";
+import { LucideIcon } from "lucide-react";
 
 interface EmptyStateProps {
-  icon: React.ReactNode;
+  icon: LucideIcon;
   title: string;
   description: string;
   action?: { label: string; onClick: () => void };
@@ -10,7 +11,7 @@ interface EmptyStateProps {
 }
 
 export default function EmptyState({
-  icon,
+  icon: Icon,
   title,
   description,
   action,
@@ -19,26 +20,27 @@ export default function EmptyState({
   return (
     <div
       className={clsx(
-        "flex flex-col items-center justify-center text-center px-6 py-12",
+        "flex flex-col items-center justify-center text-center px-[24px] py-[48px]",
         className
       )}
     >
       {/* Icon wrapper */}
-      <div className="w-16 h-16 rounded-full bg-[#F3F4F6] flex items-center justify-center mb-4 text-[#9CA3AF]">
-        {icon}
+      <div className="w-[64px] h-[64px] rounded-full bg-[#F3F4F6] flex items-center justify-center text-[#9CA3AF]">
+        <Icon size={32} strokeWidth={2} />
       </div>
 
-      <h3 className="text-[17px] font-semibold text-[#111827] mb-2">{title}</h3>
-      <p className="text-[14px] text-[#4B5563] leading-relaxed max-w-[260px]">
+      <h3 className="text-h3 text-[#111827] mt-[16px]">{title}</h3>
+      <p className="text-body-sm text-[#4B5563] mt-[8px] max-w-[280px]">
         {description}
       </p>
 
       {action && (
-        <div className="mt-6">
+        <div className="mt-[20px]">
           <CTAButton
             variant="outline"
             label={action.label}
             onClick={action.onClick}
+            size="md"
           />
         </div>
       )}

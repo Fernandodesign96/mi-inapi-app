@@ -1,214 +1,160 @@
 "use client";
 
 import { useState } from "react";
-import { Search, BookOpen, Lightbulb, PlayCircle, UserCheck, Download, Eye, SlidersHorizontal } from "lucide-react";
+import { Search, Book, PlayCircle, Download, FileText, ExternalLink } from "lucide-react";
 import TopBar from "@/components/ui/TopBar";
-import { useRouter } from "next/navigation";
-import { Toast, useToast } from "@/components/ui/Toast";
-import {
-  bibliotecaMock,
-  RecursoBiblioteca,
-  getBibliotecaByCategoria,
-  searchBiblioteca,
-  categoriasBiblioteca,
-  RecursoCat,
-} from "@/lib/mock/biblioteca";
+import StatusBadge from "@/components/ui/StatusBadge";
+import FilterPills from "@/components/ui/FilterPills";
+import SemaphoreCard from "@/components/ui/SemaphoreCard";
+import CTAButton from "@/components/ui/CTAButton";
+import EmptyState from "@/components/ui/EmptyState";
 import { clsx } from "clsx";
 
-const catIcons: Record<RecursoCat, React.ComponentType<{ size?: number; color?: string; strokeWidth?: number }>> = {
-  manuales: BookOpen,
-  guias: Lightbulb,
-  videos: PlayCircle,
-  oficiales: UserCheck,
-};
+type CategoryId = "todas" | "manuales" | "guias" | "videos" | "legales";
 
-function RecursoItem({
-  recurso,
-  onDownload,
-  onPlay,
-}: {
-  recurso: RecursoBiblioteca;
-  onDownload: () => void;
-  onPlay: () => void;
-}) {
-  const [downloaded, setDownloaded] = useState(false);
-
-  const handleDownload = async () => {
-    setDownloaded(true);
-    onDownload();
-    setTimeout(() => setDownloaded(false), 2000);
-  };
-
-  return (
-    <div className="bg-white rounded-lg shadow-card p-3 flex items-center gap-3">
-      {/* Type icon */}
-      <div
-        className="w-11 h-11 rounded-[8px] flex items-center justify-center shrink-0"
-        style={{ background: recurso.iconBg }}
-      >
-        {recurso.tipo === "video" ? (
-          <PlayCircle size={24} color={recurso.iconColor} />
-        ) : recurso.tipo === "presentacion" ? (
-          <SlidersHorizontal size={22} color={recurso.iconColor} />
-        ) : (
-          <BookOpen size={22} color={recurso.iconColor} />
-        )}
-      </div>
-
-      {/* Info */}
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-1.5 mb-0.5">
-          <span className="text-[11px] font-semibold bg-[#F3F4F6] text-[#4B5563] rounded px-1.5 py-0.5 uppercase">
-            {recurso.tipoLabel}
-          </span>
-          <span className="text-[11px] text-[#9CA3AF]">
-            {recurso.duracion ?? recurso.tamano}
-          </span>
-        </div>
-        <p className="text-[13px] font-medium text-[#111827] leading-snug line-clamp-2">
-          {recurso.titulo}
-        </p>
-      </div>
-
-      {/* Action */}
-      {recurso.tipo === "video" ? (
-        <button
-          onClick={onPlay}
-          aria-label="Ver video"
-          className="w-9 h-9 rounded-full bg-[#1E3A8A] text-white flex items-center justify-center shrink-0 hover:bg-[#1A56DB] transition-colors focus:outline-none focus:ring-2 focus:ring-[#1A56DB]"
-        >
-          <Eye size={16} />
-        </button>
-      ) : (
-        <button
-          onClick={handleDownload}
-          aria-label={downloaded ? "Descargado" : "Descargar"}
-          className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 text-[#4B5563] hover:bg-[#F3F4F6] transition-colors focus:outline-none focus:ring-2 focus:ring-[#1A56DB]"
-        >
-          {downloaded ? (
-            <span className="text-[#059669] text-[16px]">✓</span>
-          ) : (
-            <Download size={18} />
-          )}
-        </button>
-      )}
-    </div>
-  );
+interface Resource {
+  id: string;
+  title: string;
+  description: string;
+  type: "PDF" | "Video" | "Link";
+  category: CategoryId;
+  size?: string;
+  image?: string;
 }
 
+const mockResources: Resource[] = [
+  { id: "r1", title: "Manual de Marcas 2024", description: "Todo lo que necesitas saber para registrar tu marca en Chile.", type: "PDF", category: "manuales", size: "2.4 MB" },
+  { id: "r2", title: "Cómo proteger tu invento", description: "Video guía sobre el proceso de patentamiento nacional.", type: "Video", category: "videos" },
+  { id: "r3", title: "Guía de Diseño Industrial", description: "Aspectos clave para proteger la apariencia de tus productos.", type: "PDF", category: "guias", size: "1.8 MB" },
+  { id: "r4", title: "Ley de Propiedad Ind.", description: "Texto oficial de la Ley 19.039 y sus modificaciones.", type: "PDF", category: "legales", size: "1.2 MB" },
+];
+
+const guideCategories = [
+  { id: "marcas", label: "Marcas", icon: <Book size={24} />, bg: "bg-[#DBEAFE]", color: "text-[#1A56DB]" },
+  { id: "patentes", label: "Patentes", icon: <FileText size={24} />, bg: "bg-[#D1FAE5]", color: "text-[#059669]" },
+];
+
 export default function BibliotecaPage() {
-  const router = useRouter();
-  const [query, setQuery] = useState("");
-  const [activeCategory, setActiveCategory] = useState<RecursoCat | null>(null);
-  const { toast, showToast, dismissToast } = useToast();
+  const [activeFilter, setActiveFilter] = useState<CategoryId>("todas");
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const recursos = query
-    ? searchBiblioteca(query)
-    : getBibliotecaByCategoria(activeCategory);
+  const filtered = mockResources.filter(r => {
+    const matchesFilter = activeFilter === 'todas' || r.category === activeFilter;
+    const matchesSearch = r.title.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesFilter && matchesSearch;
+  });
 
-  const handleCategoryClick = (cat: RecursoCat) => {
-    setActiveCategory((prev) => (prev === cat ? null : cat));
-    setQuery("");
-  };
+  const filterOptions = [
+    { value: "todas", label: "Todas" },
+    { value: "manuales", label: "Manuales" },
+    { value: "guias", label: "Guías" },
+    { value: "videos", label: "Videos" },
+    { value: "legales", label: "Legales" },
+  ];
 
   return (
-    <>
-      <TopBar
-        variant="section"
-        title="Biblioteca"
-        subtitle="MiINAPI / Biblioteca"
-        onBack={() => router.push("/inicio")}
-      />
+    <div className="flex flex-col min-h-screen bg-[#F9FAFB]">
+      <TopBar variant="section" title="Biblioteca" />
 
-      <div className="px-4 pt-4 pb-6 space-y-5">
-        {/* Search */}
-        <div className="relative">
-          <Search
-            size={18}
-            color="#9CA3AF"
-            className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
-          />
-          <input
-            type="search"
-            placeholder="Buscar manuales, guías, videos..."
-            value={query}
-            onChange={(e) => {
-              setQuery(e.target.value);
-              if (e.target.value) setActiveCategory(null);
-            }}
-            className="w-full h-11 rounded-[10px] bg-[#F3F4F6] pl-10 pr-4 text-[14px] text-[#111827] placeholder:text-[#9CA3AF] outline-none focus:ring-2 focus:ring-[#1A56DB]"
-          />
-        </div>
-
-        {/* Categorías grid */}
-        <div>
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-[#9CA3AF] mb-3">
-            Categorías
+      <div className="flex-1 overflow-y-auto pb-24 screen-enter">
+        {/* Header Block */}
+        <div className="px-6 pt-6 pb-2">
+          <h1 className="text-h1 text-[#111827]">Centro de Recursos</h1>
+          <p className="text-body-sm text-[#4B5563] mt-1">
+            Guías, manuales y material educativo sobre Propiedad Industrial
           </p>
-          <div className="grid grid-cols-2 gap-3">
-            {categoriasBiblioteca.map((cat) => {
-              const Icon = catIcons[cat.id];
-              const isActive = activeCategory === cat.id;
-              return (
-                <button
-                  key={cat.id}
-                  onClick={() => handleCategoryClick(cat.id)}
-                  className={clsx(
-                    "rounded-[14px] p-4 flex flex-col items-center gap-2 transition-all duration-150 focus:outline-none",
-                    isActive
-                      ? "ring-2 ring-[#1A56DB] ring-offset-2 scale-[0.98]"
-                      : "hover:scale-[0.98]"
-                  )}
-                  style={{ background: cat.iconBg }}
-                >
-                  <Icon size={32} color={cat.iconColor} strokeWidth={1.5} />
-                  <span
-                    className="text-[12px] font-semibold"
-                    style={{ color: cat.iconColor }}
-                  >
-                    {cat.label}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
         </div>
 
-        {/* Recursos */}
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-[#9CA3AF]">
-              {activeCategory
-                ? categoriasBiblioteca.find((c) => c.id === activeCategory)?.label
-                : "Recursos Recientes"}
-            </p>
-            <button className="text-[13px] text-[#1A56DB] font-medium focus:outline-none focus:underline">
-              Ver todo
-            </button>
+        {/* Search and Filters */}
+        <div className="sticky top-[56px] z-30 bg-[#F9FAFB]/80 backdrop-blur-md px-6 py-4 space-y-4">
+          <div className="relative">
+            <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
+            <input 
+              type="text" 
+              placeholder="¿Qué estás buscando aprender?"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full h-[48px] bg-white border border-[#E5E7EB] rounded-[10px] pl-10 pr-4 text-[14px] font-sans focus:border-[#1A56DB] transition-all outline-none shadow-sm"
+            />
           </div>
+          <FilterPills
+            options={filterOptions}
+            activeValue={activeFilter}
+            onChange={(v) => setActiveFilter(v as CategoryId)}
+          />
+        </div>
 
-          {recursos.length === 0 ? (
-            <p className="text-center text-[#9CA3AF] py-8 text-[14px]">
-              No hay recursos que coincidan con tu búsqueda
-            </p>
-          ) : (
-            <div className="space-y-3">
-              {recursos.map((recurso) => (
-                <RecursoItem
-                  key={recurso.id}
-                  recurso={recurso}
-                  onDownload={() => showToast("success", "Descarga iniciada")}
-                  onPlay={() => showToast("info", "Reproduciendo video...")}
-                />
-              ))}
+        <div className="px-6 space-y-8">
+          {/* Quick Access Categories */}
+          {activeFilter === "todas" && !searchQuery && (
+            <div className="space-y-4">
+              <p className="text-label text-[#9CA3AF]">POR TIPO DE TRÁMITE</p>
+              <div className="grid grid-cols-2 gap-3">
+                {guideCategories.map(cat => (
+                  <button
+                    key={cat.id}
+                    className={clsx(
+                      "p-4 rounded-[14px] border border-[#E5E7EB] bg-white flex flex-col items-center justify-center gap-3 shadow-sm active:scale-95 transition-all text-center"
+                    )}
+                  >
+                    <div className={clsx("w-12 h-12 rounded-full flex items-center justify-center", cat.bg, cat.color)}>
+                      {cat.icon}
+                    </div>
+                    <span className="text-[14px] font-bold text-[#111827]">{cat.label}</span>
+                  </button>
+                ))}
+              </div>
             </div>
           )}
+
+          {/* Resource List */}
+          <div className="space-y-4">
+            <p className="text-label text-[#9CA3AF]">RECURSOS DISPONIBLES</p>
+            {filtered.length > 0 ? (
+              filtered.map((res) => (
+                <SemaphoreCard key={res.id} urgency="info">
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-start gap-3">
+                      <div className="space-y-1 flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <StatusBadge 
+                            variant={res.type === 'Video' ? 'info' : 'success'} 
+                            label={res.type} 
+                          />
+                          {res.size && <span className="text-timestamp">{res.size}</span>}
+                        </div>
+                        <h3 className="text-[16px] font-bold text-[#111827] truncate">
+                          {res.title}
+                        </h3>
+                      </div>
+                      <div className="w-10 h-10 rounded-lg bg-[#F3F4F6] flex items-center justify-center text-[#9CA3AF] shrink-0">
+                        {res.type === 'Video' ? <PlayCircle size={20} /> : <FileText size={20} />}
+                      </div>
+                    </div>
+                    
+                    <p className="text-body-xs text-[#4B5563] leading-relaxed">
+                      {res.description}
+                    </p>
+
+                    <div className="pt-2 flex justify-end">
+                      <button className="text-[12px] font-bold text-[#1A56DB] flex items-center gap-1.5 uppercase tracking-wider">
+                        {res.type === 'Video' ? 'Ver ahora' : 'Leer más'}
+                        <ExternalLink size={14} />
+                      </button>
+                    </div>
+                  </div>
+                </SemaphoreCard>
+              ))
+            ) : (
+              <EmptyState
+                icon={Book}
+                title="Sin resultados"
+                description="No encontramos recursos que coincidan con tu búsqueda."
+              />
+            )}
+          </div>
         </div>
       </div>
-
-      {toast && (
-        <Toast type={toast.type} message={toast.message} onDismiss={dismissToast} />
-      )}
-    </>
+    </div>
   );
 }

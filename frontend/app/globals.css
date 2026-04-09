@@ -1,87 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=DM+Mono:ital,wght@0,300..500;1,300..500&display=swap');
+
 @import "tailwindcss";
 
-/* ============================================
-   MiINAPI Design System — globals.css v1.0.0
-   Instituto Nacional de Propiedad Industrial
-   ============================================ */
-
-/* === PALETA BASE INSTITUCIONAL === */
 :root {
-  --color-primary: #1a56db;
-  --color-primary-dark: #1e3a8a;
-  --color-primary-foreground: #ffffff;
-  --color-accent: #7c3aed;
-  --color-accent-light: #ede9fe;
-  --color-accent-foreground: #ffffff;
+  /* Paleta institucional */
+  --color-primary:            #1A56DB;
+  --color-primary-dark:       #1E3A8A;
+  --color-accent:             #7C3AED;
+  --color-accent-light:       #EDE9FE;
 
-  /* === SISTEMA SEMÁFORO INAPI === */
-  --semaphore-danger: #dc2626;
-  --semaphore-danger-bg: #fee2e2;
-  --semaphore-warning: #d97706;
-  --semaphore-warning-bg: #fef3c7;
-  --semaphore-info: #2563eb;
-  --semaphore-info-bg: #dbeafe;
-  --semaphore-success: #059669;
-  --semaphore-success-bg: #d1fae5;
+  /* Sistema semáforo */
+  --semaphore-danger:         #DC2626;
+  --semaphore-danger-bg:      #FEE2E2;
+  --semaphore-warning:        #D97706;
+  --semaphore-warning-bg:     #FEF3C7;
+  --semaphore-info:           #2563EB;
+  --semaphore-info-bg:        #DBEAFE;
+  --semaphore-success:        #059669;
+  --semaphore-success-bg:     #D1FAE5;
 
-  /* === NEUTROS DE UI === */
-  --background: #f9fafb;
-  --surface: #ffffff;
-  --surface-elevated: #f3f4f6;
-  --foreground: #111827;
-  --foreground-secondary: #4b5563;
-  --foreground-muted: #9ca3af;
-  --border: #e5e7eb;
-  --border-strong: #d1d5db;
-  --ring: #1a56db;
+  /* Neutros */
+  --background:               #F9FAFB;   /* NEVER #FFFFFF as page background */
+  --surface:                  #FFFFFF;   /* Cards, inputs, modals only */
+  --surface-elevated:         #F3F4F6;   /* Pill inactive, input bg, table header bg */
+  --foreground:               #111827;
+  --foreground-secondary:     #4B5563;
+  --foreground-muted:         #9CA3AF;
+  --border:                   #E5E7EB;
+  --border-strong:            #D1D5DB;
+  --ring:                     #1A56DB;
 
-  /* === TIPOGRAFÍA === */
-  --font-sans: "DM Sans", system-ui, sans-serif;
-  --font-mono: "DM Mono", "Courier New", monospace;
+  /* Shadows */
+  --shadow-card:              0 1px 3px rgba(0,0,0,0.08);
+  --shadow-elevated:          0 4px 12px rgba(0,0,0,0.10);
+  --shadow-modal:             0 8px 24px rgba(0,0,0,0.15);
+  --shadow-frame:             0 8px 32px rgba(0,0,0,0.15);
+  --shadow-fab:               0 4px 16px rgba(124,58,237,0.35);
 
-  /* === BORDER RADIUS === */
-  --radius-sm: 6px;
-  --radius-md: 10px;
+  /* Layout */
+  --topbar-height:            56px;
+  --bottomnav-height:         64px;
+  --app-max-width:            390px;
+
+  /* Typo Defaults */
+  --font-sans: "DM Sans", sans-serif;
+  --font-mono: "DM Mono", monospace;
+}
+
+@theme {
+  --color-primary: var(--color-primary);
+  --color-primary-dark: var(--color-primary-dark);
+  --color-accent: var(--color-accent);
+  --color-accent-light: var(--color-accent-light);
+
+  --color-danger: var(--semaphore-danger);
+  --color-danger-bg: var(--semaphore-danger-bg);
+  --color-warning: var(--semaphore-warning);
+  --color-warning-bg: var(--semaphore-warning-bg);
+  --color-info: var(--semaphore-info);
+  --color-info-bg: var(--semaphore-info-bg);
+  --color-success: var(--semaphore-success);
+  --color-success-bg: var(--semaphore-success-bg);
+
+  --color-bg-base: var(--background);
+  --color-bg-surface: var(--surface);
+  --color-bg-elevated: var(--surface-elevated);
+  --color-text-primary: var(--foreground);
+  --color-text-secondary: var(--foreground-secondary);
+  --color-text-muted: var(--foreground-muted);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  --shadow-card: var(--shadow-card);
+  --shadow-elevated: var(--shadow-elevated);
+  --shadow-modal: var(--shadow-modal);
+  --shadow-frame: var(--shadow-frame);
+  --shadow-fab: var(--shadow-fab);
+
   --radius-lg: 14px;
   --radius-xl: 20px;
-  --radius-2xl: 24px;
-  --radius-full: 9999px;
-
-  /* === SHADOWS === */
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08);
-  --shadow-elevated: 0 4px 12px rgba(0, 0, 0, 0.1);
-  --shadow-modal: 0 8px 24px rgba(0, 0, 0, 0.15);
-  --shadow-frame: 0 8px 32px rgba(0, 0, 0, 0.15);
-  --shadow-fab: 0 4px 16px rgba(124, 58, 237, 0.35);
-
-  /* === LAYOUT === */
-  --topbar-height: 56px;
-  --bottomnav-height: 64px;
-  --app-max-width: 390px;
-}
-
-/* === DARK MODE (mejora progresiva) === */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0f172a;
-    --surface: #1e293b;
-    --surface-elevated: #263548;
-    --foreground: #f8fafc;
-    --foreground-secondary: #cbd5e1;
-    --foreground-muted: #64748b;
-    --border: #334155;
-    --border-strong: #475569;
-  }
-}
-
-/* === REDUCCIÓN DE MOVIMIENTO === */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
 }
 
 /* === BASE === */
@@ -92,104 +92,57 @@ body {
   color: var(--foreground);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
 }
 
 /* === APP FRAME === */
 .app-frame {
   max-width: var(--app-max-width);
   margin: 0 auto;
-  min-height: 100dvh;
-  background: var(--surface);
+  min-height: 100vh;
+  background: var(--background);
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 @media (min-width: 640px) {
   body {
-    background: #e2e8f0;
+    background: #E2E8F0;
   }
   .app-frame {
     box-shadow: var(--shadow-frame);
-    min-height: 100vh;
   }
 }
 
-/* === SHIMMER SKELETON === */
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
+/* === TYPOGRAPHY UTILITIES === */
+.text-display   { font-size: 28px; line-height: 36px; font-weight: 800; }
+.text-h1        { font-size: 24px; line-height: 32px; font-weight: 700; }
+.text-h2        { font-size: 20px; line-height: 28px; font-weight: 600; }
+.text-h3        { font-size: 17px; line-height: 24px; font-weight: 600; }
+.text-h4        { font-size: 15px; line-height: 22px; font-weight: 500; }
+.text-body      { font-size: 16px; line-height: 24px; font-weight: 400; }
+.text-body-sm   { font-size: 14px; line-height: 22px; font-weight: 400; }
+.text-body-xs   { font-size: 12px; line-height: 18px; font-weight: 400; }
+.text-btn       { font-size: 15px; line-height: 20px; font-weight: 600; }
+.text-label     { font-size: 11px; line-height: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.text-timestamp { font-size: 11px; line-height: 16px; font-weight: 400; }
+.text-mono      { font-family: var(--font-mono); font-size: 13px; line-height: 20px; font-weight: 500; }
+.text-mono-lg   { font-family: var(--font-mono); font-size: 15px; line-height: 22px; font-weight: 500; }
 
-.skeleton {
-  background: linear-gradient(
-    90deg,
-    #f3f4f6 25%,
-    #e5e7eb 50%,
-    #f3f4f6 75%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.5s ease-in-out infinite;
-  border-radius: var(--radius-lg);
-}
+/* === UTILS === */
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* === TOAST ANIMATION === */
-@keyframes toast-in {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
 
-@keyframes toast-out {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-}
+/* === ANIMATIONS === */
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slide-up { from { transform: translateY(16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-.toast-enter {
-  animation: toast-in 350ms ease-out forwards;
-}
+.screen-enter { animation: fade-in 200ms ease-out forwards; }
+.toast-enter { animation: slide-up 350ms ease-out forwards; }
 
-.toast-exit {
-  animation: toast-out 200ms ease-in forwards;
-}
+.transition-card { transition: all 150ms ease-in-out; }
 
-/* === SCREEN FADE === */
-@keyframes screen-fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.screen-enter {
-  animation: screen-fade-in 200ms ease-in-out forwards;
-}
-
-/* === SCROLLBAR HIDE === */
-.hide-scrollbar {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-.hide-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-
-/* === SAFE AREA === */
-.safe-bottom {
-  padding-bottom: env(safe-area-inset-bottom);
-}

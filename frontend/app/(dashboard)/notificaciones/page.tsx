@@ -2,166 +2,132 @@
 
 import { useState } from "react";
 import TopBar from "@/components/ui/TopBar";
-import FilterPills from "@/components/ui/FilterPills";
 import CollapsibleCard from "@/components/ui/CollapsibleCard";
-import NotificationTable from "@/components/ui/NotificationTable";
+import StatusBadge from "@/components/ui/StatusBadge";
+import FilterPills from "@/components/ui/FilterPills";
+import NotificationTable, { NotificationRow } from "@/components/ui/NotificationTable";
 import CTAButton from "@/components/ui/CTAButton";
-import StatusBadge, { SemaphoreVariant } from "@/components/ui/StatusBadge";
-import { Toast, useToast } from "@/components/ui/Toast";
-import {
-  notificacionesMock,
-  Notificacion,
-  getNotificacionesByCategoria,
-  sortByUrgencia,
-  sortByFecha,
-} from "@/lib/mock/notificaciones";
-import { AlertTriangle, AlertCircle, RefreshCw, CheckCircle } from "lucide-react";
+import { useAppStore } from "@/lib/store";
+import { mockNotificaciones } from "@/lib/mockData";
 
-type CatTab = "marca" | "patente";
-type FilterType = "urgencia" | "fecha";
+type FilterType = "todas" | "urgente" | "info" | "exito";
 
-const semaphoreIcon: Record<SemaphoreVariant, React.ReactNode> = {
-  danger: <AlertTriangle size={16} color="#DC2626" />,
-  warning: <AlertCircle size={16} color="#D97706" />,
-  info: <RefreshCw size={16} color="#2563EB" />,
-  success: <CheckCircle size={16} color="#059669" />,
-};
-
-function NotifCardHeader({ notif }: { notif: Notificacion }) {
-  return (
-    <div>
-      <div className="flex items-center gap-2 mb-1.5">
-        <div
-          className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
-          style={{
-            background:
-              notif.tipo === "danger" ? "#FEE2E2" :
-              notif.tipo === "warning" ? "#FEF3C7" :
-              notif.tipo === "info" ? "#DBEAFE" : "#D1FAE5",
-          }}
-        >
-          {semaphoreIcon[notif.tipo]}
-        </div>
-        <div className="flex-1 min-w-0 flex items-center justify-between gap-2">
-          <StatusBadge variant={notif.tipo} label={notif.tipoLabel} />
-          <span className="text-[11px] text-[#9CA3AF] shrink-0">{notif.timestamp}</span>
-        </div>
-      </div>
-      <h3 className="text-[16px] font-semibold text-[#111827] leading-snug">
-        {notif.titulo}
-      </h3>
-    </div>
-  );
-}
+const filterOptions = [
+  { value: "todas", label: "Todas" },
+  { value: "urgente", label: "Urgentes" },
+  { value: "info", label: "Informativas" },
+  { value: "exito", label: "Éxito" },
+];
 
 export default function NotificacionesPage() {
-  const [catTab, setCatTab] = useState<CatTab>("marca");
-  const [filter, setFilter] = useState<FilterType>("urgencia");
-  const [openIds, setOpenIds] = useState<Set<string>>(new Set(["n1"]));
-  const { toast, showToast, dismissToast } = useToast();
+  const { userState } = useAppStore();
+  const [activeFilter, setActiveFilter] = useState<FilterType>("todas");
+  const [expandedId, setExpandedId] = useState<string | null>("n1");
 
-  const toggleCard = (id: string) => {
-    setOpenIds((prev) => {
-      const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
-      return next;
-    });
-  };
+  const filteredNotifs = mockNotificaciones.filter((n) => {
+    // 1. State-based filtering
+    if (userState === 'new') return false;
+    if (userState === 'active-no-urgent' && n.id === 'n1') return false;
 
-  const rawNotifs = getNotificacionesByCategoria(catTab);
-  const notifs = filter === "urgencia" ? sortByUrgencia(rawNotifs) : sortByFecha(rawNotifs);
-
-  const ctaVariantMap: Record<string, SemaphoreVariant> = {
-    adjuntar: "danger",
-    pago: "danger",
-    confirmar: "warning",
-    acuse: "info",
-    informativo: "success",
-  };
+    // 2. Category filtering
+    if (activeFilter === "todas") return true;
+    if (activeFilter === "urgente") return n.urgency === "danger" || n.urgency === "warning";
+    if (activeFilter === "info") return n.urgency === "info";
+    if (activeFilter === "exito") return n.urgency === "success";
+    return true;
+  });
 
   return (
-    <>
-      <TopBar variant="home" title="Centro de Notificaciones" />
+    <div className="flex flex-col min-h-screen bg-[#F9FAFB]">
+      <TopBar variant="section" title="Notificaciones" />
 
-      <div className="px-4 pt-4 pb-6 space-y-4">
-        {/* Page title */}
-        <div>
-          <h1 className="text-[24px] font-bold text-[#111827]">
-            Centro de Notificaciones
-          </h1>
-          <p className="text-[14px] text-[#4B5563]">
-            Alertas inteligentes de tus trámites
+      <div className="flex-1 overflow-y-auto pb-24 screen-enter">
+        {/* Header Block */}
+        <div className="px-6 pt-6 pb-2">
+          <h1 className="text-h1 text-[#111827]">Centro de Alertas</h1>
+          <p className="text-body-sm text-[#4B5563] mt-1">
+            Gestiona los requerimientos de tus trámites
           </p>
         </div>
 
-        {/* Tabs */}
-        <div className="flex border-b border-[#E5E7EB]">
-          {(["marca", "patente"] as CatTab[]).map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setCatTab(tab)}
-              role="tab"
-              aria-selected={catTab === tab}
-              className={`flex-1 py-2.5 text-[15px] font-medium transition-colors duration-150 focus:outline-none capitalize ${
-                catTab === tab
-                  ? "text-[#1A56DB] font-semibold border-b-2 border-[#1A56DB] -mb-px"
-                  : "text-[#9CA3AF]"
-              }`}
-            >
-              {tab === "marca" ? "Marcas" : "Patentes"}
-            </button>
-          ))}
+        {/* Filters Sticky Overlay */}
+        <div className="sticky top-[56px] z-30 bg-[#F9FAFB]/80 backdrop-blur-md px-6 py-4">
+          <FilterPills
+            options={filterOptions}
+            activeValue={activeFilter}
+            onChange={(v) => setActiveFilter(v as FilterType)}
+          />
         </div>
 
-        {/* Filter pills */}
-        <FilterPills
-          options={[
-            { value: "urgencia", label: "Por urgencia" },
-            { value: "fecha", label: "Por fecha reciente" },
-          ]}
-          activeValue={filter}
-          onChange={(v) => setFilter(v as FilterType)}
-        />
+        {/* List */}
+        <div className="px-6 space-y-4">
+          {filteredNotifs.map((notif) => {
+            const isOpen = expandedId === notif.id;
 
-        {/* Notification cards */}
-        <div className="space-y-3">
-          {notifs.length === 0 ? (
-            <p className="text-center text-[#9CA3AF] py-10 text-[15px]">
-              No hay notificaciones para este filtro
-            </p>
-          ) : (
-            notifs.map((notif) => (
+            const tableRows: NotificationRow[] = notif.detalle ? [
+              { label: "Etapa actual", value: notif.detalle.etapa },
+              { label: "N° Solicitud", value: notif.solicitudId || "N/A", isMono: true },
+              { label: "Requerimiento", value: notif.detalle.requerimiento },
+              { label: "Plazo límite", value: notif.detalle.plazo },
+              { label: "Contacto", value: notif.detalle.contacto },
+            ] : [];
+
+            return (
               <CollapsibleCard
                 key={notif.id}
-                variant={notif.tipo}
-                isOpen={openIds.has(notif.id)}
-                onToggle={() => toggleCard(notif.id)}
-                header={<NotifCardHeader notif={notif} />}
-                preview={notif.preview}
+                variant={notif.urgency as any}
+                isOpen={isOpen}
+                onToggle={() => setExpandedId(isOpen ? null : notif.id)}
+                header={
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <StatusBadge
+                        variant={notif.urgency as any}
+                        label={notif.tipo.replace("_", " ")}
+                        showIcon={notif.urgency === "danger" || notif.urgency === "warning"}
+                      />
+                      <span className="text-timestamp">{notif.tiempo}</span>
+                    </div>
+                    <h3 className="text-h3 text-[#111827] leading-tight">
+                      {notif.titulo}
+                    </h3>
+                  </div>
+                }
+                preview={notif.cuerpo}
                 content={
-                  <div className="space-y-3 mt-1">
-                    <NotificationTable rows={notif.tabla} />
-                    {notif.ctaLabel && notif.ctaType !== "informativo" && (
+                  <div className="space-y-4">
+                    <p className="text-body-sm text-[#4B5563] leading-relaxed">
+                      {notif.cuerpo}
+                    </p>
+                    
+                    {tableRows.length > 0 && (
+                      <NotificationTable rows={tableRows} />
+                    )}
+
+                    {notif.cta && (
                       <CTAButton
-                        variant={ctaVariantMap[notif.ctaType ?? "acuse"]}
-                        label={notif.ctaLabel}
+                        label={notif.cta}
+                        variant={notif.urgency === "danger" ? "danger" : 
+                                 notif.urgency === "warning" ? "warning" : "primary"}
                         fullWidth
-                        onClick={() =>
-                          showToast("success", "Acción registrada correctamente")
-                        }
+                        size="md"
                       />
                     )}
                   </div>
                 }
               />
-            ))
+            );
+          })}
+
+          {filteredNotifs.length === 0 && (
+            <div className="py-20 text-center">
+              <p className="text-body-sm text-[#9CA3AF]">
+                No hay notificaciones en esta categoría.
+              </p>
+            </div>
           )}
         </div>
       </div>
-
-      {toast && (
-        <Toast type={toast.type} message={toast.message} onDismiss={dismissToast} />
-      )}
-    </>
+    </div>
   );
 }

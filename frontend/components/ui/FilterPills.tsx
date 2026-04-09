@@ -1,6 +1,7 @@
 "use client";
 
 import { clsx } from "clsx";
+import { useRef, useState } from "react";
 
 interface FilterOption {
   value: string;
@@ -20,11 +21,22 @@ export default function FilterPills({
   onChange,
   className,
 }: FilterPillsProps) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const handleWheel = (e: React.WheelEvent) => {
+    if (scrollRef.current) {
+      // Translate vertical wheel move to horizontal scroll
+      scrollRef.current.scrollLeft += e.deltaY;
+    }
+  };
+
   return (
     <div
+      ref={scrollRef}
       role="tablist"
+      onWheel={handleWheel}
       className={clsx(
-        "flex items-center gap-2 overflow-x-auto hide-scrollbar py-1",
+        "flex items-center gap-2 overflow-x-auto hide-scrollbar py-[2px] select-none touch-pan-x",
         className
       )}
     >
@@ -37,10 +49,10 @@ export default function FilterPills({
             aria-selected={isActive}
             onClick={() => onChange(opt.value)}
             className={clsx(
-              "flex-shrink-0 rounded-full px-4 py-1.5 text-[13px] font-medium transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-[#1A56DB]",
+              "flex-shrink-0 min-h-[36px] px-4 py-[6px] rounded-full text-[13px] font-sans transition-all duration-150 outline-none",
               isActive
                 ? "bg-[#1A56DB] text-white font-semibold"
-                : "bg-[#F3F4F6] text-[#4B5563] border border-[#E5E7EB] hover:bg-[#E5E7EB]"
+                : "bg-[#F3F4F6] text-[#4B5563] border border-[#E5E7EB] font-medium hover:bg-[#E5E7EB]"
             )}
           >
             {opt.label}

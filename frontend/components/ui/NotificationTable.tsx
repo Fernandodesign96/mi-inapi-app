@@ -19,12 +19,11 @@ export default function NotificationTable({ rows, className }: NotificationTable
         className
       )}
       role="table"
-      aria-label="Detalle de la notificación"
     >
       {/* Header */}
-      <div className="px-3.5 py-2.5 bg-[#F9FAFB] border-b border-[#E5E7EB]">
-        <p className="text-[11px] font-semibold uppercase tracking-wider text-[#4B5563]">
-          Detalle de la Notificación
+      <div className="px-[14px] py-[10px] bg-[#F9FAFB] border-b border-[#E5E7EB]">
+        <p className="text-label text-[#4B5563]">
+          DETALLE DE LA NOTIFICACIÓN
         </p>
       </div>
 
@@ -34,21 +33,21 @@ export default function NotificationTable({ rows, className }: NotificationTable
           key={i}
           role="row"
           className={clsx(
-            "flex items-baseline gap-3 px-3.5 py-2.5",
+            "flex items-baseline gap-3 px-[14px] py-[10px]",
             i > 0 && "border-t border-[#E5E7EB]"
           )}
         >
           <span
             role="cell"
-            className="text-[12px] text-[#9CA3AF] font-medium shrink-0 w-[110px]"
+            className="text-[12px] font-sans font-medium text-[#9CA3AF] shrink-0 w-[110px]"
           >
             {row.label}
           </span>
           <span
             role="cell"
             className={clsx(
-              "text-[13px] text-[#111827] font-medium",
-              row.isMono && "font-mono"
+              "text-[13px] font-sans text-[#111827] font-medium leading-relaxed",
+              (row.isMono || row.value.includes('#') || /\d{2,}/.test(row.value)) && "text-mono"
             )}
           >
             {row.value}
