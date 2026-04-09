@@ -21,6 +21,12 @@ import CTAButton from "@/components/ui/CTAButton";
 import { mockSolicitudes } from "@/lib/mockData";
 import { clsx } from "clsx";
 
+export async function generateStaticParams() {
+  return mockSolicitudes.map((s) => ({
+    id: s.id,
+  }));
+}
+
 export default function SolicitudDetallePage() {
   const router = useRouter();
   const params = useParams();
