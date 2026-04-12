@@ -86,7 +86,10 @@ export default function PerfilPage() {
               <AccountItem icon={<Lock size={20} />} label="Seguridad" />
               <AccountItem icon={<CreditCard size={20} />} label="Métodos de Pago" />
               <button 
-                onClick={() => router.push('/login')}
+                onClick={() => {
+                  document.cookie = "miinapi-auth=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+                  router.push('/login');
+                }}
                 className="w-full flex items-center gap-4 p-4 hover:bg-[#FEF2F2] active:bg-[#FEE2E2] transition-colors"
               >
                 <div className="w-10 h-10 rounded-full bg-[#FEF2F2] text-[#DC2626] flex items-center justify-center shrink-0">

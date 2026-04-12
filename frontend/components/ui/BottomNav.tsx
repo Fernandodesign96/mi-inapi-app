@@ -1,28 +1,44 @@
 "use client";
 
-import { Home, FileText, Bell, FolderOpen, User } from "lucide-react";
+import { Home, FileText, Bell, FolderOpen, User, Library, HelpCircle } from "lucide-react";
 import { clsx } from "clsx";
+import { useAppStore } from "@/lib/store";
+import { useRouter, usePathname } from "next/navigation";
 
-export type NavTab = "inicio" | "solicitudes" | "notificaciones" | "certificados" | "perfil";
+export type NavTab = "inicio" | "solicitudes" | "notificaciones" | "certificados" | "perfil" | "biblioteca" | "soporte";
 
-interface BottomNavProps {
-  activeTab: NavTab;
-  onNavigate: (tab: NavTab) => void;
-}
-
-const navItems: {
+interface NavItem {
   id: NavTab;
   label: string;
   icon: React.ComponentType<{ size?: number; strokeWidth?: number }>;
-}[] = [
-  { id: "inicio", label: "Inicio", icon: Home },
-  { id: "solicitudes", label: "Solicitudes", icon: FileText },
-  { id: "notificaciones", label: "Notificaciones", icon: Bell },
-  { id: "certificados", label: "Certificados", icon: FolderOpen },
-  { id: "perfil", label: "Perfil", icon: User },
-];
+  path: string;
+}
 
-export default function BottomNav({ activeTab, onNavigate }: BottomNavProps) {
+export default function BottomNav() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const { userState } = useAppStore();
+
+  const navItems: NavItem[] = userState === 'new' 
+    ? [
+        { id: "inicio", label: "Inicio", icon: Home, path: "/inicio" },
+        { id: "biblioteca", label: "Biblioteca", icon: Library, path: "/biblioteca" },
+        { id: "notificaciones", label: "Notificaciones", icon: Bell, path: "/notificaciones" },
+        { id: "soporte", label: "Soporte", icon: HelpCircle, path: "/soporte" },
+        { id: "perfil", label: "Perfil", icon: User, path: "/perfil" },
+      ]
+    : [
+        { id: "inicio", label: "Inicio", icon: Home, path: "/inicio" },
+        { id: "solicitudes", label: "Solicitudes", icon: FileText, path: "/solicitudes" },
+        { id: "notificaciones", label: "Notificaciones", icon: Bell, path: "/notificaciones" },
+        { id: "certificados", label: "Certificados", icon: FolderOpen, path: "/certificados" },
+        { id: "perfil", label: "Perfil", icon: User, path: "/perfil" },
+      ];
+
+  const handleNavigate = (path: string) => {
+    router.push(path);
+  };
+
   return (
     <nav
       role="navigation"
@@ -30,13 +46,13 @@ export default function BottomNav({ activeTab, onNavigate }: BottomNavProps) {
     >
       <div className="flex items-center h-full">
         {navItems.map((item) => {
-          const isActive = activeTab === item.id;
+          const isActive = pathname === item.path;
           const Icon = item.icon;
 
           return (
             <button
               key={item.id}
-              onClick={() => onNavigate(item.id)}
+              onClick={() => handleNavigate(item.path)}
               aria-current={isActive ? "page" : undefined}
               className={clsx(
                 "flex flex-col items-center justify-center flex-1 h-full min-w-[48px] outline-none transition-colors duration-150",

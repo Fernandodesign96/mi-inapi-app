@@ -1,6 +1,6 @@
 # MiINAPI — Roadmap de Desarrollo MVP
-## Desde el miércoles 8 de abril, 2026
-### Rol: Senior Product Designer + Senior FE/BE Developer
+Actualizado: 12 de abril, 2026
+Rol: Senior Product Designer + Senior FE/BE Developer
 
 ---
 
@@ -15,250 +15,219 @@
 
 ---
 
-## Semana 1: Fundamentos (8–11 de abril)
+## Semana 1: Fundamentos (8–12 de abril)
 
 ### Miércoles 8 — Setup del proyecto y arquitectura base
 
 **Mañana (2–3h) — Entorno**
-- [ ] Crear monorepo `mi-inapi-app/` con subcarpetas `/frontend` y `/backend`
-- [ ] Inicializar Next.js 15 con App Router y Turbopack en `/frontend`
-  ```bash
-  npx create-next-app@latest frontend --typescript --tailwind --app --turbopack
-  ```
-- [ ] Instalar dependencias FE core:
-  ```bash
-  npm install shadcn-ui zustand @tanstack/react-query react-hook-form zod
-  npm install lucide-react clsx tailwind-merge
-  npm install -D @types/node
-  ```
-- [ ] Inicializar shadcn/ui y configurar tema base MiINAPI
-- [ ] Crear `globals.css` con todos los CSS custom properties del Design System
+- [x] Crear monorepo `mi-inapi-app/` con subcarpetas `/frontend` y `/backend` ✅
+- [x] Inicializar Next.js 15 con App Router y Turbopack en `/frontend` ✅
+- [x] GitHub Actions configurado — `deploy.yml` ✅
+- [x] Instalar dependencias FE core: Next.js 15, TypeScript, Tailwind v4 ✅
+- [x] ESLint configurado (`eslintrc.json`, `next-env.d.ts`) ✅
+- [x] Inicializar shadcn/ui y configurar tema base MiINAPI ✅
+- [x] Crear `globals.css` y `next.config.ts` con tokens del Design System ✅
 
-**Tarde (2–3h) — Backend base**
-- [ ] Inicializar NestJS en `/backend`:
-  ```bash
-  npx @nestjs/cli new backend
-  ```
-- [ ] Instalar dependencias BE:
-  ```bash
-  npm install @nestjs/jwt @nestjs/passport passport passport-jwt
-  npm install @prisma/client prisma
-  npm install @nestjs/config @nestjs/websockets socket.io
-  npm install bullmq ioredis
-  ```
-- [ ] Configurar `docker-compose.yml` con PostgreSQL 16 + Redis 7
-- [ ] Levantar Docker Compose y verificar conexión
-- [ ] Crear schema Prisma inicial (User, Tramite, Notificacion, Certificado)
-
-**Entregable del día:** Monorepo corriendo en local. FE en `localhost:3000`, BE en `localhost:3001`, DB en `localhost:5432`.
+**Entregable del día:** Monorepo configurado y carpeta `/frontend` operativa con CI/CD.
 
 ---
 
 ### Jueves 9 — Design System en código + estructura de carpetas FE
 
 **Mañana — Tokens y componentes base**
-- [ ] Configurar `tailwind.config.ts` con todos los tokens del Design System:
-  - Colores: primary, secondary, semaphore (danger, warning, info, success)
-  - Tipografía: escala completa (display → label)
-  - Spacing: escala base 4px
-  - Border radius: sm/md/lg/xl/2xl/full
-  - Shadows: elevation-0 a elevation-4
-- [ ] Crear componentes base en `components/ui/`:
-  - `StatusBadge.tsx` — badge semáforo (4 variantes)
-  - `SemaphoreCard.tsx` — card con borde izquierdo de color semáforo
-  - `StepperProgress.tsx` — stepper de etapas (INGRESO → EXAMEN → RESOLUCIÓN)
-  - `BottomNav.tsx` — navegación inferior fija con safe area
-  - `TopBar.tsx` — barra superior con logo + acciones
-  - `SkeletonCard.tsx` — skeleton de carga para cards
+- [x] Configurar `tailwind.config.ts` con todos los tokens del Design System ✅
+- [x] Crear componentes UI en `components/ui/` ✅:
+  - `BottomNav.tsx` (🔄 lógica contextual en progreso)
+  - `ChatIAFab.tsx`
+  - `CollapsibleCard.tsx`
+  - `CTAButton.tsx`
+  - `DraggableRow.tsx`
+  - `EmptyState.tsx`
+  - `FilterPills.tsx`
+  - `FormInput.tsx`
+  - `NotificationTable.tsx`
+  - `SemaphoreCard.tsx`
+  - `StatusBadge.tsx`
+  - `StepperProgress.tsx`
+  - `Toast.tsx`
+  - `TopBar.tsx`
 
 **Tarde — Estructura de rutas App Router**
-- [ ] Crear estructura de carpetas:
-  ```
-  src/app/
-  ├── (auth)/
-  │   ├── login/page.tsx
-  │   └── layout.tsx
-  └── (dashboard)/
-      ├── layout.tsx          ← Shell con BottomNav
-      ├── inicio/page.tsx
-      ├── solicitudes/page.tsx
-      ├── notificaciones/page.tsx
-      ├── certificados/page.tsx
-      ├── soporte/page.tsx
-      ├── biblioteca/page.tsx
-      └── perfil/page.tsx
-  ```
-- [ ] Crear `middleware.ts` para proteger rutas del dashboard
-- [ ] Crear mock data completo en `lib/mock/` para todas las pantallas
+- [x] Crear todas las rutas del dashboard ✅:
+  - `(auth)/login/`
+  - `(dashboard)/inicio/`
+  - `(dashboard)/solicitudes/` + `[id]/`
+  - `(dashboard)/notificaciones/`
+  - `(dashboard)/certificados/`
+  - `(dashboard)/soporte/`
+  - `(dashboard)/biblioteca/`
+  - `(dashboard)/perfil/`
+  - `(dashboard)/chat/`
+  - `(dashboard)/diario-oficial/`
+- [x] `middleware.ts` para proteger rutas ✅
+- [x] Mock data completo en `lib/mock/` (notificaciones, certificados, trámites, etc.) ✅
 
-**Entregable del día:** Design System en código funcionando. Rutas navegables con mock data.
+**Entregable del día:** Design System en código y rutas navegables con mock data.
 
 ---
 
 ### Viernes 10 — Pantallas Login y Dashboard (FE)
 
 **Mañana — Login**
-- [ ] Implementar `(auth)/login/page.tsx` completo:
-  - Form RUT + Contraseña con React Hook Form + Zod
-  - Validación de formato RUT chileno (fn `validateRUT`)
-  - Botón ClaveÚnica (placeholder hasta integración real)
-  - Estados: loading, error inline, success redirect
-  - Animación de entrada (motion/opacity)
-- [ ] Conectar con NextAuth.js v5 (credentials provider con mock BE)
+- [x] Implementar `(auth)/login/page.tsx` base ✅
+- [x] Validación de formato RUT chileno ✅
+- [x] Animación de entrada y layout de auth ✅
 
-**Tarde — Dashboard**
-- [ ] Implementar `(dashboard)/inicio/page.tsx`:
-  - Tabs Marca/Patente con estado activo (subrayado color primary)
-  - Summary row: En Proceso / Acción Requerida / Finalizadas
-  - Lista de TramiteCards ordenadas por urgencia semáforo
-  - CTA contextual dinámico según tipo de notificación
-  - Stepper interno con colores semáforo por etapa
-
-**Entregable del día:** Flujo Login → Dashboard navegable con datos mockeados.
+**Tarde — Dashboard y Solicitudes**
+- [x] Implementar `(dashboard)/inicio/page.tsx` ✅
+- [x] Implementar `(dashboard)/solicitudes/` y detalle `[id]/` con `SolicitudDetalleCliente` ✅
+- [x] CTA contextual dinámico según tipo de trámite ✅
 
 ---
 
-### Viernes 10 — Pantallas Notificaciones y Certificados (FE)
+### Sábado 11 — Notificaciones y Certificados (FE)
 
 **Mañana — Notificaciones**
-- [ ] Implementar `(dashboard)/notificaciones/page.tsx`:
-  - Tabs Marca/Patente
-  - Cards ordenadas por urgencia (🔴→🟠→🔵→🟢)
-  - Filtro dropdown: Por urgencia / Por fecha (más reciente)
-  - Cards expandibles con tabla de alcances de etapa
-  - CTA contextual por tipo (adjuntar, confirmar, informativo)
+- [x] Implementar `(dashboard)/notificaciones/page.tsx` ✅
+- [x] Cards ordenadas por urgencia y tabla de alcances ✅
 
 **Tarde — Certificados**
-- [ ] Implementar `(dashboard)/certificados/page.tsx`:
-  - Buscador con input + filtro por tipo (botones pill bajo el buscador)
-  - Grid de CertificateCards (Marca / Patente / Diseño)
-  - Acción Descargar PDF (mock: download de archivo sample)
-  - Estado vacío + estado de carga con skeleton
-
-**Entregable del día:** 4 pantallas navegables con interactividad real.
+- [x] Implementar `(dashboard)/certificados/page.tsx` ✅
+- [x] Buscador y filtros por tipo ✅
 
 ---
 
-### Sábado 11 (opcional, desde casa) — Soporte y Biblioteca
+### Domingo 12 — Soporte, Biblioteca y Ajustes Finales FE
 
-- [ ] `(dashboard)/soporte/page.tsx`:
-  - Filtros de canal (Todos/Email/Chat/Llamada) como pills
-  - Cards colapsables con historial de interacciones
-  - Links fijos al fondo: OMPI, INAPI web, Nuevo Chat, Llámanos
-- [ ] `(dashboard)/biblioteca/page.tsx`:
-  - Grid de categorías 2×2 (Manuales/Guías/Videos/Oficiales)
-  - Buscador
-  - Lista de recursos con acciones Descargar/Ver
-- [ ] Testing manual de todos los flujos
-- [ ] Fix de bugs visuales
+- [x] `(dashboard)/soporte/page.tsx` + historial ✅
+- [x] `(dashboard)/biblioteca/page.tsx` ✅
+- [x] `(dashboard)/chat/page.tsx` y `(dashboard)/diario-oficial/page.tsx` ✅
+- [x] `BottomNav.tsx` — lógica contextual por tipo de usuario ✅
+- [x] `SkeletonCard.tsx` — implementación en Dashboard y Notificaciones ✅
+- [x] Testing manual completo de todos los flujos ✅
 
 ---
 
-## Semana 2: Backend Real + Integraciones (13–17 de abril)
+## SEMANA 2 — FE: Cierre y pulido (13–17 de abril)
 
-### Lunes 13 — Módulos BE: Auth y Usuarios
+Contexto: El backend NO empieza esta semana. El FE se cierra primero con todas las
+interacciones funcionando en mock data. El backend se aborda la semana siguiente
+con estudio previo (ver Semana 3 abajo). Esta secuencia es intencional y correcta.
 
-- [ ] Implementar `AuthModule` en NestJS:
-  - Estrategia JWT (access token 15min + refresh token 7 días)
-  - Estrategia ClaveÚnica (OIDC, pendiente credenciales sandbox)
-  - Guards y decoradores de usuario actual
-- [ ] Implementar `UsersModule`:
-  - CRUD básico de usuario
-  - Perfil segmentado (Persona Natural / Empresa)
-  - Migración Prisma: tabla `users`
+### Lunes 13 — BottomNav contextual ✅
+*Por qué esto primero:* El BottomNav es el sistema de navegación de toda la app.
+Si no está correcto, todas las pantallas tienen un flujo roto. Se cierra antes de avanzar.
 
-### Martes 14 — Módulo Trámites
+- [x] Implementar los 3 estados contextuales en `BottomNav.tsx` ✅
+- [x] El estado lo lee desde `store.ts` ✅
+- [x] Implementar lógica de detección del estado mediante función pura `getUserState` ✅
+- [x] Asegurar visibilidad y posición correcta del `ChatIAFab.tsx` ✅
 
-- [ ] Implementar `TramitesModule`:
-  - Endpoint `GET /tramites` paginado con filtro tipo + estado
-  - Endpoint `GET /tramites/:id` con detalle completo
-  - Modelo de estados con enum: EN_PROCESO, ACCION_REQUERIDA, PUBLICADA, FINALIZADA
-  - Seeder con datos de prueba realistas (marcas y patentes)
-- [ ] Conectar FE Dashboard con API real (reemplazar mock data)
+### Martes 14 — middleware.ts + Login completo ✅
+*Por qué:* Sin el middleware, cualquiera puede acceder al dashboard sin autenticarse.
+Es la barrera de seguridad básica del FE.
 
-### Miércoles 15 — Módulo Notificaciones + WebSocket
+- [x] Crear `src/middleware.ts` para proteger rutas `/dashboard/*` ✅
+- [x] Completar `validateRUT` en login con el algoritmo módulo 11 ✅
+- [x] Implementar estados de carga en botón "Ingresar" ✅
+- [x] Mock de redirect al dashboard tras login exitoso (cookie + navigate) ✅
 
-- [ ] Implementar `NotificacionesModule`:
-  - Tabla `notificaciones` en Prisma con tipo + urgencia + contenido
-  - Socket.io Gateway para push en tiempo real
-  - Endpoint REST fallback `GET /notificaciones`
-- [ ] Conectar FE Notificaciones con API real
-- [ ] Implementar BullMQ job para alertas de caducidad (simulado)
+### Miércoles 15 — Pantalla Inicio: los 3 estados completos
+- [ ] Implementar lógica de renderizado condicional en `inicio/page.tsx` según `userState`.
+- [ ] Estado A: Bienvenida + info card + accesos rápidos + CTA portal INAPI.
+- [ ] Estado B: Card urgente expandida + summary row + accesos rápidos.
+- [ ] Estado C: Summary row + card más reciente + accesos rápidos.
+- [ ] Dev toggle (selector de estados para demo).
 
-### Jueves 16 — Módulo Certificados + Soporte
+### Jueves 16 — Skeletons, EmptyStates y Polish
+- [ ] Implementar `SkeletonCard` en Dashboard y Notificaciones.
+- [ ] Implementar `EmptyState` en Solicitudes, Certificados y Chat IA.
+- [ ] Simular delay de carga de 800ms en todas las pantallas con datos.
+- [ ] Verificar Toasts en Certificados y posición de FAB en todas las pantallas.
 
-- [ ] `CertificadosModule`: endpoints + datos mock
-- [ ] `SoporteModule`: historial de tickets (datos mock)
-- [ ] Conectar ambas pantallas con BE real
+### Viernes 17 — Testing manual + cierre FE
+- [ ] Recorrer todos los flujos completos.
+- [ ] Verificar persistencia del Design System.
+- [ ] Commit + push limpio (sin errores de TS/ESLint).
 
-### Viernes 17 — QA, ajustes y sesión de testing
-
-- [ ] Testing E2E básico con Playwright (flujo Login → Dashboard → Notificaciones)
-- [ ] Fix de issues encontrados
-- [ ] Preparar build de staging
-- [ ] Sesión de review con Álvaro y Bernarda
-
----
-
-## Semana 3: Validación con Usuarios (20–24 de abril)
-
-### Lunes 20 — Preparación sesión de testing
-
-- [ ] Definir 5 usuarios para testing (perfil Usuario Ocasional)
-- [ ] Preparar guion de entrevista con Pía (psicóloga UX)
-- [ ] Crear tasks para los usuarios (con Nicole y Camila para métricas)
-- [ ] Habilitar Microsoft Clarity + GA4 en ambiente de staging
-
-### Martes 21–Miércoles 22 — Sesiones de testing
-
-- [ ] 2–3 sesiones por día (5 usuarios total)
-- [ ] Pía facilita, Fernando observa y toma notas UX, Nicole/Camila registran métricas
-
-### Jueves 23 — Análisis de resultados
-
-- [ ] Consolidar fricciones encontradas
-- [ ] Priorizar fixes por impacto
-- [ ] Actualizar diagramas de flujo si hay cambios de arquitectura de información
-
-### Viernes 24 — Iteración 1 post-testing
-
-- [ ] Implementar fixes de alta prioridad
-- [ ] Segunda ronda de testing rápido (2–3 usuarios)
-- [ ] Informe de resultados para Álvaro
+**Criterio de "FE Done":**
+✅ App navegable completa con mock data · ✅ Sin errores de TS/ESLint · ✅ Todos los estados vacíos y de carga funcionando · ✅ BottomNav contextual · ✅ ChatIA FAB visible y dentro del frame
 
 ---
 
-## Semana 4+: Integraciones externas y producción (27 abril+)
+## SEMANA 3 — ESTUDIO BACKEND (20–24 de abril)
 
-- [ ] Integración real con sistema de trámites INAPI (reunión TI INAPI requerida)
-- [ ] Integración ClaveÚnica sandbox → producción
-- [ ] Integración TGR/SII para validación de pagos (Fase 2)
-- [ ] Setup CI/CD (GitHub Actions o GitLab CI)
-- [ ] Deploy en ambiente de staging INAPI
-- [ ] Security review (datos personales, RUT, certificados)
-- [ ] Accesibilidad audit (WCAG 2.1 AA)
+Esta semana no tocas código de backend todavía. El objetivo es entender CADA herramienta del stack.
+
+- **Lunes 20:** Node.js + NestJS: la base.
+- **Martes 21:** PostgreSQL + Prisma: los datos.
+- **Miércoles 22:** Redis + BullMQ: cache y colas.
+- **Jueves 23:** JWT + Auth + ClaveÚnica.
+- **Viernes 24:** Socket.io: notificaciones en tiempo real + Integración completa.
+
+---
+
+## SEMANA 4 — Implementación Backend (27 abril – 1 mayo)
+
+### Lunes 27 — Setup Backend
+- [ ] Crear carpeta `/backend`, inicializar NestJS e instalar dependencias.
+- [ ] Configurar `docker-compose.yml` (PostgreSQL + Redis).
+- [ ] Inicializar Prisma y escribir el `schema.prisma` inicial.
+
+### Martes 28 — AuthModule
+- [ ] Implementar `AuthModule` (JWT, estrategias).
+- [ ] Implementar `UsersModule` básico y seeder de prueba.
+
+### Miércoles 29 — TramitesModule
+- [ ] Implementar CRUD de trámites con filtros y protección de rutas.
+- [ ] Conectar FE con API real.
+
+### Jueves 30 — NotificacionesModule + Socket.io
+- [ ] Implementar `NotificacionesModule` y gateway de WebSockets.
+- [ ] Conectar FE con notificaciones en tiempo real.
+
+### Viernes 1 mayo — CertificadosModule + QA
+- [ ] Implementar `CertificadosModule` y testing manual del flujo completo.
+
+---
+
+## SEMANA 5 — Integraciones y Testing (4–8 mayo)
+- [ ] BullMQ alerta de caducidad.
+- [ ] SoporteModule: historial real de tickets.
+- [ ] QA E2E y Analytics (Clarity/GA4).
+
+## SEMANAS 6–7 — Validación con Usuarios (11–22 mayo)
+- [ ] Sesiones de testing facilitadas por Pía.
+- [ ] Análisis de fricciones e iteración de fixes.
+
+## SEMANAS 8+ — Integraciones externas
+- [ ] Integración real sistema INAPI y ClaveÚnica producción.
+- [ ] Security review y Accesibilidad audit (WCAG 2.1 AA).
 
 ---
 
 ## Criterios de "Done" por pantalla
 
-| Pantalla | Criterio |
-|----------|----------|
-| Login | Form valida RUT, muestra errores inline, redirige al Dashboard |
-| Dashboard | Tabs funcionales, cards ordenadas por urgencia, CTA contextual |
-| Notificaciones | Orden semáforo, filtro operativo, tabla de alcances visible |
-| Certificados | Filtro por tipo + buscador funcional, descarga mock |
-| Soporte | Filtro canales, cards colapsables, links externos funcionando |
-| Biblioteca | Filtro categorías + buscador, acciones descarga/ver |
+| Pantalla | Criterio FE (mock) | Criterio BE (real) |
+|----------|-------------------|-------------------|
+| Login | Valida RUT, error inline, redirect mock | JWT real, ClaveÚnica OIDC |
+| Inicio | 3 estados contextuales, BottomNav contextual | Estado calculado desde BD real |
+| Solicitudes | Tabs, stepper, CTA contextual, EmptyState | GET /tramites con auth |
+| Notificaciones | Orden semáforo, expandible, NotificationTable | GET /notificaciones + Socket.io |
+| Certificados | Filtro, buscador, descarga mock, Toast | GET /certificados, PDF real |
+| Soporte | Filtros canal, colapsable, links externos | GET /tickets desde BD |
+| Biblioteca | Categorías, buscador, descarga mock | GET /recursos desde BD |
+| Perfil | Datos usuario, nav a herramientas | Datos desde JWT payload |
+| Chat IA | Historial, conversación, FAB | Integración modelo IA (Fase 2) |
+| Diario Oficial | Mis publicaciones, lista reciente | API DO (por definir) |
 
 ---
 
-## Deuda técnica a registrar (no bloquea MVP)
+## Deuda técnica registrada (no bloquea MVP)
 
-- Pantalla de Registro de nuevo usuario (flujo completo)
-- Pantalla Detalle de Trámite (vista extendida)
-- Simulador de Costos (Etapa 2)
-- Asistente IA Fonética (Etapa 2)
-- Push notifications nativas (iOS/Android) vía PWA
-- Modo offline básico con Service Worker
-- i18n (español chileno formal en todo el copy)
+- Pantalla de Registro de usuario (Fase 2)
+- Pantalla Detalle de Trámite extendida (Fase 2)
+- Simulador de Costos y Asistente IA Fonética (Fase 2)
+- Push notifications nativas y Modo offline avanzado (Fase 2)
+- Rediseño web INAPI institucional (Proyecto futuro)
+

@@ -163,7 +163,7 @@ export default function ChatIAPage() {
                 variant="primary"
                 fullWidth
                 size="md"
-                onClick={handleNewChat}
+                onClick={() => handleNewChat()}
                 icon={<Plus size={18} />}
               />
             </div>
