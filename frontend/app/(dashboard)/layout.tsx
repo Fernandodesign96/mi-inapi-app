@@ -2,22 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import BottomNav, { NavTab } from "@/components/ui/BottomNav";
+import BottomNav from "@/components/ui/BottomNav";
 import ChatIAFab from "@/components/ui/ChatIAFab";
 import { clsx } from "clsx";
 import { useAppStore, UserState } from "@/lib/store";
-
-const pathToTab: Record<string, NavTab> = {
-  "/inicio": "inicio",
-  "/solicitudes": "solicitudes",
-  "/notificaciones": "notificaciones",
-  "/certificados": "certificados",
-  "/perfil": "perfil",
-  "/soporte": "perfil",
-  "/biblioteca": "perfil",
-  "/chat": "inicio",
-  "/diario-oficial": "perfil",
-};
 
 export default function DashboardLayout({
   children,
@@ -26,25 +14,7 @@ export default function DashboardLayout({
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [activeTab, setActiveTab] = useState<NavTab>("inicio");
   const { userState, setUserState } = useAppStore();
-
-  useEffect(() => {
-    const tab = pathToTab[pathname] ?? "inicio";
-    setActiveTab(tab);
-  }, [pathname]);
-
-  const handleNavigate = (tab: NavTab) => {
-    setActiveTab(tab);
-    const routes: Record<NavTab, string> = {
-      inicio: "/inicio",
-      solicitudes: "/solicitudes",
-      notificaciones: "/notificaciones",
-      certificados: "/certificados",
-      perfil: "/perfil",
-    };
-    router.push(routes[tab]);
-  };
 
   const showChatIA = ["/inicio", "/solicitudes", "/notificaciones"].some(p => pathname.startsWith(p));
   const isChatView = pathname === "/chat";
@@ -65,7 +35,7 @@ export default function DashboardLayout({
 
       {/* Bottom Navigation */}
       {!isChatView && (
-        <BottomNav activeTab={activeTab} onNavigate={handleNavigate} />
+        <BottomNav />
       )}
 
       {/* Logic State Toggle (Dev Only) */}

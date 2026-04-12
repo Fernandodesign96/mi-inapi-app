@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TopBar from "@/components/ui/TopBar";
 import CollapsibleCard from "@/components/ui/CollapsibleCard";
 import StatusBadge from "@/components/ui/StatusBadge";
 import FilterPills from "@/components/ui/FilterPills";
 import NotificationTable, { NotificationRow } from "@/components/ui/NotificationTable";
 import CTAButton from "@/components/ui/CTAButton";
+import SkeletonCard from "@/components/ui/SkeletonCard";
 import { useAppStore } from "@/lib/store";
 import { mockNotificaciones } from "@/lib/mockData";
 
@@ -24,6 +25,12 @@ export default function NotificacionesPage() {
   const { userState } = useAppStore();
   const [activeFilter, setActiveFilter] = useState<FilterType>("todas");
   const [expandedId, setExpandedId] = useState<string | null>("n1");
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
 
   const filteredNotifs = mockNotificaciones.filter((n) => {
     // 1. State-based filtering
@@ -60,72 +67,82 @@ export default function NotificacionesPage() {
           />
         </div>
 
-        {/* List */}
+        {/* List or Skeletons */}
         <div className="px-6 space-y-4">
-          {filteredNotifs.map((notif) => {
-            const isOpen = expandedId === notif.id;
+          {isLoading ? (
+            <>
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+            </>
+          ) : (
+            <>
+              {filteredNotifs.map((notif) => {
+                const isOpen = expandedId === notif.id;
 
-            const tableRows: NotificationRow[] = notif.detalle ? [
-              { label: "Etapa actual", value: notif.detalle.etapa },
-              { label: "N° Solicitud", value: notif.solicitudId || "N/A", isMono: true },
-              { label: "Requerimiento", value: notif.detalle.requerimiento },
-              { label: "Plazo límite", value: notif.detalle.plazo },
-              { label: "Contacto", value: notif.detalle.contacto },
-            ] : [];
+                const tableRows: NotificationRow[] = notif.detalle ? [
+                  { label: "Etapa actual", value: notif.detalle.etapa },
+                  { label: "N° Solicitud", value: notif.solicitudId || "N/A", isMono: true },
+                  { label: "Requerimiento", value: notif.detalle.requerimiento },
+                  { label: "Plazo límite", value: notif.detalle.plazo },
+                  { label: "Contacto", value: notif.detalle.contacto },
+                ] : [];
 
-            return (
-              <CollapsibleCard
-                key={notif.id}
-                variant={notif.urgency as UrgencyType}
-                isOpen={isOpen}
-                onToggle={() => setExpandedId(isOpen ? null : notif.id)}
-                header={
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <StatusBadge
-                        variant={notif.urgency as UrgencyType}
-                        label={notif.tipo.replace("_", " ")}
-                        showIcon={notif.urgency === "danger" || notif.urgency === "warning"}
-                      />
-                      <span className="text-timestamp">{notif.tiempo}</span>
-                    </div>
-                    <h3 className="text-h3 text-[#111827] leading-tight">
-                      {notif.titulo}
-                    </h3>
-                  </div>
-                }
-                preview={notif.cuerpo}
-                content={
-                  <div className="space-y-4">
-                    <p className="text-body-sm text-[#4B5563] leading-relaxed">
-                      {notif.cuerpo}
-                    </p>
-                    
-                    {tableRows.length > 0 && (
-                      <NotificationTable rows={tableRows} />
-                    )}
+                return (
+                  <CollapsibleCard
+                    key={notif.id}
+                    variant={notif.urgency as UrgencyType}
+                    isOpen={isOpen}
+                    onToggle={() => setExpandedId(isOpen ? null : notif.id)}
+                    header={
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <StatusBadge
+                            variant={notif.urgency as UrgencyType}
+                            label={notif.tipo.replace("_", " ")}
+                            showIcon={notif.urgency === "danger" || notif.urgency === "warning"}
+                          />
+                          <span className="text-timestamp">{notif.tiempo}</span>
+                        </div>
+                        <h3 className="text-h3 text-[#111827] leading-tight">
+                          {notif.titulo}
+                        </h3>
+                      </div>
+                    }
+                    preview={notif.cuerpo}
+                    content={
+                      <div className="space-y-4">
+                        <p className="text-body-sm text-[#4B5563] leading-relaxed">
+                          {notif.cuerpo}
+                        </p>
+                        
+                        {tableRows.length > 0 && (
+                          <NotificationTable rows={tableRows} />
+                        )}
 
-                    {notif.cta && (
-                      <CTAButton
-                        label={notif.cta}
-                        variant={notif.urgency === "danger" ? "danger" : 
-                                 notif.urgency === "warning" ? "warning" : "primary"}
-                        fullWidth
-                        size="md"
-                      />
-                    )}
-                  </div>
-                }
-              />
-            );
-          })}
+                        {notif.cta && (
+                          <CTAButton
+                            label={notif.cta}
+                            variant={notif.urgency === "danger" ? "danger" : 
+                                     notif.urgency === "warning" ? "warning" : "primary"}
+                            fullWidth
+                            size="md"
+                          />
+                        )}
+                      </div>
+                    }
+                  />
+                );
+              })}
 
-          {filteredNotifs.length === 0 && (
-            <div className="py-20 text-center">
-              <p className="text-body-sm text-[#9CA3AF]">
-                No hay notificaciones en esta categoría.
-              </p>
-            </div>
+              {filteredNotifs.length === 0 && (
+                <div className="py-20 text-center">
+                  <p className="text-body-sm text-[#9CA3AF]">
+                    No hay notificaciones en esta categoría.
+                  </p>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

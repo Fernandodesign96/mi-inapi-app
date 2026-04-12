@@ -23,3 +23,10 @@ npm-debug.log*
 # IDE
 .vscode/
 .idea/
+
+# Internal Documentation (Antigravity/Prompts)
+docs/prompts/
+docs/v0_prompt_v2.md
+docs/DEVLOGejemplo.md
+*.tmp
+*.bak

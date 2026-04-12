@@ -17,15 +17,14 @@ function validateRUT(rut: string): boolean {
   const body = clean.slice(0, -1);
   const dv = clean.slice(-1).toUpperCase();
   let sum = 0;
-  let factor = 2;
+  let multiplier = 2;
   for (let i = body.length - 1; i >= 0; i--) {
-    sum += parseInt(body[i]) * factor;
-    factor = factor === 7 ? 2 : factor + 1;
+    sum += parseInt(body[i]) * multiplier;
+    multiplier = multiplier === 7 ? 2 : multiplier + 1;
   }
   const expected = 11 - (sum % 11);
-  const expectedDv =
-    expected === 11 ? "0" : expected === 10 ? "K" : String(expected);
-  return dv === expectedDv;
+  const computed = expected === 11 ? "0" : expected === 10 ? "K" : String(expected);
+  return computed === dv;
 }
 
 /* === Formateo automático RUT === */
@@ -62,6 +61,10 @@ export default function LoginPage() {
   const onSubmit = async () => {
     setIsLoading(true);
     await new Promise((r) => setTimeout(r, 800));
+    
+    // Set mock auth cookie
+    document.cookie = "miinapi-auth=true; path=/; max-age=3600; samesite=lax";
+    
     setIsLoading(false);
     router.push("/inicio");
   };
@@ -69,6 +72,10 @@ export default function LoginPage() {
   const handleClaveUnica = async () => {
     setIsCULoading(true);
     await new Promise((r) => setTimeout(r, 1200));
+    
+    // Set mock auth cookie
+    document.cookie = "miinapi-auth=true; path=/; max-age=3600; samesite=lax";
+    
     setIsCULoading(false);
     router.push("/inicio");
   };

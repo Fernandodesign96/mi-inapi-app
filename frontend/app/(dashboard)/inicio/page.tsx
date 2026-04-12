@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { 
   ExternalLink, 
@@ -15,6 +16,7 @@ import SemaphoreCard from "@/components/ui/SemaphoreCard";
 import StepperProgress from "@/components/ui/StepperProgress";
 import StatusBadge from "@/components/ui/StatusBadge";
 import CTAButton from "@/components/ui/CTAButton";
+import SkeletonCard from "@/components/ui/SkeletonCard";
 import { useAppStore } from "@/lib/store";
 import { mockUser, mockSolicitudes } from "@/lib/mockData";
 import { clsx } from "clsx";
@@ -23,6 +25,12 @@ import React from "react";
 export default function InicioPage() {
   const router = useRouter();
   const { userState } = useAppStore();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
 
   const urgentSolicitud = mockSolicitudes.find(s => s.estado === "ACCION_REQUERIDA");
   const recentSolicitud = mockSolicitudes[1]; // Aura Cosmetics
@@ -42,141 +50,155 @@ export default function InicioPage() {
           </p>
         </div>
 
-        {/* STATE A: NEW USER */}
-        {userState === 'new' && (
+        {/* LOADING STATE - SKELETONS */}
+        {isLoading ? (
           <div className="space-y-6">
-            <SemaphoreCard urgency="info">
-              <p className="text-body-sm text-[#1E40AF] leading-relaxed">
-                Aquí verás el estado de tus solicitudes de marcas, patentes y diseños 
-                en tiempo real. Cuando ingreses una solicitud en el portal de INAPI, 
-                aparecerá aquí automáticamente.
-              </p>
-            </SemaphoreCard>
-
-            <CTAButton 
-              label="Ir al portal de solicitudes INAPI"
-              variant="primary"
-              size="lg"
-              fullWidth
-              onClick={() => window.open('https://www.inapi.cl', '_blank')}
-              icon={<ExternalLink size={18} />}
-            />
-
-            <div className="pt-2">
-              <h2 className="text-label text-[#9CA3AF] mb-4">MIENTRAS TANTO, EXPLORA</h2>
-              <div className="grid grid-cols-2 gap-3">
-                <QuickAccessCard 
-                  icon={Book} 
-                  label="Biblioteca de Recursos" 
-                  onClick={() => router.push('/biblioteca')} 
-                />
-                <QuickAccessCard 
-                  icon={HelpCircle} 
-                  label="Soporte e Historial" 
-                  onClick={() => router.push('/soporte')} 
-                />
-              </div>
+            <SkeletonCard />
+            <div className="flex gap-2">
+              <div className="flex-1 h-16 bg-white rounded-lg border border-[#E5E7EB] skeleton" />
+              <div className="flex-1 h-16 bg-white rounded-lg border border-[#E5E7EB] skeleton" />
+              <div className="flex-1 h-16 bg-white rounded-lg border border-[#E5E7EB] skeleton" />
             </div>
           </div>
-        )}
-
-        {/* STATE B & C: ACTIVE USERS */}
-        {(userState === 'active-urgent' || userState === 'active-no-urgent') && (
-          <div className="space-y-6">
-            {/* HERO CARD */}
-            {userState === 'active-urgent' ? (
-              <SemaphoreCard urgency="danger">
-                <div className="flex justify-between items-center mb-3">
-                  <StatusBadge variant="danger" label="ACCIÓN REQUERIDA" showIcon />
-                  <span className="text-timestamp">Hace 10 min</span>
-                </div>
-                <h2 className="text-h2 text-[#111827] mb-1">
-                  {urgentSolicitud?.accion || "Cargar documento"}
-                </h2>
-                <p className="text-mono text-[#4B5563] mb-4">
-                  #{urgentSolicitud?.id} · {urgentSolicitud?.tipo === 'marca' ? 'Marca Comercial' : 'Patente'}
-                </p>
-                <CTAButton 
-                  label="Ir a la notificación"
-                  variant="danger"
-                  fullWidth
-                  onClick={() => router.push('/notificaciones')}
-                  icon={<ChevronRight size={18} />}
-                />
-              </SemaphoreCard>
-            ) : (
-              <SemaphoreCard urgency="info">
-                <div className="flex justify-between items-center mb-3">
-                  <StatusBadge variant="info" label="EN REVISIÓN" />
-                  <span className="text-timestamp">Actualizado hoy</span>
-                </div>
-                <h2 className="text-h2 text-[#111827] mb-1">
-                  {recentSolicitud?.nombre}
-                </h2>
-                <p className="text-mono text-[#4B5563] mb-4">
-                  #{recentSolicitud?.id} · Marca Comercial
-                </p>
-                <StepperProgress 
-                  stepStates={['completed', 'completed', 'current']} 
-                  urgency="info"
-                />
-                <div className="mt-4 p-3 bg-[#EFF6FF] rounded-[10px] border border-[#DBEAFE]">
-                  <p className="text-body-xs text-[#1E40AF]">
-                    Esperando fin del período de oposición (30 días).
+        ) : (
+          <>
+            {/* STATE A: NEW USER */}
+            {userState === 'new' && (
+              <div className="space-y-6">
+                <SemaphoreCard urgency="info">
+                  <p className="text-body-sm text-[#1E40AF] leading-relaxed">
+                    Aquí verás el estado de tus solicitudes de marcas, patentes y diseños 
+                    en tiempo real. Cuando ingreses una solicitud en el portal de INAPI, 
+                    aparecerá aquí automáticamente.
                   </p>
+                </SemaphoreCard>
+
+                <CTAButton 
+                  label="Ir al portal de solicitudes INAPI"
+                  variant="primary"
+                  size="lg"
+                  fullWidth
+                  onClick={() => window.open('https://www.inapi.cl', '_blank')}
+                  icon={<ExternalLink size={18} />}
+                />
+
+                <div className="pt-2">
+                  <h2 className="text-label text-[#9CA3AF] mb-4">MIENTRAS TANTO, EXPLORA</h2>
+                  <div className="grid grid-cols-2 gap-3">
+                    <QuickAccessCard 
+                      icon={Book} 
+                      label="Biblioteca de Recursos" 
+                      onClick={() => router.push('/biblioteca')} 
+                    />
+                    <QuickAccessCard 
+                      icon={HelpCircle} 
+                      label="Soporte e Historial" 
+                      onClick={() => router.push('/soporte')} 
+                    />
+                  </div>
                 </div>
-              </SemaphoreCard>
+              </div>
             )}
 
-            {/* SUMMARY ROW */}
-            <div className="flex gap-2">
-              <SummaryCard 
-                count={3} 
-                label="EN PROCESO" 
-                variant="info" 
-              />
-              <SummaryCard 
-                count={userState === 'active-urgent' ? 1 : 0} 
-                label="REQUERIDO" 
-                variant={userState === 'active-urgent' ? "danger" : "neutral"} 
-                icon={userState === 'active-urgent' ? AlertCircle : undefined}
-              />
-              <SummaryCard 
-                count={45} 
-                label="FINALIZADOS" 
-                variant="success" 
-                icon={CheckCircle2}
-              />
-            </div>
+            {/* STATE B & C: ACTIVE USERS */}
+            {(userState === 'active-urgent' || userState === 'active-no-urgent') && (
+              <div className="space-y-6">
+                {/* HERO CARD */}
+                {userState === 'active-urgent' ? (
+                  <SemaphoreCard urgency="danger">
+                    <div className="flex justify-between items-center mb-3">
+                      <StatusBadge variant="danger" label="ACCIÓN REQUERIDA" showIcon />
+                      <span className="text-timestamp">Hace 10 min</span>
+                    </div>
+                    <h2 className="text-h2 text-[#111827] mb-1">
+                      {urgentSolicitud?.accion || "Cargar documento"}
+                    </h2>
+                    <p className="text-mono text-[#4B5563] mb-4">
+                      #{urgentSolicitud?.id} · {urgentSolicitud?.tipo === 'marca' ? 'Marca Comercial' : 'Patente'}
+                    </p>
+                    <CTAButton 
+                      label="Ir a la notificación"
+                      variant="danger"
+                      fullWidth
+                      onClick={() => router.push('/notificaciones')}
+                      icon={<ChevronRight size={18} />}
+                    />
+                  </SemaphoreCard>
+                ) : (
+                  <SemaphoreCard urgency="info">
+                    <div className="flex justify-between items-center mb-3">
+                      <StatusBadge variant="info" label="EN REVISIÓN" />
+                      <span className="text-timestamp">Actualizado hoy</span>
+                    </div>
+                    <h2 className="text-h2 text-[#111827] mb-1">
+                      {recentSolicitud?.nombre}
+                    </h2>
+                    <p className="text-mono text-[#4B5563] mb-4">
+                      #{recentSolicitud?.id} · Marca Comercial
+                    </p>
+                    <StepperProgress 
+                      stepStates={['completed', 'completed', 'current']} 
+                      urgency="info"
+                    />
+                    <div className="mt-4 p-3 bg-[#EFF6FF] rounded-[10px] border border-[#DBEAFE]">
+                      <p className="text-body-xs text-[#1E40AF]">
+                        Esperando fin del período de oposición (30 días).
+                      </p>
+                    </div>
+                  </SemaphoreCard>
+                )}
 
-            <button 
-              onClick={() => router.push('/solicitudes')}
-              className="w-full text-center py-1 text-body-sm font-semibold text-[#1A56DB] flex items-center justify-center gap-1 hover:underline"
-            >
-              Ver todas mis solicitudes <ChevronRight size={16} />
-            </button>
+                {/* SUMMARY ROW */}
+                <div className="flex gap-2">
+                  <SummaryCard 
+                    count={3} 
+                    label="EN PROCESO" 
+                    variant="info" 
+                  />
+                  <SummaryCard 
+                    count={userState === 'active-urgent' ? 1 : 0} 
+                    label="REQUERIDO" 
+                    variant={userState === 'active-urgent' ? "danger" : "neutral"} 
+                    icon={userState === 'active-urgent' ? AlertCircle : undefined}
+                  />
+                  <SummaryCard 
+                    count={45} 
+                    label="FINALIZADOS" 
+                    variant="success" 
+                    icon={CheckCircle2}
+                  />
+                </div>
 
-            {/* QUICK ACCESS ROW */}
-            <div className="pt-4 border-t border-[#E5E7EB]">
-              <div className="flex gap-2 text-center">
-                <QuickAccessGhost 
-                  icon={Book} 
-                  label="Biblioteca" 
-                  onClick={() => router.push('/biblioteca')} 
-                />
-                <QuickAccessGhost 
-                  icon={FileText} 
-                  label="Certificados" 
-                  onClick={() => router.push('/certificados')} 
-                />
-                <QuickAccessGhost 
-                  icon={HelpCircle} 
-                  label="Soporte" 
-                  onClick={() => router.push('/soporte')} 
-                />
+                <button 
+                  onClick={() => router.push('/solicitudes')}
+                  className="w-full text-center py-1 text-body-sm font-semibold text-[#1A56DB] flex items-center justify-center gap-1 hover:underline"
+                >
+                  Ver todas mis solicitudes <ChevronRight size={16} />
+                </button>
+
+                {/* QUICK ACCESS ROW */}
+                <div className="pt-4 border-t border-[#E5E7EB]">
+                  <div className="flex gap-2 text-center">
+                    <QuickAccessGhost 
+                      icon={Book} 
+                      label="Biblioteca" 
+                      onClick={() => router.push('/biblioteca')} 
+                    />
+                    <QuickAccessGhost 
+                      icon={FileText} 
+                      label="Certificados" 
+                      onClick={() => router.push('/certificados')} 
+                    />
+                    <QuickAccessGhost 
+                      icon={HelpCircle} 
+                      label="Soporte" 
+                      onClick={() => router.push('/soporte')} 
+                    />
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            )}
+          </>
         )}
       </div>
     </div>
