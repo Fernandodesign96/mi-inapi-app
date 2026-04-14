@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import BottomNav from "@/components/ui/BottomNav";
 import ChatIAFab from "@/components/ui/ChatIAFab";

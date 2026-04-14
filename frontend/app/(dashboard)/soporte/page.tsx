@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Mail, Phone, MessageCircle, Headphones, ChevronRight, User } from "lucide-react";
+import { Mail, Phone, MessageCircle, Headphones, ChevronRight, User, ExternalLink } from "lucide-react";
 import TopBar from "@/components/ui/TopBar";
 import CollapsibleCard from "@/components/ui/CollapsibleCard";
 import StatusBadge from "@/components/ui/StatusBadge";
@@ -162,15 +162,8 @@ export default function SoportePage() {
                 </div>
               </div>
 
-              {/* CTAs dentro del card */}
-              <div className="grid grid-cols-2 gap-3 pt-1">
-                <CTAButton
-                  label="Llámanos"
-                  variant="outline"
-                  fullWidth
-                  size="md"
-                  icon={<Phone size={18} />}
-                />
+              {/* CTAs dentro del card — Layout vertical y redondeo equilibrado */}
+              <div className="flex flex-col gap-3 pt-1">
                 <CTAButton
                   label="Chatea con un ejecutivo"
                   variant="primary"
@@ -178,6 +171,13 @@ export default function SoportePage() {
                   size="md"
                   icon={<MessageCircle size={18} />}
                   onClick={() => router.push('/soporte/chat-ejecutivo?nuevo=true')}
+                />
+                <CTAButton
+                  label="Llámanos"
+                  variant="outline"
+                  fullWidth
+                  size="md"
+                  icon={<Phone size={18} />}
                 />
               </div>
             </div>
@@ -281,6 +281,34 @@ export default function SoportePage() {
               />
             ))}
           </div>
+        </div>
+
+        {/* Footer Institucional — Restaurado */}
+        <div className="p-6 pb-28 border-t border-[#E5E7EB] bg-white space-y-6">
+          <div className="flex items-center justify-center gap-6">
+            <a 
+              href="https://www.inapi.cl/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[13px] font-semibold text-[#1A56DB] flex items-center gap-1.5 hover:underline"
+            >
+              Página INAPI <ExternalLink size={14} />
+            </a>
+            <div className="w-px h-4 bg-[#E5E7EB]" />
+            <a 
+              href="https://www.wipo.int/portal/es/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[13px] font-semibold text-[#1A56DB] flex items-center gap-1.5 hover:underline"
+            >
+              Ir a OMPI <ExternalLink size={14} />
+            </a>
+          </div>
+          
+          <p className="text-center text-[11px] text-[#9CA3AF] leading-relaxed">
+            Mostrando historial de los últimos 6 meses · <br />
+            <span className="font-bold underline cursor-pointer">Ver historial completo</span>
+          </p>
         </div>
       </div>
     </div>

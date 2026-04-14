@@ -66,8 +66,9 @@ export default function CTAButton({
       onClick={onClick}
       disabled={disabled}
       className={clsx(
-        "rounded-full font-sans font-semibold inline-flex items-center justify-center gap-2 transition-all duration-150",
+        "font-sans font-semibold inline-flex items-center justify-center gap-2 transition-all duration-150",
         "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1A56DB] active:scale-[0.98]",
+        !className?.includes("rounded-") && "rounded-xl",
         variantClasses[variant],
         sizeClasses[size],
         fullWidth && "w-full",
