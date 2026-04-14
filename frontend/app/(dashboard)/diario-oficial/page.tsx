@@ -20,12 +20,12 @@ export default function DiarioOficialPage() {
   const [activeDate, setActiveDate] = useState("hoy");
 
   // Filter user publications that are "PUBLICADA" (mocking this for demo)
-  const misPublicaciones = userState !== "new" ? [
+  const misPublicaciones = userState === "active-urgent" ? [
     {
-      id: "2024-00123",
-      nombre: "Eco-Tech Solutions",
+      id: "trm-005",
+      nombre: "Terra Verde SPA",
       fecha: "15 de marzo 2026",
-      vence: "15 abr 2026",
+      vence: "15 de marzo 2036",
       estado: "PUBLICADA"
     }
   ] : [];

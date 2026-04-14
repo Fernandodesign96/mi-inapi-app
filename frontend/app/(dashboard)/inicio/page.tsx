@@ -13,12 +13,12 @@ import {
 } from "lucide-react";
 import TopBar from "@/components/ui/TopBar";
 import SemaphoreCard from "@/components/ui/SemaphoreCard";
-import StepperProgress from "@/components/ui/StepperProgress";
+import StepperProgress, { getStepStates } from "@/components/ui/StepperProgress";
 import StatusBadge from "@/components/ui/StatusBadge";
 import CTAButton from "@/components/ui/CTAButton";
 import SkeletonCard from "@/components/ui/SkeletonCard";
 import { useAppStore } from "@/lib/store";
-import { mockUser, mockSolicitudes } from "@/lib/mockData";
+import { mockUser, mockTramitesUrgent, mockTramitesNoUrgent, mockSummaryUrgent, mockSummaryNoUrgent } from "@/lib/mockData";
 import { clsx } from "clsx";
 import React from "react";
 
@@ -32,8 +32,11 @@ export default function InicioPage() {
     return () => clearTimeout(timer);
   }, []);
 
-  const urgentSolicitud = mockSolicitudes.find(s => s.estado === "ACCION_REQUERIDA");
-  const recentSolicitud = mockSolicitudes[1]; // Aura Cosmetics
+  const currentTramites = userState === 'active-no-urgent' ? mockTramitesNoUrgent : mockTramitesUrgent;
+  const currentSummary = userState === 'active-no-urgent' ? mockSummaryNoUrgent : mockSummaryUrgent;
+
+  const urgentSolicitud = currentTramites.find(s => s.estado === "ACCION_REQUERIDA");
+  const recentSolicitud = userState === 'active-no-urgent' ? currentTramites[0] : currentTramites.find(s => s.estado === "EN_REVISION" || s.estado === "PUBLICACION");
 
   return (
     <div className="flex flex-col min-h-screen bg-[#F9FAFB]">
@@ -137,7 +140,7 @@ export default function InicioPage() {
                       #{recentSolicitud?.id} · Marca Comercial
                     </p>
                     <StepperProgress 
-                      stepStates={['completed', 'completed', 'current']} 
+                      stepStates={getStepStates(recentSolicitud?.estado || 'EN_REVISION')} 
                       urgency="info"
                     />
                     <div className="mt-4 p-3 bg-[#EFF6FF] rounded-[10px] border border-[#DBEAFE]">
@@ -151,21 +154,21 @@ export default function InicioPage() {
                 {/* SUMMARY ROW */}
                 <div className="flex gap-2">
                   <SummaryCard 
-                    count={3} 
+                    count={currentSummary.enProceso} 
                     label="EN PROCESO" 
                     variant="info" 
                   />
                   <SummaryCard 
-                    count={userState === 'active-urgent' ? 1 : 0} 
-                    label="REQUERIDO" 
-                    variant={userState === 'active-urgent' ? "danger" : "neutral"} 
-                    icon={userState === 'active-urgent' ? AlertCircle : undefined}
+                    count={currentSummary.accionRequerida} 
+                    label="ACCIÓN REQ." 
+                    variant={currentSummary.accionRequerida > 0 ? "danger" : "neutral"} 
+                    icon={currentSummary.accionRequerida > 0 ? AlertCircle : undefined}
                   />
                   <SummaryCard 
-                    count={45} 
-                    label="FINALIZADOS" 
-                    variant="success" 
-                    icon={CheckCircle2}
+                    count={currentSummary.finalizadas} 
+                    label="FINALIZADAS" 
+                    variant={currentSummary.finalizadas > 0 ? "success" : "neutral"} 
+                    icon={currentSummary.finalizadas > 0 ? CheckCircle2 : undefined}
                   />
                 </div>
 
@@ -184,11 +187,13 @@ export default function InicioPage() {
                       label="Biblioteca" 
                       onClick={() => router.push('/biblioteca')} 
                     />
-                    <QuickAccessGhost 
-                      icon={FileText} 
-                      label="Certificados" 
-                      onClick={() => router.push('/certificados')} 
-                    />
+                    {userState !== 'active-no-urgent' && (
+                      <QuickAccessGhost 
+                        icon={FileText} 
+                        label="Certificados" 
+                        onClick={() => router.push('/certificados')} 
+                      />
+                    )}
                     <QuickAccessGhost 
                       icon={HelpCircle} 
                       label="Soporte" 
@@ -217,10 +222,10 @@ function SummaryCard({
   icon?: React.ElementType;
 }) {
   const styles = {
-    info: "text-[#2563EB] bg-white",
-    danger: "text-[#DC2626] bg-[#FEF2F2] border-[#FEE2E2]",
-    success: "text-[#059669] bg-white",
-    neutral: "text-[#9CA3AF] bg-white opacity-50",
+    info: "text-[#111827] bg-white",
+    danger: "text-[#DC2626] bg-[#FFF5F5] border-[#DC2626]",
+    success: "text-[#059669] bg-[#F0FDF4] border-[#059669]",
+    neutral: "text-[#9CA3AF] bg-[#F9FAFB] border-[#E5E7EB]",
   };
 
   return (

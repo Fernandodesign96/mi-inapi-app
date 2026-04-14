@@ -9,6 +9,7 @@ import StatusBadge from "@/components/ui/StatusBadge";
 import SemaphoreCard from "@/components/ui/SemaphoreCard";
 import FilterPills from "@/components/ui/FilterPills";
 import EmptyState from "@/components/ui/EmptyState";
+import { useAppStore } from "@/lib/store";
 
 type FilterType = "todos" | "marcas" | "patentes" | "diseños";
 
@@ -29,12 +30,17 @@ const mockCertificados: Certificate[] = [
 ];
 
 export default function CertificadosPage() {
+  const { userState } = useAppStore();
   const [activeFilter, setActiveFilter] = useState<FilterType>("todos");
   const [searchQuery, setSearchQuery] = useState("");
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
-  const filtered = mockCertificados.filter(c => {
+  const currentCertificados = userState === 'active-urgent' ? [
+    { id: "cert-terra", name: "Terra Verde SPA", type: "Marca Comercial", typeLabel: "marcas" as FilterType, registration: "8049182", emission: "15 MAR 2026" }
+  ] : mockCertificados;
+
+  const filtered = currentCertificados.filter(c => {
     const matchesFilter = activeFilter === 'todos' || c.typeLabel === activeFilter;
     const matchesSearch = c.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                          c.registration.includes(searchQuery);

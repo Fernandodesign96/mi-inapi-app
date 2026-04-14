@@ -190,21 +190,21 @@ export default function SoportePage() {
         
         <div className="flex items-center justify-center gap-6 py-2">
           <a 
-            href="https://www.wipo.int/portal/es/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[13px] font-semibold text-[#1A56DB] flex items-center gap-1.5 hover:underline"
-          >
-            Ir a OMPI <ExternalLink size={14} />
-          </a>
-          <div className="w-px h-4 bg-[#E5E7EB]" />
-          <a 
             href="https://www.inapi.cl/"
             target="_blank"
             rel="noopener noreferrer"
             className="text-[13px] font-semibold text-[#1A56DB] flex items-center gap-1.5 hover:underline"
           >
             Página INAPI <ExternalLink size={14} />
+          </a>
+          <div className="w-px h-4 bg-[#E5E7EB]" />
+          <a 
+            href="https://www.wipo.int/portal/es/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[13px] font-semibold text-[#1A56DB] flex items-center gap-1.5 hover:underline"
+          >
+            Ir a OMPI <ExternalLink size={14} />
           </a>
         </div>
         

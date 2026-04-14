@@ -17,6 +17,7 @@ interface FormInputProps {
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  name?: string;
   autoComplete?: string;
 }
 
@@ -35,6 +36,7 @@ const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
       value,
       onChange,
       onBlur,
+      name,
       autoComplete,
     },
     ref
@@ -65,6 +67,7 @@ const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
           <input
             ref={ref}
             id={id}
+            name={name}
             type={inputType}
             placeholder={placeholder}
             value={value}

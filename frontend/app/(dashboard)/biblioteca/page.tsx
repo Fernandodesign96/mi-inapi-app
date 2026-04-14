@@ -1,32 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Book, PlayCircle, FileText, ExternalLink } from "lucide-react";
+import { Search, Book, PlayCircle, FileText, ExternalLink, Download } from "lucide-react";
 import TopBar from "@/components/ui/TopBar";
 import StatusBadge from "@/components/ui/StatusBadge";
 import FilterPills from "@/components/ui/FilterPills";
 import SemaphoreCard from "@/components/ui/SemaphoreCard";
 import EmptyState from "@/components/ui/EmptyState";
+import { bibliotecaMock, RecursoBiblioteca, RecursoCat } from "@/lib/mock/biblioteca";
 import { clsx } from "clsx";
 
-type CategoryId = "todas" | "manuales" | "guias" | "videos" | "legales";
+type CategoryId = "todas" | RecursoCat;
 
-interface Resource {
-  id: string;
-  title: string;
-  description: string;
-  type: "PDF" | "Video" | "Link";
-  category: CategoryId;
-  size?: string;
-  image?: string;
-}
 
-const mockResources: Resource[] = [
-  { id: "r1", title: "Manual de Marcas 2024", description: "Todo lo que necesitas saber para registrar tu marca en Chile.", type: "PDF", category: "manuales", size: "2.4 MB" },
-  { id: "r2", title: "Cómo proteger tu invento", description: "Video guía sobre el proceso de patentamiento nacional.", type: "Video", category: "videos" },
-  { id: "r3", title: "Guía de Diseño Industrial", description: "Aspectos clave para proteger la apariencia de tus productos.", type: "PDF", category: "guias", size: "1.8 MB" },
-  { id: "r4", title: "Ley de Propiedad Ind.", description: "Texto oficial de la Ley 19.039 y sus modificaciones.", type: "PDF", category: "legales", size: "1.2 MB" },
-];
 
 const guideCategories = [
   { id: "marcas", label: "Marcas", icon: <Book size={24} />, bg: "bg-[#DBEAFE]", color: "text-[#1A56DB]" },
@@ -37,18 +23,22 @@ export default function BibliotecaPage() {
   const [activeFilter, setActiveFilter] = useState<CategoryId>("todas");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filtered = mockResources.filter(r => {
-    const matchesFilter = activeFilter === 'todas' || r.category === activeFilter;
-    const matchesSearch = r.title.toLowerCase().includes(searchQuery.toLowerCase());
+  const filtered = bibliotecaMock.filter(r => {
+    const matchesFilter = activeFilter === 'todas' || r.categoria === activeFilter;
+    const matchesSearch = r.nombre.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesFilter && matchesSearch;
   });
+
+  const handleRecursoClick = (recurso: RecursoBiblioteca) => {
+    window.open(recurso.url, '_blank', 'noopener,noreferrer')
+  };
 
   const filterOptions = [
     { value: "todas", label: "Todas" },
     { value: "manuales", label: "Manuales" },
     { value: "guias", label: "Guías" },
     { value: "videos", label: "Videos" },
-    { value: "legales", label: "Legales" },
+    { value: "oficiales", label: "Oficiales" },
   ];
 
   return (
@@ -117,28 +107,31 @@ export default function BibliotecaPage() {
                       <div className="space-y-1 flex-1 min-w-0">
                         <div className="flex items-center gap-2">
                           <StatusBadge 
-                            variant={res.type === 'Video' ? 'info' : 'success'} 
-                            label={res.type} 
+                            variant={res.tipo === 'video' ? 'info' : 'success'} 
+                            label={res.tipo.toUpperCase()} 
                           />
-                          {res.size && <span className="text-timestamp">{res.size}</span>}
+                          {res.tamaño && <span className="text-timestamp">{res.tamaño}</span>}
+                          {res.duracion && <span className="text-timestamp">{res.duracion}</span>}
                         </div>
-                        <h3 className="text-[16px] font-bold text-[#111827] truncate">
-                          {res.title}
+                        <h3 className="text-[16px] font-bold text-[#111827]">
+                          {res.nombre}
                         </h3>
                       </div>
                       <div className="w-10 h-10 rounded-lg bg-[#F3F4F6] flex items-center justify-center text-[#9CA3AF] shrink-0">
-                        {res.type === 'Video' ? <PlayCircle size={20} /> : <FileText size={20} />}
+                        {res.tipo === 'video' ? <PlayCircle size={20} /> : <FileText size={20} />}
                       </div>
                     </div>
-                    
-                    <p className="text-body-xs text-[#4B5563] leading-relaxed">
-                      {res.description}
-                    </p>
 
                     <div className="pt-2 flex justify-end">
-                      <button className="text-[12px] font-bold text-[#1A56DB] flex items-center gap-1.5 uppercase tracking-wider">
-                        {res.type === 'Video' ? 'Ver ahora' : 'Leer más'}
-                        <ExternalLink size={14} />
+                      <button 
+                        onClick={() => handleRecursoClick(res)}
+                        aria-label={`${res.ctaLabel || 'Descargar'} ${res.nombre}`}
+                        className="text-[12px] font-bold text-[#1A56DB] flex items-center gap-1.5 uppercase tracking-wider"
+                      >
+                        {res.accion === 'descargar'
+                          ? <><Download size={18} /> Descargar</>
+                          : <><ExternalLink size={18} /> {res.ctaLabel || 'Ver ahora'}</>
+                        }
                       </button>
                     </div>
                   </div>

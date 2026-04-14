@@ -1,6 +1,11 @@
+"use client";
+
 import { Bell, User, ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { useState } from "react";
+
 
 interface TopBarProps {
   variant?: "home" | "section";
@@ -22,6 +27,7 @@ export default function TopBar({
   rightAction,
 }: TopBarProps) {
   const router = useRouter();
+  const [imgError, setImgError] = useState(false);
 
   const handleBack = () => {
     if (onBack) {
@@ -43,11 +49,23 @@ export default function TopBar({
             <ChevronLeft size={24} strokeWidth={2.5} />
           </button>
         ) : (
-          <div className="flex items-center">
-            <div className="w-7 h-7 bg-[#1E3A8A] rounded-[6px] flex items-center justify-center text-white font-sans font-bold text-[14px]">
-              I
-            </div>
-            <span className="ml-2 font-sans font-semibold text-[16px] text-[#111827] tracking-tight">
+          <div className="flex items-center gap-2">
+            {imgError ? (
+              <div className="w-8 h-8 bg-[#1E3A8A] flex items-center justify-center">
+                <span className="text-white font-bold text-sm font-sans">I</span>
+              </div>
+            ) : (
+              <Image
+                src="/images/inapi-logo.png"
+                alt="INAPI"
+                width={32}
+                height={32}
+                className="object-contain"
+                onError={() => setImgError(true)}
+                priority
+              />
+            )}
+            <span className="font-semibold text-[16px] text-[#111827] font-sans tracking-tight">
               MiINAPI
             </span>
           </div>
