@@ -19,21 +19,38 @@ export default function BottomNav() {
   const pathname = usePathname();
   const { userState } = useAppStore();
 
-  const navItems: NavItem[] = userState === 'new' 
-    ? [
+  const getNavItems = (): NavItem[] => {
+    if (userState === 'new') {
+      return [
         { id: "inicio", label: "Inicio", icon: Home, path: "/inicio" },
         { id: "biblioteca", label: "Biblioteca", icon: Library, path: "/biblioteca" },
         { id: "notificaciones", label: "Notificaciones", icon: Bell, path: "/notificaciones" },
         { id: "soporte", label: "Soporte", icon: HelpCircle, path: "/soporte" },
         { id: "perfil", label: "Perfil", icon: User, path: "/perfil" },
-      ]
-    : [
+      ];
+    }
+    
+    if (userState === 'active-no-urgent') {
+      return [
         { id: "inicio", label: "Inicio", icon: Home, path: "/inicio" },
         { id: "solicitudes", label: "Solicitudes", icon: FileText, path: "/solicitudes" },
         { id: "notificaciones", label: "Notificaciones", icon: Bell, path: "/notificaciones" },
-        { id: "certificados", label: "Certificados", icon: FolderOpen, path: "/certificados" },
+        { id: "soporte", label: "Soporte", icon: HelpCircle, path: "/soporte" },
         { id: "perfil", label: "Perfil", icon: User, path: "/perfil" },
       ];
+    }
+
+    // active-urgent
+    return [
+      { id: "inicio", label: "Inicio", icon: Home, path: "/inicio" },
+      { id: "solicitudes", label: "Solicitudes", icon: FileText, path: "/solicitudes" },
+      { id: "notificaciones", label: "Notificaciones", icon: Bell, path: "/notificaciones" },
+      { id: "certificados", label: "Certificados", icon: FolderOpen, path: "/certificados" },
+      { id: "perfil", label: "Perfil", icon: User, path: "/perfil" },
+    ];
+  };
+
+  const navItems = getNavItems();
 
   const handleNavigate = (path: string) => {
     router.push(path);

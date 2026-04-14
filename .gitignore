@@ -28,5 +28,11 @@ npm-debug.log*
 docs/prompts/
 docs/v0_prompt_v2.md
 docs/DEVLOGejemplo.md
+docs/pdf_content.txt
+docs/correccion.md
 *.tmp
 *.bak
+
+# Windows/WSL Metadata Artifacts
+*:Zone.Identifier
+*Zone.Identifier

@@ -9,7 +9,7 @@ import NotificationTable, { NotificationRow } from "@/components/ui/Notification
 import CTAButton from "@/components/ui/CTAButton";
 import SkeletonCard from "@/components/ui/SkeletonCard";
 import { useAppStore } from "@/lib/store";
-import { mockNotificaciones } from "@/lib/mockData";
+import { mockNotificacionesUrgent, mockNotificacionesNoUrgent } from "@/lib/mockData";
 
 type FilterType = "todas" | "urgente" | "info" | "exito";
 type UrgencyType = "danger" | "warning" | "info" | "success";
@@ -21,10 +21,18 @@ const filterOptions = [
   { value: "exito", label: "Éxito" },
 ];
 
+const getBadgeLabel = (urgency: string, detalleEtapa?: string) => {
+  if (urgency === 'danger') return 'Acción urgente';
+  if (urgency === 'warning') return detalleEtapa?.toLowerCase().includes('fondo') ? 'Corrección de Fondo' : 'Corrección de Forma';
+  if (urgency === 'info') return 'En revisión';
+  if (urgency === 'success') return 'Finalizada';
+  return 'En revisión';
+};
+
 export default function NotificacionesPage() {
   const { userState } = useAppStore();
   const [activeFilter, setActiveFilter] = useState<FilterType>("todas");
-  const [expandedId, setExpandedId] = useState<string | null>("n1");
+  const [expandedId, setExpandedId] = useState<string | null>(userState === 'active-no-urgent' ? 'notif-neo' : 'n-eco');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -32,10 +40,11 @@ export default function NotificacionesPage() {
     return () => clearTimeout(timer);
   }, []);
 
-  const filteredNotifs = mockNotificaciones.filter((n) => {
+  const baseNotifs = userState === 'active-no-urgent' ? mockNotificacionesNoUrgent : mockNotificacionesUrgent;
+
+  const filteredNotifs = baseNotifs.filter((n) => {
     // 1. State-based filtering
     if (userState === 'new') return false;
-    if (userState === 'active-no-urgent' && n.id === 'n1') return false;
 
     // 2. Category filtering
     if (activeFilter === "todas") return true;
@@ -99,7 +108,7 @@ export default function NotificacionesPage() {
                         <div className="flex justify-between items-center">
                           <StatusBadge
                             variant={notif.urgency as UrgencyType}
-                            label={notif.tipo.replace("_", " ")}
+                            label={getBadgeLabel(notif.urgency, notif.detalle?.etapa)}
                             showIcon={notif.urgency === "danger" || notif.urgency === "warning"}
                           />
                           <span className="text-timestamp">{notif.tiempo}</span>

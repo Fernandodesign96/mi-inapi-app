@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { Search, Clock, ChevronRight } from "lucide-react";
 import SemaphoreCard from "@/components/ui/SemaphoreCard";
-import StepperProgress from "@/components/ui/StepperProgress";
+import StepperProgress, { getStepStates } from "@/components/ui/StepperProgress";
 import StatusBadge from "@/components/ui/StatusBadge";
 import FilterPills from "@/components/ui/FilterPills";
 import EmptyState from "@/components/ui/EmptyState";
 import { useAppStore } from "@/lib/store";
-import { mockSolicitudes } from "@/lib/mockData";
+import { mockTramitesUrgent, mockTramitesNoUrgent } from "@/lib/mockData";
 
 type FilterType = "todas" | "marca" | "patente" | "diseño";
 type UrgencyType = "danger" | "warning" | "info" | "success";
@@ -20,15 +20,27 @@ const filterOptions = [
   { value: "diseño", label: "Diseños" },
 ];
 
+const getBadgeLabel = (urgency: string, etapa: string, notificacionEtapa?: string) => {
+  if (urgency === 'danger') return 'Acción urgente';
+  if (urgency === 'warning') {
+    const et = notificacionEtapa || etapa || '';
+    return et.toLowerCase().includes('fondo') || et === 'RESOLUCION' ? 'Corrección de Fondo' : 'Corrección de Forma';
+  }
+  if (urgency === 'info') return 'En revisión';
+  if (urgency === 'success') return 'Finalizada';
+  return 'En revisión';
+};
+
 export default function SolicitudesPage() {
   const { userState } = useAppStore();
   const [activeFilter, setActiveFilter] = useState<FilterType>("todas");
 
-  const filteredSolicitudes = mockSolicitudes
+  const baseSolicitudes = userState === 'active-no-urgent' ? mockTramitesNoUrgent : mockTramitesUrgent;
+
+  const filteredSolicitudes = baseSolicitudes
     .filter((s) => {
       // 1. State-based filtering
       if (userState === 'new') return false;
-      if (userState === 'active-no-urgent' && s.id === '2024-00123') return false;
 
       // 2. Category filtering
       if (activeFilter === "todas") return true;
@@ -75,7 +87,7 @@ export default function SolicitudesPage() {
                       <div className="flex items-center gap-2">
                         <StatusBadge 
                           variant={solicitud.urgency as UrgencyType} 
-                          label={solicitud.estado.replace('_', ' ')} 
+                          label={getBadgeLabel(solicitud.urgency, solicitud.etapa, solicitud.notificacion?.etapa)} 
                         />
                       </div>
                       <h3 className="text-h3 text-[#111827]">
@@ -87,11 +99,7 @@ export default function SolicitudesPage() {
 
                   {/* Stepper */}
                   <StepperProgress 
-                    stepStates={
-                      solicitud.etapa === 'INGRESO' ? ['current', 'pending', 'pending'] :
-                      solicitud.etapa === 'EXAMEN' ? ['completed', 'current', 'pending'] :
-                      ['completed', 'completed', 'current']
-                    }
+                    stepStates={getStepStates(solicitud.estado)}
                     urgency={solicitud.urgency as "danger" | "warning" | "info" | "success"}
                   />
 

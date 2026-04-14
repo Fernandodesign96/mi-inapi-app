@@ -11,20 +11,37 @@ import CTAButton from "@/components/ui/CTAButton";
 import TopBar from "@/components/ui/TopBar";
 
 /* === Validación RUT chileno === */
+const MOCK_CREDENTIALS = {
+  rut: '12.345.678-9',
+  rutClean: '123456789',   // sin puntos ni guión
+  password: 'miinapi2026',
+}
+
 function validateRUT(rut: string): boolean {
-  const clean = rut.replace(/[.\-]/g, "").trim();
-  if (clean.length < 8 || clean.length > 9) return false;
-  const body = clean.slice(0, -1);
-  const dv = clean.slice(-1).toUpperCase();
-  let sum = 0;
-  let multiplier = 2;
+  // Limpiar: remover puntos, guiones y espacios
+  const clean = rut.replace(/[\.\-\s]/g, '').toUpperCase()
+  if (clean.length < 2) return false
+
+  const body = clean.slice(0, -1)
+  const dv = clean.slice(-1)
+
+  // Verificar que el body sea numérico
+  if (!/^\d+$/.test(body)) return false
+
+  // Algoritmo módulo 11
+  let sum = 0
+  let multiplier = 2
   for (let i = body.length - 1; i >= 0; i--) {
-    sum += parseInt(body[i]) * multiplier;
-    multiplier = multiplier === 7 ? 2 : multiplier + 1;
+    sum += parseInt(body[i]) * multiplier
+    multiplier = multiplier === 7 ? 2 : multiplier + 1
   }
-  const expected = 11 - (sum % 11);
-  const computed = expected === 11 ? "0" : expected === 10 ? "K" : String(expected);
-  return computed === dv;
+  const remainder = 11 - (sum % 11)
+  const expected = remainder === 11 ? '0' : remainder === 10 ? 'K' : String(remainder)
+
+  // Permitir la validación directa si es la cuenta demo
+  if (clean === MOCK_CREDENTIALS.rutClean) return true
+
+  return expected === dv
 }
 
 /* === Formateo automático RUT === */
@@ -41,7 +58,7 @@ const loginSchema = z.object({
   rut: z.string().min(1, "Ingresa tu RUT").refine(validateRUT, {
     message: "RUT inválido. Ej: 12.345.678-9",
   }),
-  password: z.string().min(1, "Ingresa tu contraseña"),
+  password: z.string({ required_error: "Rut o contraseña ingresados incorrectos, vuelve a intentar." }).min(1, "Rut o contraseña ingresados incorrectos, vuelve a intentar."),
 });
 
 type LoginForm = z.infer<typeof loginSchema>;
@@ -53,17 +70,31 @@ export default function LoginPage() {
   const [rutValue, setRutValue] = useState("");
 
   const {
+    register,
     handleSubmit,
     setValue,
+    setError,
     formState: { errors },
   } = useForm<LoginForm>({ resolver: zodResolver(loginSchema) });
 
-  const onSubmit = async () => {
+  const onSubmit = async (data: LoginForm) => {
     setIsLoading(true);
     await new Promise((r) => setTimeout(r, 800));
     
+    const cleanRut = data.rut.replace(/[\.\-\s]/g, '').toUpperCase()
+    const isDemo = (
+      cleanRut === MOCK_CREDENTIALS.rutClean &&
+      data.password === MOCK_CREDENTIALS.password
+    )
+
+    if (!isDemo) {
+      setError("password", { message: "Rut o contraseña ingresados incorrectos, vuelve a intentar." });
+      setIsLoading(false);
+      return;
+    }
+
     // Set mock auth cookie
-    document.cookie = "miinapi-auth=true; path=/; max-age=3600; samesite=lax";
+    document.cookie = 'miinapi-auth=mock-session; path=/; max-age=3600';
     
     setIsLoading(false);
     router.push("/inicio");
@@ -117,15 +148,17 @@ export default function LoginPage() {
             onChange={handleRUTChange}
             error={errors.rut?.message}
             autoComplete="username"
+            hint="Ingresa tu RUT con puntos y guión"
           />
 
           <div className="space-y-[16px]">
             <FormInput
               id="password"
               label="CONTRASEÑA"
-              placeholder="••••••••"
+              placeholder="Ingresa tu contraseña"
               type="password"
               icon={<Lock size={20} />}
+              {...register("password")}
               error={errors.password?.message}
               autoComplete="current-password"
             />
@@ -166,6 +199,10 @@ export default function LoginPage() {
               isLoading={isCULoading}
               icon={<Fingerprint size={18} className="text-[#7C3AED]" />}
             />
+
+            <p className="text-center text-xs text-[#9CA3AF] mt-2">
+              Demo: RUT <span className="font-mono">12.345.678-9</span> · Contraseña <span className="font-mono">miinapi2026</span>
+            </p>
           </div>
         </form>
 
