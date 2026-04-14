@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import TopBar from "@/components/ui/TopBar";
 import CollapsibleCard from "@/components/ui/CollapsibleCard";
 import StatusBadge from "@/components/ui/StatusBadge";
@@ -30,6 +31,7 @@ const getBadgeLabel = (urgency: string, detalleEtapa?: string) => {
 };
 
 export default function NotificacionesPage() {
+  const router = useRouter();
   const { userState } = useAppStore();
   const [activeFilter, setActiveFilter] = useState<FilterType>("todas");
   const [expandedId, setExpandedId] = useState<string | null>(userState === 'active-no-urgent' ? 'notif-neo' : 'n-eco');
@@ -43,10 +45,7 @@ export default function NotificacionesPage() {
   const baseNotifs = userState === 'active-no-urgent' ? mockNotificacionesNoUrgent : mockNotificacionesUrgent;
 
   const filteredNotifs = baseNotifs.filter((n) => {
-    // 1. State-based filtering
     if (userState === 'new') return false;
-
-    // 2. Category filtering
     if (activeFilter === "todas") return true;
     if (activeFilter === "urgente") return n.urgency === "danger" || n.urgency === "warning";
     if (activeFilter === "info") return n.urgency === "info";
@@ -98,49 +97,59 @@ export default function NotificacionesPage() {
                 ] : [];
 
                 return (
-                  <CollapsibleCard
-                    key={notif.id}
-                    variant={notif.urgency as UrgencyType}
-                    isOpen={isOpen}
-                    onToggle={() => setExpandedId(isOpen ? null : notif.id)}
-                    header={
-                      <div className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <StatusBadge
-                            variant={notif.urgency as UrgencyType}
-                            label={getBadgeLabel(notif.urgency, notif.detalle?.etapa)}
-                            showIcon={notif.urgency === "danger" || notif.urgency === "warning"}
-                          />
-                          <span className="text-timestamp">{notif.tiempo}</span>
+                  <div key={notif.id}>
+                    <CollapsibleCard
+                      variant={notif.urgency as UrgencyType}
+                      isOpen={isOpen}
+                      onToggle={() => setExpandedId(isOpen ? null : notif.id)}
+                      header={
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-center">
+                            <StatusBadge
+                              variant={notif.urgency as UrgencyType}
+                              label={getBadgeLabel(notif.urgency, notif.detalle?.etapa)}
+                              showIcon={notif.urgency === "danger" || notif.urgency === "warning"}
+                            />
+                            <span className="text-timestamp">{notif.tiempo}</span>
+                          </div>
+                          <h3 className="text-h3 text-[#111827] leading-tight">
+                            {notif.titulo}
+                          </h3>
                         </div>
-                        <h3 className="text-h3 text-[#111827] leading-tight">
-                          {notif.titulo}
-                        </h3>
-                      </div>
-                    }
-                    preview={notif.cuerpo}
-                    content={
-                      <div className="space-y-4">
-                        <p className="text-body-sm text-[#4B5563] leading-relaxed">
-                          {notif.cuerpo}
-                        </p>
-                        
-                        {tableRows.length > 0 && (
-                          <NotificationTable rows={tableRows} />
-                        )}
+                      }
+                      preview={notif.cuerpo}
+                      content={
+                        <div className="space-y-4">
+                          <p className="text-body-sm text-[#4B5563] leading-relaxed">
+                            {notif.cuerpo}
+                          </p>
 
-                        {notif.cta && (
-                          <CTAButton
-                            label={notif.cta}
-                            variant={notif.urgency === "danger" ? "danger" : 
-                                     notif.urgency === "warning" ? "warning" : "primary"}
-                            fullWidth
-                            size="md"
-                          />
-                        )}
-                      </div>
-                    }
-                  />
+                          {tableRows.length > 0 && (
+                            <NotificationTable rows={tableRows} />
+                          )}
+
+                          {notif.cta && (
+                            <CTAButton
+                              label={notif.cta}
+                              variant={notif.urgency === "danger" ? "danger" :
+                                       notif.urgency === "warning" ? "warning" : "primary"}
+                              fullWidth
+                              size="md"
+                            />
+                          )}
+
+                          {notif.solicitudId && (
+                            <button
+                              onClick={() => router.push(`/solicitudes/${notif.solicitudId}`)}
+                              className="w-full text-center text-[12px] font-bold text-[#1A56DB] py-2 border-t border-[#E5E7EB] mt-1 hover:bg-[#EFF6FF] rounded-b-xl transition-colors"
+                            >
+                              Ver detalle completo de la solicitud →
+                            </button>
+                          )}
+                        </div>
+                      }
+                    />
+                  </div>
                 );
               })}
 

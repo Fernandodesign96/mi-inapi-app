@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Search, Clock, ChevronRight } from "lucide-react";
 import SemaphoreCard from "@/components/ui/SemaphoreCard";
 import StepperProgress, { getStepStates } from "@/components/ui/StepperProgress";
@@ -32,6 +33,7 @@ const getBadgeLabel = (urgency: string, etapa: string, notificacionEtapa?: strin
 };
 
 export default function SolicitudesPage() {
+  const router = useRouter();
   const { userState } = useAppStore();
   const [activeFilter, setActiveFilter] = useState<FilterType>("todas");
 
@@ -78,7 +80,7 @@ export default function SolicitudesPage() {
               <SemaphoreCard 
                 key={solicitud.id} 
                 urgency={solicitud.urgency as UrgencyType}
-                onClick={() => {}}
+                onClick={() => router.push(`/solicitudes/${solicitud.id}`)}
               >
                 <div className="space-y-4">
                   {/* Header Row */}

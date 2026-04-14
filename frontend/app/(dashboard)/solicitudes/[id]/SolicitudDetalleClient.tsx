@@ -1,183 +1,211 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { 
-  ArrowLeft, 
-  Clock, 
-  FileText, 
-  Calendar, 
-  User, 
-  MapPin,
-  ChevronRight,
-  Download,
+import {
+  ArrowLeft,
+  FileText,
   AlertCircle,
-  ExternalLink
+  CheckCircle2,
+  Info,
+  Download,
+  Tag,
+  User,
+  Users,
+  Hash,
+  Layers,
+  DollarSign
 } from "lucide-react";
 import SemaphoreCard from "@/components/ui/SemaphoreCard";
-import StepperProgress from "@/components/ui/StepperProgress";
+import StepperProgress, { getStepStates } from "@/components/ui/StepperProgress";
 import StatusBadge from "@/components/ui/StatusBadge";
 import CTAButton from "@/components/ui/CTAButton";
 import { Solicitud } from "@/lib/mockData";
 import { clsx } from "clsx";
 
+const getBadgeLabel = (urgency: string, etapa?: string) => {
+  if (urgency === 'danger') return 'Acción urgente';
+  if (urgency === 'warning') {
+    return etapa?.toLowerCase().includes('fondo') ? 'Corrección de Fondo' : 'Corrección de Forma';
+  }
+  if (urgency === 'info') return 'En revisión';
+  if (urgency === 'success') return 'Finalizada';
+  return 'En revisión';
+};
+
+const getUrgencyIcon = (urgency: string) => {
+  if (urgency === 'danger') return <AlertCircle size={18} className="text-[#DC2626]" />;
+  if (urgency === 'warning') return <AlertCircle size={18} className="text-[#D97706]" />;
+  if (urgency === 'success') return <CheckCircle2 size={18} className="text-[#059669]" />;
+  return <Info size={18} className="text-[#2563EB]" />;
+};
+
 export default function SolicitudDetalleClient({ solicitud }: { solicitud: Solicitud }) {
   const router = useRouter();
 
-  const timeline = [
-    { date: "15 ENE 2024", title: "Ingreso de Solicitud", desc: "Se ha recibido la solicitud exitosamente.", status: "completed" },
-    { date: "02 FEB 2024", title: "Examen de Forma", desc: "La solicitud cumple con los requisitos formales.", status: "completed" },
-    { date: "10 MAR 2024", title: "Publicación Diario Oficial", desc: "Publicado en el cuerpo de Marcas.", status: "completed" },
-    { date: "Presente", title: "Examen de Fondo", desc: "Revisión técnica de la solicitud.", status: "current" },
-    { date: "Pendiente", title: "Resolución Final", desc: "Emisión de título o rechazo.", status: "pending" },
-  ];
-
   return (
     <div className="flex flex-col min-h-screen bg-[#F9FAFB]">
+      {/* TopBar */}
       <header className="h-[56px] border-b border-[#E5E7EB] flex items-center px-4 sticky top-0 bg-white z-40">
         <button onClick={() => router.back()} className="p-2 -ml-2 text-[#111827]">
           <ArrowLeft size={24} />
         </button>
-        <span className="text-[17px] font-bold text-[#111827] ml-2 truncate">Detalle de Solicitud</span>
+        <div className="ml-2 flex-1 min-w-0">
+          <span className="text-[17px] font-bold text-[#111827] truncate block">{solicitud.nombre}</span>
+          <span className="text-[11px] font-bold text-[#9CA3AF] uppercase tracking-wider">#{solicitud.id}</span>
+        </div>
       </header>
 
-      <div className="flex-1 overflow-y-auto pb-24 screen-enter">
+      <div className="flex-1 overflow-y-auto pb-10 screen-enter">
         <div className="px-6 py-6 space-y-6">
-          {/* Header Info */}
-          <div className="space-y-4">
-            <div className="flex justify-between items-start">
-              <div className="space-y-1">
-                <StatusBadge 
-                  variant={solicitud.urgency as "danger" | "warning" | "info" | "success"} 
-                  label={solicitud.estado.replace('_', ' ')} 
-                />
-                <h1 className="text-[24px] font-extrabold text-[#111827] leading-tight">
-                  {solicitud.nombre}
-                </h1>
-              </div>
-              <div className="w-12 h-12 rounded-xl bg-white border border-[#E5E7EB] flex items-center justify-center text-[#1A56DB] shadow-sm">
-                <FileText size={24} />
-              </div>
-            </div>
 
-            <StepperProgress 
-              stepStates={
-                solicitud.etapa === 'INGRESO' ? ['current', 'pending', 'pending'] :
-                solicitud.etapa === 'EXAMEN' ? ['completed', 'current', 'pending'] :
-                ['completed', 'completed', 'current']
-              }
-              urgency={solicitud.urgency as "danger" | "warning" | "info" | "success"}
-            />
-          </div>
+          {/* ── SECCIÓN 1: ESTADO ACTUAL ── */}
+          <section className="space-y-3">
+            <p className="text-label text-[#9CA3AF]">ESTADO ACTUAL</p>
 
-          {/* Contextual Link to Diario Oficial */}
-          {timeline.find(t => t.title === "Publicación Diario Oficial" && t.status === "completed") && (
-            <div 
-              onClick={() => router.push('/diario-oficial')}
-              className="bg-[#FFF7ED] p-4 rounded-xl border border-[#FED7AA] flex items-center justify-between cursor-pointer active:scale-[0.98] transition-all shadow-sm group"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#EA580C] text-white flex items-center justify-center shrink-0">
-                  <ExternalLink size={20} />
-                </div>
-                <div className="space-y-0.5">
-                  <p className="text-[14px] font-bold text-[#9A3412]">Publicación Oficial</p>
-                  <p className="text-[12px] text-[#C2410C]">Ver publicación en el Diario Oficial</p>
-                </div>
-              </div>
-              <ChevronRight size={20} className="text-[#EA580C] group-hover:translate-x-1 transition-transform" />
-            </div>
-          )}
-
-          {/* Urgent Action Card */}
-          {solicitud.estado === "ACCION_REQUERIDA" && (
-            <SemaphoreCard urgency="danger">
-              <div className="flex gap-3">
-                <AlertCircle size={20} className="text-[#DC2626] shrink-0" />
-                <div className="space-y-3 flex-1">
-                  <div className="space-y-1">
-                    <h4 className="text-[14px] font-bold text-[#111827]">Acción Requerida</h4>
-                    <p className="text-body-xs text-[#4B5563]">
-                      {solicitud.accion || "Se requiere cargar documentación pendiente para continuar."}
-                    </p>
+            <SemaphoreCard urgency={solicitud.urgency as "danger" | "warning" | "info" | "success"}>
+              <div className="space-y-4">
+                <div className="flex justify-between items-start gap-3">
+                  <div className="space-y-1.5">
+                    <div className="flex items-center gap-2">
+                      {getUrgencyIcon(solicitud.urgency)}
+                      <StatusBadge
+                        variant={solicitud.urgency as "danger" | "warning" | "info" | "success"}
+                        label={getBadgeLabel(solicitud.urgency, solicitud.etapaLabel)}
+                        showIcon={solicitud.urgency === "danger" || solicitud.urgency === "warning"}
+                      />
+                    </div>
+                    <h2 className="text-[18px] font-extrabold text-[#111827] leading-tight">
+                      {solicitud.nombre}
+                    </h2>
+                    <p className="text-body-xs text-[#6B7280]">{solicitud.etapaLabel ?? solicitud.etapa}</p>
                   </div>
-                  <CTAButton 
-                    label="Gestionar en Notificaciones" 
-                    variant="danger" 
-                    fullWidth 
-                    size="sm"
-                    onClick={() => router.push('/notificaciones')}
-                  />
+                  <div className="w-12 h-12 rounded-xl bg-white border border-[#E5E7EB] flex items-center justify-center text-[#1A56DB] shadow-sm shrink-0">
+                    <FileText size={22} />
+                  </div>
                 </div>
+
+                <StepperProgress
+                  stepStates={getStepStates(solicitud.estado)}
+                  urgency={solicitud.urgency as "danger" | "warning" | "info" | "success"}
+                />
               </div>
             </SemaphoreCard>
-          )}
+          </section>
 
-          {/* Main Details Grid */}
-          <div className="grid grid-cols-2 gap-4">
-            <DetailItem icon={Clock} label="N° SOLICITUD" value={solicitud.id} isMono />
-            <DetailItem icon={Calendar} label="FECHA INGRESO" value="15 ENE 2024" />
-            <DetailItem icon={User} label="REPRESENTANTE" value="Juan Díaz" />
-            <DetailItem icon={MapPin} label="TIPO REGISTRO" value={solicitud.tipo === 'marca' ? 'Marca Comercial' : 'Patente Inv.'} />
-          </div>
-
-          {/* Timeline */}
-          <section className="space-y-4 pt-4">
-            <p className="text-label text-[#9CA3AF]">HISTORIAL DEL TRÁMITE</p>
-            <div className="relative pl-6 space-y-6 before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[2px] before:bg-[#E5E7EB]">
-              {timeline.map((item, idx) => (
-                <div key={idx} className="relative">
-                  <div className={clsx(
-                    "absolute -left-[21px] top-1.5 w-4 h-4 rounded-full border-2 border-white ring-4",
-                    item.status === 'completed' ? "bg-[#059669] ring-[#D1FAE5]" :
-                    item.status === 'current' ? "bg-[#2563EB] ring-[#DBEAFE] animate-pulse" : "bg-[#D1D5DB] ring-[#F3F4F6]"
-                  )} />
-                  <div className="space-y-0.5">
-                    <div className="flex justify-between items-center">
-                      <span className="text-[10px] font-bold text-[#9CA3AF]">{item.date}</span>
-                      {item.status === 'completed' && <span className="text-[10px] font-bold text-[#059669]">OK</span>}
-                    </div>
-                    <h4 className={clsx(
-                      "text-[14px] font-bold",
-                      item.status === 'pending' ? "text-[#9CA3AF]" : "text-[#111827]"
-                    )}>{item.title}</h4>
-                    <p className="text-body-xs text-[#6B7280]">{item.desc}</p>
-                  </div>
+          {/* ── SECCIÓN 2: NOTIFICACIÓN OFICIAL ── */}
+          <section className="space-y-3">
+            <p className="text-label text-[#9CA3AF]">NOTIFICACIÓN INAPI</p>
+            <div className="bg-white rounded-2xl border border-[#E5E7EB] shadow-sm overflow-hidden">
+              {/* Encabezado del bloque de notificación */}
+              <div className="px-4 py-3 bg-[#F8FAFC] border-b border-[#E5E7EB] flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg bg-[#DBEAFE] flex items-center justify-center text-[#1A56DB] shrink-0">
+                  <FileText size={14} />
                 </div>
-              ))}
+                <div>
+                  <p className="text-[12px] font-bold text-[#1A56DB]">Notificación Oficial INAPI</p>
+                  <p className="text-[10px] text-[#9CA3AF]">Información equivalente al correo oficial enviado al solicitante</p>
+                </div>
+              </div>
+
+              {/* Filas de datos */}
+              <div className="divide-y divide-[#F3F4F6]">
+                <InfoRow icon={Tag} label="Categoría" value="Marca" />
+                <InfoRow icon={Hash} label="Nombre (Denominación)" value={solicitud.nombre} />
+                <InfoRow icon={Layers} label="Clasificación de Niza" value={solicitud.nizaClass ? `Clase ${solicitud.nizaClass}` : "—"} />
+                <InfoRow icon={User} label="Solicitante" value={solicitud.solicitante ?? "Juan Díaz"} />
+                <InfoRow icon={Users} label="Representante" value={solicitud.representante ?? "Juan Díaz"} />
+                <InfoRow icon={DollarSign} label="Tasa (UTM)" value={solicitud.tasa ?? "—"} />
+                <InfoRow
+                  icon={Info}
+                  label="Etapa de la solicitud"
+                  value={solicitud.etapaLabel ?? solicitud.etapa}
+                  highlight
+                />
+              </div>
             </div>
           </section>
 
-          {/* Documents Section */}
-          <section className="space-y-3 pt-4">
+          {/* ── SECCIÓN 3: ACCIÓN REQUERIDA ── */}
+          {(solicitud.estado === "ACCION_REQUERIDA" || solicitud.notificacion) && (
+            <section className="space-y-3">
+              <p className="text-label text-[#9CA3AF]">ACCIÓN REQUERIDA</p>
+              <SemaphoreCard urgency={solicitud.urgency === "danger" ? "danger" : "warning"}>
+                <div className="flex gap-3">
+                  <AlertCircle size={20} className={clsx(
+                    "shrink-0 mt-0.5",
+                    solicitud.urgency === "danger" ? "text-[#DC2626]" : "text-[#D97706]"
+                  )} />
+                  <div className="space-y-4 flex-1">
+                    <div className="space-y-1">
+                      <h4 className="text-[14px] font-bold text-[#111827]">{solicitud.accion ?? "Acción pendiente"}</h4>
+                      {solicitud.notificacion && (
+                        <div className="space-y-1.5 pt-2 text-body-xs text-[#6B7280]">
+                          <p><span className="font-semibold text-[#374151]">Requerimiento:</span> {solicitud.notificacion.requerimiento}</p>
+                          <p><span className="font-semibold text-[#374151]">Plazo límite:</span> <span className={clsx("font-bold", solicitud.urgency === "danger" ? "text-[#DC2626]" : "text-[#D97706]")}>{solicitud.notificacion.plazo}</span></p>
+                          <p><span className="font-semibold text-[#374151]">Contacto:</span> {solicitud.notificacion.contacto}</p>
+                        </div>
+                      )}
+                    </div>
+                    <CTAButton
+                      label="Gestionar en Notificaciones"
+                      variant={solicitud.urgency === "danger" ? "danger" : "warning"}
+                      fullWidth
+                      size="sm"
+                      onClick={() => router.push('/notificaciones')}
+                    />
+                  </div>
+                </div>
+              </SemaphoreCard>
+            </section>
+          )}
+
+          {/* ── DOCUMENTOS GENERADOS ── */}
+          <section className="space-y-3 pt-2">
             <p className="text-label text-[#9CA3AF]">DOCUMENTOS GENERADOS</p>
-            <div className="bg-white rounded-xl border border-[#E5E7EB] overflow-hidden shadow-sm">
+            <div className="bg-white rounded-2xl border border-[#E5E7EB] overflow-hidden shadow-sm">
               <DocRow title="Formulario Solicitud F-01" date="15 ENE 2024" />
               <DocRow title="Resolución de Aceptación" date="02 FEB 2024" />
               <DocRow title="Publicación Diario Oficial" date="10 MAR 2024" isLast />
             </div>
           </section>
+
         </div>
       </div>
     </div>
   );
 }
 
-function DetailItem({ icon: Icon, label, value, isMono }: { icon: React.ElementType, label: string, value: string, isMono?: boolean }) {
+/* ─── Sub-components ─── */
+
+function InfoRow({
+  icon: Icon,
+  label,
+  value,
+  highlight
+}: {
+  icon: React.ElementType;
+  label: string;
+  value: string;
+  highlight?: boolean;
+}) {
   return (
-    <div className="bg-white rounded-xl border border-[#E5E7EB] p-3 shadow-sm">
-      <div className="flex items-center gap-1.5 mb-1">
-        <Icon size={12} className="text-[#9CA3AF]" />
-        <span className="text-[9px] font-bold text-[#9CA3AF] uppercase tracking-wider">{label}</span>
+    <div className={clsx(
+      "flex items-center justify-between px-4 py-3 gap-3",
+      highlight && "bg-[#FFFBEB]"
+    )}>
+      <div className="flex items-center gap-2.5 min-w-0">
+        <Icon size={14} className={clsx("shrink-0", highlight ? "text-[#D97706]" : "text-[#9CA3AF]")} />
+        <span className="text-[12px] font-medium text-[#6B7280] truncate">{label}</span>
       </div>
-      <p className={clsx(
-        "text-[#111827] font-semibold truncate",
-        isMono ? "text-mono text-[13px]" : "text-[14px]"
-      )}>{value}</p>
+      <span className={clsx(
+        "text-[13px] font-bold shrink-0 text-right max-w-[55%] truncate",
+        highlight ? "text-[#92400E]" : "text-[#111827]"
+      )}>{value}</span>
     </div>
   );
 }
 
-function DocRow({ title, date, isLast }: { title: string, date: string, isLast?: boolean }) {
+function DocRow({ title, date, isLast }: { title: string; date: string; isLast?: boolean }) {
   return (
     <div className={clsx(
       "flex items-center justify-between p-4 hover:bg-[#F9FAFB] active:bg-[#F3F4F6] transition-colors",

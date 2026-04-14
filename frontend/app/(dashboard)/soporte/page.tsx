@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Mail, Phone, MessageCircle, Headphones, ExternalLink } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Mail, Phone, MessageCircle, Headphones, ChevronRight, User, ExternalLink } from "lucide-react";
 import TopBar from "@/components/ui/TopBar";
 import CollapsibleCard from "@/components/ui/CollapsibleCard";
 import StatusBadge from "@/components/ui/StatusBadge";
@@ -21,6 +22,17 @@ interface Interaccion {
   consulta: string;
   respuesta: string;
   atendidoPor: string;
+}
+
+interface ChatEjecutivoSesion {
+  id: string;
+  titulo: string;
+  ejecutivo: string;
+  fecha: string;
+  estado: "resuelto" | "pendiente";
+  saludo: string;
+  pregunta: string;
+  respuesta: string;
 }
 
 const mockInteracciones: Interaccion[] = [
@@ -56,9 +68,44 @@ const mockInteracciones: Interaccion[] = [
   }
 ];
 
+const mockChatsEjecutivo: ChatEjecutivoSesion[] = [
+  {
+    id: "ce1",
+    titulo: "¿Cómo presento un poder notarial fuera de plazo?",
+    ejecutivo: "María González",
+    fecha: "12 Oct 2023",
+    estado: "resuelto",
+    saludo: "Buenos días, Juan. Soy María del equipo de Marcas de INAPI. Estoy revisando su consulta y en unos momentos le entrego la información.",
+    pregunta: "¿Cómo presento un poder notarial fuera de plazo? Mi solicitud indica que tenía hasta el 10 de octubre.",
+    respuesta: "Estimado Juan, si el plazo ya venció, debe ingresar un escrito de reposición adjuntando el poder notarial y una justificación de la demora. Esto puede hacerlo directamente en nuestra plataforma en la sección 'Documentos pendientes'. Le recomendamos actuar a la brevedad para no afectar su solicitud."
+  },
+  {
+    id: "ce2",
+    titulo: "Observación de forma en solicitud de marca",
+    ejecutivo: "Sebastián Rojas",
+    fecha: "8 Oct 2023",
+    estado: "resuelto",
+    saludo: "Hola Juan, habla Sebastián, ejecutivo de trámites de INAPI. Vi que tiene una observación de forma pendiente. ¿En qué le puedo ayudar hoy?",
+    pregunta: "Me llegó un aviso de observación de forma pero no entiendo qué debo corregir exactamente.",
+    respuesta: "La observación se refiere a que la descripción de la clase de Niza no es suficientemente específica. Debe ingresar una nueva descripción de los productos o servicios dentro de la Clase 3, indicando de forma detallada los productos que desea registrar (ej: 'cosméticos para el cuidado facial, cremas hidratantes'). Puede enviar la corrección a forma@inapi.cl con el número de solicitud en el asunto."
+  },
+  {
+    id: "ce3",
+    titulo: "Proceso de publicación en Diario Oficial",
+    ejecutivo: "Andrea Pérez",
+    fecha: "5 Oct 2023",
+    estado: "resuelto",
+    saludo: "¡Buenos días! Soy Andrea, parte del equipo de Publicaciones de INAPI. Quedo a disposición para orientarle sobre el proceso de publicación.",
+    pregunta: "¿Cuánto tiempo tarda el proceso de publicación en el Diario Oficial y cómo sé que fue publicado?",
+    respuesta: "Una vez aprobado el examen de forma, el proceso de publicación en el Diario Oficial tarda aproximadamente 10 a 15 días hábiles. Le llegará una notificación a su correo registrado confirmando la publicación, y podrá verla en MiINAPI bajo la sección Solicitudes. A partir de esa publicación se inician los 30 días de período de oposición."
+  }
+];
+
 export default function SoportePage() {
+  const router = useRouter();
   const [activeFilter, setActiveFilter] = useState<FilterType>("todos");
   const [expandedId, setExpandedId] = useState<string | null>("s1");
+  const [expandedFaqId, setExpandedFaqId] = useState<string | null>(null);
 
   const filtered = mockInteracciones.filter(i => activeFilter === 'todos' || i.canal === activeFilter);
 
@@ -81,12 +128,12 @@ export default function SoportePage() {
     <div className="flex flex-col min-h-screen bg-[#F9FAFB]">
       <TopBar variant="section" title="Soporte e Historial" />
 
-      <div className="flex-1 overflow-y-auto pb-6 screen-enter">
+      <div className="flex-1 overflow-y-auto pb-24 screen-enter">
         {/* Header Block */}
         <div className="px-6 pt-6 pb-2">
           <h1 className="text-h1 text-[#111827]">Centro de Ayuda</h1>
           <p className="text-body-sm text-[#4B5563] mt-1">
-            Revisa tus consultas anteriores o inicia una nueva
+            Revisa tus consultas anteriores o contáctate con un ejecutivo
           </p>
         </div>
 
@@ -100,21 +147,43 @@ export default function SoportePage() {
         </div>
 
         <div className="px-6 space-y-6">
-          {/* Immediate Help Card */}
+          {/* Immediate Help Card — con CTAs dentro */}
           <SemaphoreCard urgency="warning">
-            <div className="flex gap-4">
-              <div className="w-10 h-10 rounded-full bg-[#FFFBEB] flex items-center justify-center text-[#D97706] shrink-0">
-                <Headphones size={20} />
+            <div className="space-y-4">
+              <div className="flex gap-4">
+                <div className="w-10 h-10 rounded-full bg-[#FFFBEB] flex items-center justify-center text-[#D97706] shrink-0">
+                  <Headphones size={20} />
+                </div>
+                <div className="space-y-1">
+                  <h4 className="text-[14px] font-bold text-[#111827]">¿Necesitas ayuda inmediata?</h4>
+                  <p className="text-body-xs text-[#4B5563]">
+                    Estamos disponibles de Lun a Vie, 09:00 – 18:00 hrs.
+                  </p>
+                </div>
               </div>
-              <div className="space-y-1">
-                <h4 className="text-[14px] font-bold text-[#111827]">¿Necesitas ayuda inmediata?</h4>
-                <p className="text-body-xs text-[#4B5563]">
-                  Estamos disponibles de Lun a Vie, 09:00 – 18:00 hrs.
-                </p>
+
+              {/* CTAs dentro del card — Layout vertical y redondeo equilibrado */}
+              <div className="flex flex-col gap-3 pt-1">
+                <CTAButton
+                  label="Chatea con un ejecutivo"
+                  variant="primary"
+                  fullWidth
+                  size="md"
+                  icon={<MessageCircle size={18} />}
+                  onClick={() => router.push('/soporte/chat-ejecutivo?nuevo=true')}
+                />
+                <CTAButton
+                  label="Llámanos"
+                  variant="outline"
+                  fullWidth
+                  size="md"
+                  icon={<Phone size={18} />}
+                />
               </div>
             </div>
           </SemaphoreCard>
 
+          {/* INTERACCIONES RECIENTES */}
           <div className="space-y-4">
             <p className="text-label text-[#9CA3AF]">INTERACCIONES RECIENTES</p>
             {filtered.map((item) => (
@@ -130,9 +199,9 @@ export default function SoportePage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-center">
-                        <StatusBadge 
-                          variant={item.estado === 'resuelto' ? 'success' : 'warning'} 
-                          label={item.estado} 
+                        <StatusBadge
+                          variant={item.estado === 'resuelto' ? 'success' : 'warning'}
+                          label={item.estado}
                         />
                         <span className="text-timestamp">{item.fecha}</span>
                       </div>
@@ -166,51 +235,81 @@ export default function SoportePage() {
               />
             ))}
           </div>
-        </div>
-      </div>
 
-      {/* Floating Action Area */}
-      <div className="p-6 pb-24 border-t border-[#E5E7EB] bg-white space-y-4">
-        <div className="grid grid-cols-2 gap-3">
-          <CTAButton 
-            label="Llámanos" 
-            variant="outline" 
-            fullWidth 
-            size="md"
-            icon={<Phone size={18} />} 
-          />
-          <CTAButton 
-            label="Nuevo Chat" 
-            variant="primary" 
-            fullWidth 
-            size="md"
-            icon={<MessageCircle size={18} />} 
-          />
+          {/* PREGUNTAS FRECUENTES — chats con ejecutivos */}
+          <div className="space-y-4 pb-4">
+            <p className="text-label text-[#9CA3AF]">PREGUNTAS FRECUENTES</p>
+            <p className="text-body-xs text-[#6B7280] -mt-2">Chats recientes con ejecutivos de INAPI</p>
+            {mockChatsEjecutivo.map((chat) => (
+              <CollapsibleCard
+                key={chat.id}
+                variant={chat.estado === 'resuelto' ? 'success' : 'warning'}
+                isOpen={expandedFaqId === chat.id}
+                onToggle={() => setExpandedFaqId(expandedFaqId === chat.id ? null : chat.id)}
+                header={
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-[#EFF6FF] flex items-center justify-center text-[#1A56DB] shrink-0">
+                      <User size={18} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between items-center">
+                        <StatusBadge
+                          variant={chat.estado === 'resuelto' ? 'success' : 'warning'}
+                          label={chat.estado}
+                        />
+                        <span className="text-timestamp">{chat.fecha}</span>
+                      </div>
+                      <h4 className="text-[14px] font-bold text-[#111827] mt-1 pr-4">{chat.titulo}</h4>
+                    </div>
+                  </div>
+                }
+                preview={chat.pregunta}
+                content={
+                  <div className="space-y-3">
+                    <p className="text-body-xs text-[#9CA3AF]">
+                      Atendido por: <span className="font-semibold text-[#4B5563]">{chat.ejecutivo}</span>
+                    </p>
+                    <button
+                      onClick={() => router.push(`/soporte/chat-ejecutivo?id=${chat.id}`)}
+                      className="w-full flex items-center justify-between bg-[#EFF6FF] border border-[#BFDBFE] rounded-xl px-4 py-3 text-[13px] font-bold text-[#1A56DB] active:scale-[0.98] transition-all"
+                    >
+                      <span>Ver conversación completa</span>
+                      <ChevronRight size={16} />
+                    </button>
+                  </div>
+                }
+              />
+            ))}
+          </div>
         </div>
-        
-        <div className="flex items-center justify-center gap-6 py-2">
-          <a 
-            href="https://www.inapi.cl/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[13px] font-semibold text-[#1A56DB] flex items-center gap-1.5 hover:underline"
-          >
-            Página INAPI <ExternalLink size={14} />
-          </a>
-          <div className="w-px h-4 bg-[#E5E7EB]" />
-          <a 
-            href="https://www.wipo.int/portal/es/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[13px] font-semibold text-[#1A56DB] flex items-center gap-1.5 hover:underline"
-          >
-            Ir a OMPI <ExternalLink size={14} />
-          </a>
+
+        {/* Footer Institucional — Restaurado */}
+        <div className="p-6 pb-28 border-t border-[#E5E7EB] bg-white space-y-6">
+          <div className="flex items-center justify-center gap-6">
+            <a 
+              href="https://www.inapi.cl/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[13px] font-semibold text-[#1A56DB] flex items-center gap-1.5 hover:underline"
+            >
+              Página INAPI <ExternalLink size={14} />
+            </a>
+            <div className="w-px h-4 bg-[#E5E7EB]" />
+            <a 
+              href="https://www.wipo.int/portal/es/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[13px] font-semibold text-[#1A56DB] flex items-center gap-1.5 hover:underline"
+            >
+              Ir a OMPI <ExternalLink size={14} />
+            </a>
+          </div>
+          
+          <p className="text-center text-[11px] text-[#9CA3AF] leading-relaxed">
+            Mostrando historial de los últimos 6 meses · <br />
+            <span className="font-bold underline cursor-pointer">Ver historial completo</span>
+          </p>
         </div>
-        
-        <p className="text-center text-[11px] text-[#9CA3AF]">
-          Mostrando historial de los últimos 6 meses · <span className="font-bold underline cursor-pointer">Ver historial completo</span>
-        </p>
       </div>
     </div>
   );
