@@ -32,6 +32,12 @@ export interface Solicitud {
   accion: string | null;
   estimacion: string;
   diasRestantes?: number; // Propiedad nueva de urgencia estricta para el Stepper
+  // Campos para pantalla de detalle unificada (info de notificación oficial)
+  nizaClass?: string;
+  solicitante?: string;
+  representante?: string;
+  tasa?: string;
+  etapaLabel?: string;
   notificacion?: {
     etapa: string;
     requerimiento: string;
@@ -61,7 +67,12 @@ export const mockTramitesNoUrgent: Solicitud[] = [
     urgency: "info",
     accion: null,
     estimacion: "6 meses restantes",
-    diasRestantes: 14
+    diasRestantes: 14,
+    nizaClass: "35",
+    solicitante: "Juan Díaz",
+    representante: "Juan Díaz",
+    tasa: "3 UTM",
+    etapaLabel: "Publicación en Diario Oficial"
   }
 ];
 
@@ -93,12 +104,17 @@ export const mockTramitesUrgent: Solicitud[] = [
     id: "trm-001",
     nombre: "Eco-Tech Solutions",
     tipo: "marca",
-    estado: "ACCION_REQUERIDA",  // Presentación -> Documento faltante
+    estado: "ACCION_REQUERIDA",
     etapa: "EXAMEN",
     urgency: "danger",
     accion: "Adjuntar documento de Poder notariado",
     estimacion: "Faltan documentos",
-    diasRestantes: 5, // <= 7 se tiñe rojo en el stepper
+    diasRestantes: 5,
+    nizaClass: "9",
+    solicitante: "Juan Díaz",
+    representante: "Juan Díaz",
+    tasa: "2 UTM",
+    etapaLabel: "Observación de Forma",
     notificacion: { 
       etapa: "Observación de Forma", 
       requerimiento: "Adjuntar Poder Notariado", 
@@ -115,28 +131,43 @@ export const mockTramitesUrgent: Solicitud[] = [
     urgency: "warning",
     accion: "Corregir descripción de clase de productos",
     estimacion: "2 semanas restantes",
-    diasRestantes: 14 // >= 8 se tiñe naranja/warning en el stepper
+    diasRestantes: 14,
+    nizaClass: "5",
+    solicitante: "Juan Díaz",
+    representante: "Juan Díaz",
+    tasa: "2 UTM",
+    etapaLabel: "Corrección de Fondo"
   },
   {
     id: "trm-003",
     nombre: "Aura Cosmetics",
     tipo: "marca",
-    estado: "EN_REVISION",  // Resolución de fondo
+    estado: "EN_REVISION",
     etapa: "RESOLUCION",
     urgency: "info",
     accion: null,
-    estimacion: "8 meses restantes"
+    estimacion: "8 meses restantes",
+    nizaClass: "3",
+    solicitante: "Juan Díaz",
+    representante: "Juan Díaz",
+    tasa: "3 UTM",
+    etapaLabel: "Examen de Fondo"
   },
   {
     id: "trm-004",
     nombre: "NeoGraphix Design",
     tipo: "marca",
-    estado: "PUBLICACION", // Pago en DO requerido
+    estado: "PUBLICACION",
     etapa: "EXAMEN",
     urgency: "danger",
     accion: "Pagar publicación",
     estimacion: "Pagar Diario Oficial",
-    diasRestantes: 2 // <= 7 se tiñe rojo en el stepper
+    diasRestantes: 2,
+    nizaClass: "35",
+    solicitante: "Juan Díaz",
+    representante: "Juan Díaz",
+    tasa: "3 UTM",
+    etapaLabel: "Publicación en Diario Oficial"
   },
   {
     id: "trm-005",
@@ -147,6 +178,11 @@ export const mockTramitesUrgent: Solicitud[] = [
     urgency: "success",
     accion: null,
     estimacion: "Registrada",
+    nizaClass: "43",
+    solicitante: "Juan Díaz",
+    representante: "Juan Díaz",
+    tasa: "3 UTM",
+    etapaLabel: "Resolución Final · Marca Registrada"
   }
 ];
 
