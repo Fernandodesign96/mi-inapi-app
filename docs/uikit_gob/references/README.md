@@ -24,6 +24,7 @@ Capturas PNG exportadas desde el kit (o Figma), versionadas en el repo y enlazad
 | Grilla — diagramas 4K / desktop / tablet / mobile | `10.PNG` | `grilla-diagramas.png` |
 | Token / espaciado | `11.PNG` | `token-espaciado.png` |
 | **Botón ClaveÚnica — estados interactivos** | `claveunica-button-states.PNG` | `claveunica-button-states.png` |
+| **Logo institucional INAPI** | `inapi_logo.jpg` | `inapi-logo.jpg` (copia en `frontend/public/images/`) |
 
 Los archivos `1.PNG`–`11.PNG` pueden renombrarse a kebab-case en una iteración futura; mantener enlaces actualizados en el design system.
 
