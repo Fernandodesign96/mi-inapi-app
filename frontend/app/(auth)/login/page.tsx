@@ -174,7 +174,7 @@ export default function LoginPage() {
             <div className="flex justify-end pr-1">
               <button
                 type="button"
-                className="text-body-sm text-link hover:underline"
+                className="text-body-sm text-link hover:underline focus-gob rounded-sm"
               >
                 ¿Olvidaste tu contraseña?
               </button>
@@ -214,7 +214,7 @@ export default function LoginPage() {
 
         <p className="text-center text-body-sm text-muted-secondary mt-4">
           ¿No tienes una cuenta?{" "}
-          <button className="text-link underline font-medium">
+          <button className="text-link underline font-medium focus-gob rounded-sm">
             Regístrate ahora
           </button>
         </p>

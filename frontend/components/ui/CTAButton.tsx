@@ -40,7 +40,7 @@ const variantClasses: Record<ButtonVariant, string> = {
 };
 
 const sizeClasses: Record<string, string> = {
-  sm: "px-4 py-2 text-body-sm min-h-[36px]",
+  sm: "px-4 py-2 text-body-sm min-h-[44px]",
   md: "px-6 py-3 text-btn min-h-[48px]",
   lg: "px-7 py-3.5 text-btn min-h-[52px]",
 };
@@ -68,7 +68,7 @@ export default function CTAButton({
       disabled={disabled}
       className={cn(
         "font-sans font-semibold inline-flex items-center justify-center gap-2 transition-all duration-150",
-        "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-focus active:scale-[0.98]",
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-focus focus-visible:ring-offset-background active:scale-[0.98]",
         !className?.includes("rounded-") && "rounded-md",
         variantClasses[variant],
         sizeClasses[size],

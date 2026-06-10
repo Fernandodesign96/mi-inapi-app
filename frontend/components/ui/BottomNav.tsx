@@ -72,7 +72,8 @@ export default function BottomNav() {
               onClick={() => handleNavigate(item.path)}
               aria-current={isActive ? "page" : undefined}
               className={clsx(
-                "flex flex-col items-center justify-center flex-1 h-full min-w-[48px] outline-none transition-colors duration-150",
+                "flex flex-col items-center justify-center flex-1 h-full min-w-[48px] min-h-[44px] outline-none transition-colors duration-150",
+                "focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-inset",
                 isActive ? "text-primary" : "text-muted"
               )}
             >

@@ -172,7 +172,7 @@ export default function ChatIAPage() {
               placeholder="Pregunta sobre plazos, leyes o estados..."
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
-              className="w-full bg-surface-elevated h-[52px] rounded-full pl-6 pr-14 text-body-sm font-sans outline-none focus:ring-2 focus:ring-primary border border-transparent transition-all"
+              className="w-full bg-surface-elevated h-[52px] rounded-full pl-6 pr-14 text-body-sm font-sans outline-none input-gob border border-transparent transition-all"
             />
             <button className="absolute right-1 top-1 w-[44px] h-[44px] bg-primary text-white rounded-full flex items-center justify-center active:scale-90 transition-transform shadow-md">
               <Send size={18} />

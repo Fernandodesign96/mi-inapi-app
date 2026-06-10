@@ -58,7 +58,7 @@ export default function CollapsibleCard({
         aria-expanded={isOpen}
         className={cn(
           "w-full text-left p-4 outline-none",
-          "hover:bg-white/50 transition-colors",
+          "hover:bg-surface/50 transition-colors min-h-[44px]",
           "focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-inset"
         )}
       >
@@ -66,7 +66,7 @@ export default function CollapsibleCard({
           <div className="flex-1 min-w-0">{header}</div>
           <div
             className={cn(
-              "mt-1 w-6 h-6 flex items-center justify-center rounded-full bg-black/5 text-muted transition-transform duration-250",
+              "mt-1 w-6 h-6 flex items-center justify-center rounded-full bg-foreground/5 text-muted transition-transform duration-250",
               isOpen && "rotate-180"
             )}
           >

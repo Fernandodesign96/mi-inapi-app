@@ -42,7 +42,7 @@ export default function ChatIAFab({ onClick, className, hasUnread = true }: Chat
         onClick={onClick}
         className={clsx(
           "w-[52px] h-[52px] bg-accent text-white rounded-full flex items-center justify-center transition-all shadow-fab",
-          "hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2"
+          "hover:scale-105 active:scale-95 motion-reduce:hover:scale-100 motion-reduce:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         )}
         aria-label="Abrir Chat IA"
       >

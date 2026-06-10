@@ -60,7 +60,7 @@ export default function DiarioOficialPage() {
               <input
                 type="text"
                 placeholder="Nombre de marca, N° solicitud..."
-                className="w-full h-[52px] bg-surface border border-border rounded-lg pl-11 pr-4 text-body-sm font-sans shadow-sm focus:ring-2 focus:ring-primary transition-all outline-none"
+                className="w-full h-[52px] bg-surface border border-border rounded-lg pl-11 pr-4 text-body-sm font-sans shadow-sm input-gob transition-all outline-none"
               />
             </div>
           </section>

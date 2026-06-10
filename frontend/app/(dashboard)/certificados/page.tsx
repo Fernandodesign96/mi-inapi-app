@@ -84,7 +84,7 @@ export default function CertificadosPage() {
               placeholder="Buscar por nombre o registro..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-[48px] bg-surface border border-border rounded-md pl-10 pr-4 text-body-sm font-sans focus:border-primary focus:ring-2 focus:ring-primary/15 transition-all outline-none shadow-sm"
+              className="w-full h-[48px] bg-surface border border-border rounded-md pl-10 pr-4 text-body-sm font-sans input-gob transition-all outline-none shadow-sm"
             />
           </div>
           <FilterPills

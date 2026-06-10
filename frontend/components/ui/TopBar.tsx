@@ -43,7 +43,7 @@ export default function TopBar({
         {variant === "section" ? (
           <button
             onClick={handleBack}
-                        className="w-11 h-11 -ml-2 flex items-center justify-center text-foreground active:opacity-60 transition-opacity focus-visible:ring-2 focus-visible:ring-focus rounded-sm"
+                        className="w-11 h-11 -ml-2 flex items-center justify-center text-foreground active:opacity-60 transition-opacity focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm touch-target"
             aria-label="Volver"
           >
             <ChevronLeft size={24} strokeWidth={2.5} />
@@ -86,7 +86,7 @@ export default function TopBar({
             {showNotifications && (
               <Link
                 href="/notificaciones"
-                className="w-11 h-11 flex items-center justify-center text-muted-secondary relative active:opacity-60 transition-opacity focus-visible:ring-2 focus-visible:ring-focus rounded-sm"
+                className="w-11 h-11 flex items-center justify-center text-muted-secondary relative active:opacity-60 transition-opacity focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm touch-target"
               >
                 <Bell size={22} strokeWidth={2} />
                 {hasUnreadNotifications && (
@@ -97,7 +97,7 @@ export default function TopBar({
             {showProfile && (
               <Link
                 href="/perfil"
-                className="w-11 h-11 flex items-center justify-center text-muted-secondary active:opacity-60 transition-opacity focus-visible:ring-2 focus-visible:ring-focus rounded-sm"
+                className="w-11 h-11 flex items-center justify-center text-muted-secondary active:opacity-60 transition-opacity focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm touch-target"
               >
                 <User size={22} strokeWidth={2} />
               </Link>

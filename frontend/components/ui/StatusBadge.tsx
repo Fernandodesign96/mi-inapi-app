@@ -45,7 +45,7 @@ export default function StatusBadge({
   return (
     <div
       className={cn(
-        "inline-flex items-center gap-1 px-[10px] py-[2px] rounded-full",
+        "inline-flex items-center gap-1 px-[10px] py-[2px] rounded-full min-h-[29px] touch-target-chip",
         "text-label",
         config.bg,
         config.text

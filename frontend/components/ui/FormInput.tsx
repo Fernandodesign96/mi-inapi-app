@@ -77,14 +77,14 @@ const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
             aria-describedby={error ? `${id}-error` : hint ? `${id}-hint` : undefined}
             aria-invalid={Boolean(error)}
             className={cn(
-              "w-full h-[52px] bg-surface-elevated rounded-md text-body font-sans text-foreground placeholder:text-muted transition-all duration-150 outline-none",
+              "w-full h-[52px] bg-surface-elevated rounded-md text-body font-sans text-foreground placeholder:text-muted transition-all duration-150 outline-none input-gob",
               icon ? "pl-[44px] pr-4" : "px-4",
               isPassword && "pr-[44px]",
               error
-                ? "border-2 border-danger focus:border-danger"
+                ? "border-2 border-danger focus-visible:border-danger focus-visible:ring-danger/30"
                 : isValid
                 ? "border-2 border-success"
-                : "border-[1.5px] border-border focus:border-primary focus:ring-[3px] focus:ring-primary/15"
+                : "border-[1.5px] border-border"
             )}
           />
 
@@ -94,7 +94,7 @@ const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
               type="button"
               onClick={() => setShowPassword((v) => !v)}
               aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
-              className="absolute right-[14px] top-1/2 -translate-y-1/2 text-muted hover:text-muted-secondary transition-colors focus:outline-none focus:ring-2 focus:ring-focus rounded-sm"
+              className="absolute right-[6px] top-1/2 -translate-y-1/2 text-muted hover:text-muted-secondary transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-focus rounded-sm touch-target flex items-center justify-center"
             >
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>

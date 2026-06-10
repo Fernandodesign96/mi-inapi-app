@@ -58,10 +58,10 @@ export default function ClaveUnicaButton({
       disabled={disabled}
       aria-busy={isLoading}
       className={cn(
-        "inline-flex items-center justify-center gap-2 min-h-[48px] px-4",
+        "inline-flex items-center justify-center gap-2 min-h-[48px] px-4 touch-target",
         "text-white text-btn font-medium transition-all duration-150",
         "bg-claveunica hover:bg-claveunica-hover",
-        "focus-visible:outline-none focus-visible:bg-claveunica-focus focus-visible:ring-2 focus-visible:ring-claveunica-border focus-visible:ring-offset-2",
+        "focus-visible:outline-none focus-visible:bg-claveunica-focus focus-visible:ring-2 focus-visible:ring-claveunica-border focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         "active:ring-2 active:ring-claveunica-border active:ring-offset-0",
         "disabled:bg-claveunica-disabled disabled:cursor-not-allowed disabled:opacity-80",
         radiusClasses[radius],
