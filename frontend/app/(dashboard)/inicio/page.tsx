@@ -39,16 +39,16 @@ export default function InicioPage() {
   const recentSolicitud = userState === 'active-no-urgent' ? currentTramites[0] : currentTramites.find(s => s.estado === "EN_REVISION" || s.estado === "PUBLICACION");
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#F9FAFB]">
+    <div className="flex flex-col min-h-screen bg-background">
       <TopBar variant="home" />
 
-      <div className="px-6 pt-6 pb-24 flex flex-col space-y-6 screen-enter">
+      <div className="px-6 pt-6 pb-safe-bottomnav flex flex-col space-y-6 screen-enter">
         {/* GREETING */}
         <div className="space-y-1">
-          <h1 className="text-display text-[#111827]">
+          <h1 className="text-display text-foreground">
             Hola, {mockUser.name.split(' ')[0]} 👋
           </h1>
-          <p className="text-body-sm text-[#4B5563]">
+          <p className="text-body-sm text-muted-secondary">
             {userState === 'new' ? 'Bienvenido a MiINAPI' : 'Tienes novedades en tus trámites'}
           </p>
         </div>
@@ -58,9 +58,9 @@ export default function InicioPage() {
           <div className="space-y-6">
             <SkeletonCard />
             <div className="flex gap-2">
-              <div className="flex-1 h-16 bg-white rounded-lg border border-[#E5E7EB] skeleton" />
-              <div className="flex-1 h-16 bg-white rounded-lg border border-[#E5E7EB] skeleton" />
-              <div className="flex-1 h-16 bg-white rounded-lg border border-[#E5E7EB] skeleton" />
+              <div className="flex-1 h-16 bg-surface rounded-lg border border-border skeleton" />
+              <div className="flex-1 h-16 bg-surface rounded-lg border border-border skeleton" />
+              <div className="flex-1 h-16 bg-surface rounded-lg border border-border skeleton" />
             </div>
           </div>
         ) : (
@@ -69,7 +69,7 @@ export default function InicioPage() {
             {userState === 'new' && (
               <div className="space-y-6">
                 <SemaphoreCard urgency="info">
-                  <p className="text-body-sm text-[#1E40AF] leading-relaxed">
+                  <p className="text-body-sm text-primary-dark leading-relaxed">
                     Aquí verás el estado de tus solicitudes de marcas, patentes y diseños 
                     en tiempo real. Cuando ingreses una solicitud en el portal de INAPI, 
                     aparecerá aquí automáticamente.
@@ -86,7 +86,7 @@ export default function InicioPage() {
                 />
 
                 <div className="pt-2">
-                  <h2 className="text-label text-[#9CA3AF] mb-4">MIENTRAS TANTO, EXPLORA</h2>
+                  <h2 className="text-label text-muted mb-4">MIENTRAS TANTO, EXPLORA</h2>
                   <div className="grid grid-cols-2 gap-3">
                     <QuickAccessCard 
                       icon={Book} 
@@ -113,10 +113,10 @@ export default function InicioPage() {
                       <StatusBadge variant="danger" label="ACCIÓN REQUERIDA" showIcon />
                       <span className="text-timestamp">Hace 10 min</span>
                     </div>
-                    <h2 className="text-h2 text-[#111827] mb-1">
+                    <h2 className="text-h2 text-foreground mb-1">
                       {urgentSolicitud?.accion || "Cargar documento"}
                     </h2>
-                    <p className="text-mono text-[#4B5563] mb-4">
+                    <p className="text-mono text-muted-secondary mb-4">
                       #{urgentSolicitud?.id} · {urgentSolicitud?.tipo === 'marca' ? 'Marca Comercial' : 'Patente'}
                     </p>
                     <CTAButton 
@@ -133,18 +133,18 @@ export default function InicioPage() {
                       <StatusBadge variant="info" label="EN REVISIÓN" />
                       <span className="text-timestamp">Actualizado hoy</span>
                     </div>
-                    <h2 className="text-h2 text-[#111827] mb-1">
+                    <h2 className="text-h2 text-foreground mb-1">
                       {recentSolicitud?.nombre}
                     </h2>
-                    <p className="text-mono text-[#4B5563] mb-4">
+                    <p className="text-mono text-muted-secondary mb-4">
                       #{recentSolicitud?.id} · Marca Comercial
                     </p>
                     <StepperProgress 
                       stepStates={getStepStates(recentSolicitud?.estado || 'EN_REVISION')} 
                       urgency="info"
                     />
-                    <div className="mt-4 p-3 bg-[#EFF6FF] rounded-[10px] border border-[#DBEAFE]">
-                      <p className="text-body-xs text-[#1E40AF]">
+                    <div className="mt-4 p-3 bg-info-bg rounded-md border border-primary-light">
+                      <p className="text-body-xs text-primary-dark">
                         Esperando fin del período de oposición (30 días).
                       </p>
                     </div>
@@ -174,13 +174,13 @@ export default function InicioPage() {
 
                 <button 
                   onClick={() => router.push('/solicitudes')}
-                  className="w-full text-center py-1 text-body-sm font-semibold text-[#1A56DB] flex items-center justify-center gap-1 hover:underline"
+                  className="w-full text-center py-1 text-body-sm font-semibold text-primary flex items-center justify-center gap-1 hover:underline"
                 >
                   Ver todas mis solicitudes <ChevronRight size={16} />
                 </button>
 
                 {/* QUICK ACCESS ROW */}
-                <div className="pt-4 border-t border-[#E5E7EB]">
+                <div className="pt-4 border-t border-border">
                   <div className="flex gap-2 text-center">
                     <QuickAccessGhost 
                       icon={Book} 
@@ -222,15 +222,15 @@ function SummaryCard({
   icon?: React.ElementType;
 }) {
   const styles = {
-    info: "text-[#111827] bg-white",
-    danger: "text-[#DC2626] bg-[#FFF5F5] border-[#DC2626]",
-    success: "text-[#059669] bg-[#F0FDF4] border-[#059669]",
-    neutral: "text-[#9CA3AF] bg-[#F9FAFB] border-[#E5E7EB]",
+    info: "text-foreground bg-surface",
+    danger: "text-danger bg-danger-bg border-danger",
+    success: "text-success bg-success-bg border-success",
+    neutral: "text-muted bg-background border-border",
   };
 
   return (
     <div className={clsx(
-      "flex-1 flex flex-col items-center justify-center p-3 rounded-lg border border-[#E5E7EB] shadow-card",
+      "flex-1 flex flex-col items-center justify-center p-3 rounded-lg border border-border shadow-card",
       styles[variant]
     )}>
       <div className="flex items-center gap-1 mb-1">
@@ -254,12 +254,12 @@ function QuickAccessCard({
   return (
     <button 
       onClick={onClick}
-      className="flex flex-col items-center justify-center gap-2 p-4 bg-white border border-[#E5E7EB] rounded-[14px] shadow-sm hover:shadow-md active:bg-[#F9FAFB] transition-all"
+      className="flex flex-col items-center justify-center gap-2 p-4 bg-surface border border-border rounded-lg shadow-sm hover:shadow-md active:bg-background transition-all"
     >
-      <div className="w-10 h-10 rounded-full bg-[#EFF6FF] flex items-center justify-center text-[#1A56DB]">
+      <div className="w-10 h-10 rounded-full bg-info-bg flex items-center justify-center text-primary">
         <Icon size={24} />
       </div>
-      <span className="text-[13px] font-semibold text-[#111827] leading-tight">{label}</span>
+      <span className="text-body-sm font-semibold text-foreground leading-tight">{label}</span>
     </button>
   );
 }
@@ -276,10 +276,10 @@ function QuickAccessGhost({
   return (
     <button 
       onClick={onClick}
-      className="flex-1 flex flex-col items-center justify-center p-3 bg-white border border-[#E5E7EB] rounded-[10px] hover:bg-[#F9FAFB] active:bg-[#F3F4F6] transition-colors"
+      className="flex-1 flex flex-col items-center justify-center p-3 bg-surface border border-border rounded-md hover:bg-background active:bg-surface-elevated transition-colors"
     >
-      <Icon size={20} className="text-[#1A56DB] mb-1.5" />
-      <span className="text-body-xs font-medium text-[#4B5563]">{label}</span>
+      <Icon size={20} className="text-primary mb-1.5" />
+      <span className="text-body-xs font-medium text-muted-secondary">{label}</span>
     </button>
   );
 }

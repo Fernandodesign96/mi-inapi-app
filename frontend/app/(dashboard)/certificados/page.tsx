@@ -63,28 +63,28 @@ export default function CertificadosPage() {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#F9FAFB]">
+    <div className="flex flex-col min-h-screen bg-background">
       <TopBar variant="section" title="Certificados" />
 
-      <div className="flex-1 overflow-y-auto pb-24 screen-enter">
+      <div className="flex-1 overflow-y-auto pb-safe-bottomnav screen-enter">
         {/* Header Block */}
         <div className="px-6 pt-6 pb-2">
-          <h1 className="text-h1 text-[#111827]">Títulos y Registros</h1>
-          <p className="text-body-sm text-[#4B5563] mt-1">
+          <h1 className="text-h1 text-foreground">Títulos y Registros</h1>
+          <p className="text-body-sm text-muted-secondary mt-1">
             Descarga tus certificados con firma electrónica avanzada.
           </p>
         </div>
 
         {/* Search and Filters */}
-        <div className="sticky top-[56px] z-30 bg-[#F9FAFB]/80 backdrop-blur-md px-6 py-4 space-y-4">
+        <div className="sticky top-topbar z-30 bg-background/80 backdrop-blur-md px-6 py-4 space-y-4">
           <div className="relative">
-            <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
+            <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" />
             <input 
               type="text" 
               placeholder="Buscar por nombre o registro..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-[48px] bg-white border border-[#E5E7EB] rounded-[10px] pl-10 pr-4 text-[14px] font-sans focus:border-[#1A56DB] transition-all outline-none shadow-sm"
+              className="w-full h-[48px] bg-surface border border-border rounded-md pl-10 pr-4 text-body-sm font-sans focus:border-primary focus:ring-2 focus:ring-primary/15 transition-all outline-none shadow-sm"
             />
           </div>
           <FilterPills
@@ -101,15 +101,15 @@ export default function CertificadosPage() {
               <SemaphoreCard key={cert.id} urgency="neutral">
                 <div className="space-y-4">
                   <div className="flex items-start gap-3">
-                    <div className="w-12 h-12 rounded-xl bg-[#F3F4F6] flex items-center justify-center shrink-0">
-                      <FileText size={24} className="text-[#9CA3AF]" />
+                    <div className="w-12 h-12 rounded-xl bg-surface-elevated flex items-center justify-center shrink-0">
+                      <FileText size={24} className="text-muted" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
-                        <span className="text-label text-[#9CA3AF]">{cert.type}</span>
+                        <span className="text-label text-muted">{cert.type}</span>
                         <StatusBadge variant="success" label="VIGENTE" />
                       </div>
-                      <h3 className="text-[16px] font-bold text-[#111827] mt-[2px] truncate uppercase">
+                      <h3 className="text-h3 font-bold text-foreground mt-[2px] truncate uppercase">
                         {cert.name}
                       </h3>
                     </div>
@@ -117,12 +117,12 @@ export default function CertificadosPage() {
 
                   <div className="flex items-center justify-between pt-1">
                     <div className="flex flex-col">
-                      <span className="text-[10px] font-bold text-[#9CA3AF] uppercase">N° REGISTRO</span>
-                      <span className="text-mono text-[#111827]">{cert.registration}</span>
+                      <span className="text-body-xs font-bold text-muted uppercase">N° REGISTRO</span>
+                      <span className="text-mono text-foreground">{cert.registration}</span>
                     </div>
                     <div className="text-right">
-                      <span className="text-[10px] font-bold text-[#9CA3AF] uppercase">EMISIÓN</span>
-                      <p className="text-timestamp font-bold text-[#4B5563]">{cert.emission}</p>
+                      <span className="text-body-xs font-bold text-muted uppercase">EMISIÓN</span>
+                      <p className="text-timestamp font-bold text-muted-secondary">{cert.emission}</p>
                     </div>
                   </div>
 

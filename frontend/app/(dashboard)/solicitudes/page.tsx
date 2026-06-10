@@ -54,18 +54,18 @@ export default function SolicitudesPage() {
     });
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#F9FAFB]">
-      <div className="flex-1 overflow-y-auto pb-24 screen-enter">
+    <div className="flex flex-col min-h-screen bg-background">
+      <div className="flex-1 overflow-y-auto pb-safe-bottomnav screen-enter">
         {/* Header Block */}
         <div className="px-6 pt-6 pb-2">
-          <h1 className="text-h1 text-[#111827]">Seguimiento</h1>
-          <p className="text-body-sm text-[#4B5563] mt-1">
+          <h1 className="text-h1 text-foreground">Seguimiento</h1>
+          <p className="text-body-sm text-muted-secondary mt-1">
             Revisa el estado de tus registros en tiempo real
           </p>
         </div>
 
         {/* Filters Sticky Overlay */}
-        <div className="sticky top-[56px] z-30 bg-[#F9FAFB]/80 backdrop-blur-md px-6 py-4">
+        <div className="sticky top-topbar z-30 bg-background/80 backdrop-blur-md px-6 py-4">
           <FilterPills
             options={filterOptions}
             activeValue={activeFilter}
@@ -92,7 +92,7 @@ export default function SolicitudesPage() {
                           label={getBadgeLabel(solicitud.urgency, solicitud.etapa, solicitud.notificacion?.etapa)} 
                         />
                       </div>
-                      <h3 className="text-h3 text-[#111827]">
+                      <h3 className="text-h3 text-foreground">
                         {solicitud.nombre}
                       </h3>
                     </div>
@@ -106,18 +106,18 @@ export default function SolicitudesPage() {
                   />
 
                   {/* Footer Info Row */}
-                  <div className="flex items-center justify-between pt-3 border-t border-[#E5E7EB]">
+                  <div className="flex items-center justify-between pt-3 border-t border-border">
                     <div className="flex flex-col">
-                      <span className="text-[10px] font-bold text-[#9CA3AF] uppercase">N° SOLICITUD</span>
-                      <span className="text-mono text-[#111827]">#{solicitud.id}</span>
+                      <span className="text-body-xs font-bold text-muted uppercase">N° SOLICITUD</span>
+                      <span className="text-mono text-foreground">#{solicitud.id}</span>
                     </div>
                     
                     <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-1 text-[#4B5563]">
-                        <Clock size={14} className="text-[#9CA3AF]" />
+                      <div className="flex items-center gap-1 text-muted-secondary">
+                        <Clock size={14} className="text-muted" />
                         <span className="text-body-xs font-medium">{solicitud.estimacion}</span>
                       </div>
-                      <ChevronRight size={18} className="text-[#9CA3AF]" />
+                      <ChevronRight size={18} className="text-muted" />
                     </div>
                   </div>
                 </div>

@@ -54,20 +54,20 @@ export default function NotificacionesPage() {
   });
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#F9FAFB]">
+    <div className="flex flex-col min-h-screen bg-background">
       <TopBar variant="section" title="Notificaciones" />
 
-      <div className="flex-1 overflow-y-auto pb-24 screen-enter">
+      <div className="flex-1 overflow-y-auto pb-safe-bottomnav screen-enter">
         {/* Header Block */}
         <div className="px-6 pt-6 pb-2">
-          <h1 className="text-h1 text-[#111827]">Centro de Alertas</h1>
-          <p className="text-body-sm text-[#4B5563] mt-1">
+          <h1 className="text-h1 text-foreground">Centro de Alertas</h1>
+          <p className="text-body-sm text-muted-secondary mt-1">
             Gestiona los requerimientos de tus trámites
           </p>
         </div>
 
         {/* Filters Sticky Overlay */}
-        <div className="sticky top-[56px] z-30 bg-[#F9FAFB]/80 backdrop-blur-md px-6 py-4">
+        <div className="sticky top-topbar z-30 bg-background/80 backdrop-blur-md px-6 py-4">
           <FilterPills
             options={filterOptions}
             activeValue={activeFilter}
@@ -112,7 +112,7 @@ export default function NotificacionesPage() {
                             />
                             <span className="text-timestamp">{notif.tiempo}</span>
                           </div>
-                          <h3 className="text-h3 text-[#111827] leading-tight">
+                          <h3 className="text-h3 text-foreground leading-tight">
                             {notif.titulo}
                           </h3>
                         </div>
@@ -120,7 +120,7 @@ export default function NotificacionesPage() {
                       preview={notif.cuerpo}
                       content={
                         <div className="space-y-4">
-                          <p className="text-body-sm text-[#4B5563] leading-relaxed">
+                          <p className="text-body-sm text-muted-secondary leading-relaxed">
                             {notif.cuerpo}
                           </p>
 
@@ -141,7 +141,7 @@ export default function NotificacionesPage() {
                           {notif.solicitudId && (
                             <button
                               onClick={() => router.push(`/solicitudes/${notif.solicitudId}`)}
-                              className="w-full text-center text-[12px] font-bold text-[#1A56DB] py-2 border-t border-[#E5E7EB] mt-1 hover:bg-[#EFF6FF] rounded-b-xl transition-colors"
+                              className="w-full text-center text-body-xs font-bold text-primary py-2 border-t border-border mt-1 hover:bg-info-bg rounded-b-xl transition-colors"
                             >
                               Ver detalle completo de la solicitud →
                             </button>
@@ -155,7 +155,7 @@ export default function NotificacionesPage() {
 
               {filteredNotifs.length === 0 && (
                 <div className="py-20 text-center">
-                  <p className="text-body-sm text-[#9CA3AF]">
+                  <p className="text-body-sm text-muted">
                     No hay notificaciones en esta categoría.
                   </p>
                 </div>
