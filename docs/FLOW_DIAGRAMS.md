@@ -1,6 +1,8 @@
-# MiINAPI — Diagramas de Flujo por Pantalla
+# MiINAPI — Diagramas de flujo por pantalla
 ## MVP Fase 1 · Revisión post-reunión 06/04/2026
 ### Fernando (UX) · Bernarda (Informática) · Álvaro (Jefe Proyecto CORFO)
+
+> **Colores en diagramas (2026-06-10):** alineados a tokens semánticos GOB v3.0.1 — error `#FB3B3B`, advertencia `#FF5722`, info `#2196F3`, éxito `#4CAF50`. Ver [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md) v2.0.0-gob.
 
 ---
 
@@ -37,9 +39,9 @@ flowchart TD
     E -.-> P[¿Olvidaste pass?] --> Q[Recuperación via Email]
     E -.-> R[¿No tienes cuenta?] --> S[Registro / Pendiente Definir]
 
-    style D fill:#16A34A,stroke:#16A34A,color:#fff
-    style I fill:#DC2626,stroke:#DC2626,color:#fff
-    style S fill:#D97706,stroke:#D97706,color:#fff
+    style D fill:#4CAF50,stroke:#4CAF50,color:#fff
+    style I fill:#FB3B3B,stroke:#FB3B3B,color:#fff
+    style S fill:#FF5722,stroke:#FF5722,color:#fff
 ```
 
 ---
@@ -67,9 +69,9 @@ flowchart TD
     F --> K([Usuario Activo])
     J --> K
 
-    style C fill:#D97706,stroke:#D97706,color:#fff
-    style H fill:#16A34A,stroke:#16A34A,color:#fff
-    style J fill:#DC2626,stroke:#DC2626,color:#fff
+    style C fill:#FF5722,stroke:#FF5722,color:#fff
+    style H fill:#4CAF50,stroke:#4CAF50,color:#fff
+    style J fill:#FB3B3B,stroke:#FB3B3B,color:#fff
 ```
 
 ---
@@ -109,11 +111,11 @@ flowchart TD
         E --> S[🔔 Campaña Alertas]
     end
 
-    style D fill:#DC2626,stroke:#DC2626,color:#fff
-    style K fill:#DC2626,stroke:#DC2626,color:#fff
-    style L fill:#D97706,stroke:#D97706,color:#fff
-    style M fill:#2563EB,stroke:#2563EB,color:#fff
-    style N fill:#16A34A,stroke:#16A34A,color:#fff
+    style D fill:#FB3B3B,stroke:#FB3B3B,color:#fff
+    style K fill:#FB3B3B,stroke:#FB3B3B,color:#fff
+    style L fill:#FF5722,stroke:#FF5722,color:#fff
+    style M fill:#2196F3,stroke:#2196F3,color:#fff
+    style N fill:#4CAF50,stroke:#4CAF50,color:#fff
 ```
 
 ---
@@ -143,10 +145,10 @@ flowchart TD
         K -->|❌ Error| M[Toast Error + Retry]
     end
 
-    style I fill:#DC2626,stroke:#DC2626,color:#fff
-    style L fill:#16A34A,stroke:#16A34A,color:#fff
-    style M fill:#DC2626,stroke:#DC2626,color:#fff
-    style D fill:#DC2626,stroke:#DC2626,color:#fff
+    style I fill:#FB3B3B,stroke:#FB3B3B,color:#fff
+    style L fill:#4CAF50,stroke:#4CAF50,color:#fff
+    style M fill:#FB3B3B,stroke:#FB3B3B,color:#fff
+    style D fill:#FB3B3B,stroke:#FB3B3B,color:#fff
 ```
 
 ---
@@ -179,8 +181,8 @@ flowchart TD
     end
 
     style D fill:#94A3B8,stroke:#94A3B8,color:#fff
-    style M fill:#16A34A,stroke:#16A34A,color:#fff
-    style N fill:#DC2626,stroke:#DC2626,color:#fff
+    style M fill:#4CAF50,stroke:#4CAF50,color:#fff
+    style N fill:#FB3B3B,stroke:#FB3B3B,color:#fff
 ```
 
 ---
@@ -213,8 +215,8 @@ flowchart TD
         M --> N[Call Center / Nuevo Chat / Web INAPI]
     end
 
-    style K fill:#D97706,stroke:#D97706,color:#fff
-    style N fill:#2563EB,stroke:#2563EB,color:#fff
+    style K fill:#FF5722,stroke:#FF5722,color:#fff
+    style N fill:#2196F3,stroke:#2196F3,color:#fff
 ```
 
 ---
@@ -245,8 +247,8 @@ flowchart TD
         J -->|Multimedia| L[Reproductor Media]
     end
 
-    style K fill:#16A34A,stroke:#16A34A,color:#fff
-    style L fill:#2563EB,stroke:#2563EB,color:#fff
+    style K fill:#4CAF50,stroke:#4CAF50,color:#fff
+    style L fill:#2196F3,stroke:#2196F3,color:#fff
 ```
 
 ---
@@ -267,8 +269,8 @@ flowchart LR
         E -->|Exit| I[Logout]
     end
 
-    style F fill:#DC2626,color:#fff
-    style G fill:#16A34A,color:#fff
+    style F fill:#FB3B3B,color:#fff
+    style G fill:#4CAF50,color:#fff
     style I fill:#94A3B8,color:#fff
 ```
 
@@ -277,10 +279,10 @@ flowchart LR
 ## Notas técnicas para el equipo de desarrollo (UX/FE/BE)
 
 - **Sistemas de Diseño:** Todos los diagramas utilizan el **Sistema Semáforo INAPI**:
-    - **Rojo (#DC2626):** Crítico/Urgente/Vencido.
-    - **Naranja (#D97706):** Atención/Próximo/Acción Intermedia.
-    - **Azul (#2563EB):** Información/Estado Pasivo/En proceso.
-    - **Verde (#16A34A):** Éxito/Completado/Vigente.
+    - **Rojo (#FB3B3B):** Crítico/Urgente/Vencido.
+    - **Naranja (#FF5722):** Atención/Próximo/Acción Intermedia.
+    - **Azul (#2196F3):** Información/Estado Pasivo/En proceso.
+    - **Verde (#4CAF50):** Éxito/Completado/Vigente.
 - **Categorización Transversal:** La división Marcas / Patentes / Diseños es el eje de la data; el FE debe persistir el último Tab seleccionado por el usuario.
 - **Performance:** Las llamadas a API de cada flujo deben implementar estrategias de **Caching** y **Optimistic UI** para mejorar la percepción de velocidad.
 - **Jerarquía Visual:** El Dashboard y Notificaciones SIEMPRE deben renderizar el contenido **Rojo** en la parte superior (Priorización por Servidor).

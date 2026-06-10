@@ -3,9 +3,41 @@
 Este documento describe el proceso de desarrollo del proyecto **MiINAPI**. Es un registro de las decisiones tomadas, los aprendizajes adquiridos, los problemas que surgieron y la forma en que se resolvieron, y el progreso realizado.
 
 ## 📑 Índice
+- [[2026-06-10] - Frontend | Sprint 3: Migración UI Kit GOB v3.0.1 — documentación](#2026-06-10---frontend--sprint-3-migración-ui-kit-gob-v301--documentación)
 - [[2026-04-06 - 2026-04-13] - Frontend | Sprint 1: Fundamentos, Design System y App Router](#2026-04-06---2026-04-13---frontend--sprint-1-fundamentos-design-system-y-app-router)
 - [[2026-04-13] - Frontend | Sprint 1.5: Cierre, Seguridad y Navegación Contextual](#2026-04-13---frontend--sprint-15-cierre-seguridad-y-navegación-contextual)
 - [[2026-04-14] - Frontend | Sprint 2: Stepper, Mock Data, Login y Polish Final](#2026-04-14---frontend--sprint-2-stepper-mock-data-login-y-polish-final)
+
+---
+
+## [2026-06-10] - Frontend | Sprint 3: Migración UI Kit GOB v3.0.1 — documentación
+
+### Contexto y objetivos:
+
+Tras incorporar la carpeta `docs/uikit_gob/` con capturas del UI Kit Gobierno de Chile v3.0.1 y la lámina `claveunica-button-states.PNG`, era necesario alinear la documentación de MiINAPI antes de tocar código. El MVP frontend aún usa tokens legacy (DM Sans, `#1A56DB`, frame 390 px, ~90 hex hardcodeados), pero la dirección acordada es **tokens GOB en Tailwind + componentes React propios**, descartando el Framework kit Bootstrap (`@gobdigital-cl/gob.cl`) por incompatibilidad con Next.js 15 y MVPs SPA.
+
+Este sprint documenta la migración completa (Fase 0 del plan); la implementación en `frontend/` queda para sprints posteriores.
+
+### Implementación técnica:
+
+- **`docs/DESIGN_SYSTEM.md` v2.0.0-gob:** reescritura con paleta `GOB.COLOR.*`, tipografía Roboto Slab/Sans, espaciado kit (4–64 px), grilla responsiva (600/905/1240/1440 px, 4/8/12 columnas), elevación y radius GOB, semáforo INAPI remapeado a estados semánticos, componente dedicado `ClaveUnicaButton` (§9.14) y tokens `--claveunica-*`.
+- **`docs/UI_MIGRATION_PLAN.md`:** plan en 6 fases (documentación → tokens CSS → componentes → layouts → páginas → QA), decisiones de arquitectura y mapa legacy→GOB.
+- **`docs/uikit_gob/references/`:** `README.md` actualizado con inventario PNG incluyendo ClaveÚnica; `DESIGN_SYSTEM.md` de referencia enlazado al DS MiINAPI v2.
+- **`docs/FLOW_DIAGRAMS.md`:** colores Mermaid alineados a GOB (`#FB3B3B`, `#FF5722`, `#2196F3`, `#4CAF50`).
+- **`docs/USER_JOURNEY.md`:** nota de equipo con enlace al nuevo design system y reglas de semáforo/ClaveÚnica.
+- **`docs/prompts/`:** aviso de obsolescencia parcial (v1) en `correccion.md`, `v0_prompt_v2.md` y `Antigravity_Prompt_MiINAPI_v2.md`.
+
+### 💡 Repaso técnico: UI Kit v3.0.1 vs Framework kit Gobierno
+
+El sitio [framework.digital.gob.cl](https://framework.digital.gob.cl/) distribuye `@gobdigital-cl/gob.cl` sobre Bootstrap 4 + jQuery (breakpoints 576/768/992/1200 px). El UI Kit v3.0.1 en Figma/PDF usa otra grilla (600/905/1240/1440 px) y tokens `GOB.COLOR.*`. Para MiINAPI (Next.js + Tailwind v4), la estrategia correcta es **extraer tokens y patrones**, no instalar el paquete npm legacy. El botón ClaveÚnica es un caso especial: identidad propia documentada en `claveunica-button-states.PNG`, independiente del accent GOB `#FF4731`.
+
+### Próximos pasos:
+
+- Fase 1: propagar tokens a `frontend/app/globals.css`, `tailwind.config.ts` y `layout.tsx` (Roboto).
+- Fase 2: crear `ClaveUnicaButton.tsx` y migrar componentes `ui/` a clases semánticas.
+- Fase 3: eliminar frame 390 px; adoptar contenedor GOB en layouts.
+- Fase 4: migrar páginas, empezando por `login/page.tsx`.
+- Completar hex pendientes: escala `GOB.COLOR.GRIS` y valores CSS de Elevation-01…05.
 
 ---
 
