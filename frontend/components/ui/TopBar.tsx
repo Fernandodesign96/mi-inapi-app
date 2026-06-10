@@ -4,6 +4,7 @@ import { Bell, User, ChevronLeft } from "lucide-react";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { basePath } from "@/next.config";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -59,7 +60,7 @@ export default function TopBar({
               </div>
             ) : (
               <Image
-                src="/images/inapi-logo.jpg"
+                src={`${basePath}/images/inapi-logo.jpg`}
                 alt="INAPI — Instituto Nacional de Propiedad Industrial, Gobierno de Chile"
                 width={1904}
                 height={1742}
