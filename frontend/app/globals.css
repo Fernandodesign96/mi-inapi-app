@@ -1,57 +1,84 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=DM+Mono:ital,wght@0,300..500;1,300..500&display=swap');
-
 @import "tailwindcss";
 
 :root {
-  /* Paleta institucional */
-  --color-primary:            #1A56DB;
-  --color-primary-dark:       #1E3A8A;
-  --color-accent:             #7C3AED;
-  --color-accent-light:       #EDE9FE;
+  /* === INSTITUCIONAL GOB === */
+  --color-primary:            #4282E0;
+  --color-primary-dark:       #0F69C4;
+  --color-primary-foreground: #FFFFFF;
+  --color-accent:             #FF4731;
+  --color-accent-light:       #FFECEF;
+  --color-accent-foreground:  #FFFFFF;
 
-  /* Sistema semáforo */
-  --semaphore-danger:         #DC2626;
-  --semaphore-danger-bg:      #FEE2E2;
-  --semaphore-warning:        #D97706;
-  --semaphore-warning-bg:     #FEF3C7;
-  --semaphore-info:           #2563EB;
-  --semaphore-info-bg:        #DBEAFE;
-  --semaphore-success:        #059669;
-  --semaphore-success-bg:     #D1FAE5;
+  /* === SEMÁFORO INAPI → GOB === */
+  --semaphore-danger:         #FB3B3B;
+  --semaphore-danger-bg:      #FFEBEF;
+  --semaphore-warning:        #FF5722;
+  --semaphore-warning-bg:     #FBE9E7;
+  --semaphore-info:           #2196F3;
+  --semaphore-info-bg:        #E3F2FD;
+  --semaphore-success:        #4CAF50;
+  --semaphore-success-bg:     #E8F5E9;
 
-  /* Neutros */
-  --background:               #F9FAFB;   /* NEVER #FFFFFF as page background */
-  --surface:                  #FFFFFF;   /* Cards, inputs, modals only */
-  --surface-elevated:         #F3F4F6;   /* Pill inactive, input bg, table header bg */
-  --foreground:               #111827;
-  --foreground-secondary:     #4B5563;
+  /* === NEUTROS === */
+  --background:               #F9FAFB;
+  --surface:                  #FFFFFF;
+  --surface-elevated:         #F3F4F6;
+  --foreground:               #373737;
+  --foreground-secondary:     #555555;
   --foreground-muted:         #9CA3AF;
   --border:                   #E5E7EB;
   --border-strong:            #D1D5DB;
-  --ring:                     #1A56DB;
+  --ring:                     #FFBE5C;
+  --color-link:               #1D70B8;
+  --color-link-visited:       #4C2C92;
 
-  /* Shadows */
-  --shadow-card:              0 1px 3px rgba(0,0,0,0.08);
-  --shadow-elevated:          0 4px 12px rgba(0,0,0,0.10);
-  --shadow-modal:             0 8px 24px rgba(0,0,0,0.15);
-  --shadow-frame:             0 8px 32px rgba(0,0,0,0.15);
-  --shadow-fab:               0 4px 16px rgba(124,58,237,0.35);
+  /* === CLAVEÚNICA (excepción) === */
+  --claveunica-bg:            #0F69C4;
+  --claveunica-bg-hover:      #0051A8;
+  --claveunica-bg-focus:      #002673;
+  --claveunica-bg-disabled:   #A1D2FF;
+  --claveunica-border-active: #FFBE5C;
+  --claveunica-fg:            #FFFFFF;
+  --claveunica-radius:        4px;
 
-  /* Layout */
-  --topbar-height:            56px;
-  --bottomnav-height:         64px;
-  --app-max-width:            390px;
+  /* === TIPOGRAFÍA (variables next/font en layout.tsx) === */
+  --font-sans: var(--font-roboto), "Roboto", system-ui, sans-serif;
+  --font-slab: var(--font-roboto-slab), "Roboto Slab", Georgia, serif;
 
-  /* Typo Defaults */
-  --font-sans: "DM Sans", sans-serif;
-  --font-mono: "DM Mono", monospace;
+  /* === RADIUS GOB === */
+  --radius-none: 0px;
+  --radius-sm:   4px;
+  --radius-md:   8px;
+  --radius-lg:   16px;
+  --radius-xl:   24px;
+  --radius-full: 9999px;
+
+  /* === ELEVACIÓN GOB === */
+  --elevation-01: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --elevation-02: 0 4px 12px rgba(0, 0, 0, 0.10);
+  --elevation-03: 0 8px 16px rgba(0, 0, 0, 0.12);
+  --elevation-04: 0 12px 24px rgba(0, 0, 0, 0.14);
+  --elevation-05: 0 16px 32px rgba(0, 0, 0, 0.16);
+
+  /* Alias legacy (componentes Fase 2 aún los usan) */
+  --shadow-card:     var(--elevation-01);
+  --shadow-elevated: var(--elevation-02);
+  --shadow-modal:    var(--elevation-04);
+  --shadow-frame:    var(--elevation-05);
+  --shadow-fab:      0 4px 16px rgba(255, 71, 49, 0.35);
+
+  /* === LAYOUT === */
+  --topbar-height:    56px;
+  --bottomnav-height: 64px;
 }
 
 @theme {
   --color-primary: var(--color-primary);
   --color-primary-dark: var(--color-primary-dark);
+  --color-primary-foreground: var(--color-primary-foreground);
   --color-accent: var(--color-accent);
   --color-accent-light: var(--color-accent-light);
+  --color-accent-foreground: var(--color-accent-foreground);
 
   --color-danger: var(--semaphore-danger);
   --color-danger-bg: var(--semaphore-danger-bg);
@@ -62,26 +89,70 @@
   --color-success: var(--semaphore-success);
   --color-success-bg: var(--semaphore-success-bg);
 
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--foreground-muted);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-focus: var(--ring);
+  --color-link: var(--color-link);
+
+  --color-claveunica: var(--claveunica-bg);
+  --color-claveunica-hover: var(--claveunica-bg-hover);
+  --color-claveunica-focus: var(--claveunica-bg-focus);
+  --color-claveunica-disabled: var(--claveunica-bg-disabled);
+  --color-claveunica-border: var(--claveunica-border-active);
+
   --color-bg-base: var(--background);
   --color-bg-surface: var(--surface);
   --color-bg-elevated: var(--surface-elevated);
   --color-text-primary: var(--foreground);
   --color-text-secondary: var(--foreground-secondary);
   --color-text-muted: var(--foreground-muted);
-  --color-border: var(--border);
-  --color-border-strong: var(--border-strong);
 
   --font-sans: var(--font-sans);
-  --font-mono: var(--font-mono);
+  --font-slab: var(--font-slab);
 
   --shadow-card: var(--shadow-card);
   --shadow-elevated: var(--shadow-elevated);
   --shadow-modal: var(--shadow-modal);
   --shadow-frame: var(--shadow-frame);
   --shadow-fab: var(--shadow-fab);
+  --shadow-elevation-01: var(--elevation-01);
+  --shadow-elevation-02: var(--elevation-02);
+  --shadow-elevation-03: var(--elevation-03);
+  --shadow-elevation-04: var(--elevation-04);
+  --shadow-elevation-05: var(--elevation-05);
 
-  --radius-lg: 14px;
-  --radius-xl: 20px;
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-full: var(--radius-full);
+}
+
+/* === DARK MODE === */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background:           #0F172A;
+    --surface:              #1E293B;
+    --surface-elevated:     #263548;
+    --foreground:           #F8FAFC;
+    --foreground-secondary: #CBD5E1;
+    --foreground-muted:     #64748B;
+    --border:               #334155;
+    --border-strong:        #475569;
+  }
+}
+
+/* === REDUCCIÓN DE MOVIMIENTO === */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* === BASE === */
@@ -96,10 +167,9 @@ body {
   padding: 0;
 }
 
-/* === APP FRAME === */
+/* === SHELL (Fase 3 quitará max-width inline del dashboard) === */
 .app-frame {
-  max-width: var(--app-max-width);
-  margin: 0 auto;
+  width: 100%;
   min-height: 100vh;
   background: var(--background);
   position: relative;
@@ -107,42 +177,116 @@ body {
   flex-direction: column;
 }
 
-@media (min-width: 640px) {
-  body {
-    background: #E2E8F0;
-  }
-  .app-frame {
-    box-shadow: var(--shadow-frame);
+/* === CONTENEDOR GOB === */
+.gob-container {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+@media (min-width: 600px) {
+  .gob-container {
+    padding-left: 32px;
+    padding-right: 32px;
   }
 }
 
-/* === TYPOGRAPHY UTILITIES === */
-.text-display   { font-size: 28px; line-height: 36px; font-weight: 800; }
-.text-h1        { font-size: 24px; line-height: 32px; font-weight: 700; }
-.text-h2        { font-size: 20px; line-height: 28px; font-weight: 600; }
-.text-h3        { font-size: 17px; line-height: 24px; font-weight: 600; }
-.text-h4        { font-size: 15px; line-height: 22px; font-weight: 500; }
-.text-body      { font-size: 16px; line-height: 24px; font-weight: 400; }
-.text-body-sm   { font-size: 14px; line-height: 22px; font-weight: 400; }
-.text-body-xs   { font-size: 12px; line-height: 18px; font-weight: 400; }
-.text-btn       { font-size: 15px; line-height: 20px; font-weight: 600; }
-.text-label     { font-size: 11px; line-height: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
-.text-timestamp { font-size: 11px; line-height: 16px; font-weight: 400; }
-.text-mono      { font-family: var(--font-mono); font-size: 13px; line-height: 20px; font-weight: 500; }
-.text-mono-lg   { font-family: var(--font-mono); font-size: 15px; line-height: 22px; font-weight: 500; }
+@media (min-width: 905px) {
+  .gob-container {
+    max-width: 840px;
+  }
+}
 
-/* === UTILS === */
-.hide-scrollbar::-webkit-scrollbar { display: none; }
-.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+@media (min-width: 1440px) {
+  .gob-container {
+    max-width: 1040px;
+  }
+}
+
+.gob-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (min-width: 600px) {
+  .gob-grid {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 905px) {
+  .gob-grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+}
+
+/* === TIPOGRAFÍA (mobile-first; desktop ≥905px) === */
+.text-display   { font-family: var(--font-slab); font-size: 28px; line-height: 1.5; font-weight: 400; }
+.text-h1        { font-family: var(--font-slab); font-size: 24px; line-height: 1.5; font-weight: 500; }
+.text-h2        { font-family: var(--font-slab); font-size: 18px; line-height: 1.5; font-weight: 500; }
+.text-h3        { font-family: var(--font-sans); font-size: 16px; line-height: 1.5; font-weight: 500; }
+.text-h4        { font-family: var(--font-sans); font-size: 15px; line-height: 1.5; font-weight: 500; }
+.text-body      { font-size: 16px; line-height: 1.5; font-weight: 400; }
+.text-body-sm   { font-size: 14px; line-height: 1.5; font-weight: 400; }
+.text-body-xs   { font-size: 12px; line-height: 1.5; font-weight: 400; }
+.text-btn       { font-size: 16px; line-height: 1.5; font-weight: 500; }
+.text-label     { font-size: 12px; line-height: 1.5; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+.text-timestamp { font-size: 12px; line-height: 1.5; font-weight: 400; }
+.text-mono      { font-variant-numeric: tabular-nums; font-size: 13px; line-height: 1.5; font-weight: 500; }
+.text-mono-lg   { font-variant-numeric: tabular-nums; font-size: 15px; line-height: 1.5; font-weight: 500; }
+
+@media (min-width: 905px) {
+  .text-h1 { font-size: 36px; }
+  .text-h2 { font-size: 31px; }
+  .text-h3 { font-size: 19px; }
+}
+
+/* === UTILIDADES === */
+.hide-scrollbar::-webkit-scrollbar,
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+.hide-scrollbar,
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
 
 .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
 
-/* === ANIMATIONS === */
-@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-@keyframes slide-up { from { transform: translateY(16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.font-tabular { font-variant-numeric: tabular-nums; }
+
+/* === SKELETON === */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--surface-elevated) 25%,
+    var(--border) 50%,
+    var(--surface-elevated) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-lg);
+}
+
+/* === ANIMACIONES === */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { transform: translateY(16px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
 
 .screen-enter { animation: fade-in 200ms ease-out forwards; }
 .toast-enter { animation: slide-up 350ms ease-out forwards; }
-
 .transition-card { transition: all 150ms ease-in-out; }
-
