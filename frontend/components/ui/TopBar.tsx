@@ -1,6 +1,7 @@
 "use client";
 
 import { Bell, User, ChevronLeft } from "lucide-react";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -11,6 +12,7 @@ interface TopBarProps {
   variant?: "home" | "section";
   title?: string;
   showNotifications?: boolean;
+  showThemeToggle?: boolean;
   showProfile?: boolean;
   hasUnreadNotifications?: boolean;
   onBack?: () => void;
@@ -21,6 +23,7 @@ export default function TopBar({
   variant = "home",
   title,
   showNotifications = true,
+  showThemeToggle = true,
   showProfile = true,
   hasUnreadNotifications = true,
   onBack,
@@ -56,11 +59,11 @@ export default function TopBar({
               </div>
             ) : (
               <Image
-                src="/images/inapi-logo.png"
-                alt="INAPI"
-                width={32}
-                height={32}
-                className="object-contain"
+                src="/images/inapi-logo.jpg"
+                alt="INAPI — Instituto Nacional de Propiedad Industrial, Gobierno de Chile"
+                width={1904}
+                height={1742}
+                className="h-8 w-auto object-contain"
                 onError={() => setImgError(true)}
                 priority
               />
@@ -90,10 +93,11 @@ export default function TopBar({
               >
                 <Bell size={22} strokeWidth={2} />
                 {hasUnreadNotifications && (
-                  <div className="absolute top-[10px] right-[10px] w-2 h-2 bg-danger rounded-full border border-white" />
+                  <div className="absolute top-[10px] right-[10px] w-2 h-2 bg-danger rounded-full border border-surface" />
                 )}
               </Link>
             )}
+            {showThemeToggle && <ThemeToggle />}
             {showProfile && (
               <Link
                 href="/perfil"

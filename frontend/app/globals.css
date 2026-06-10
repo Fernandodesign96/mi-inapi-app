@@ -131,45 +131,40 @@
   --radius-full: var(--radius-full);
 }
 
-/* === DARK MODE (prefers-color-scheme) === */
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
+/* === MODO NOCHE (toggle manual vía html.dark) === */
+html.dark {
+  color-scheme: dark;
 
-    --background:           #0F172A;
-    --surface:              #1E293B;
-    --surface-elevated:     #263548;
-    --foreground:           #F8FAFC;
-    --foreground-secondary: #CBD5E1;
-    --foreground-muted:     #94A3B8;
-    --border:               #334155;
-    --border-strong:        #475569;
+  --background:           #0F172A;
+  --surface:              #1E293B;
+  --surface-elevated:     #263548;
+  --foreground:           #F8FAFC;
+  --foreground-secondary: #CBD5E1;
+  --foreground-muted:     #94A3B8;
+  --border:               #334155;
+  --border-strong:        #475569;
 
-    /* Fondos semánticos adaptados a superficie oscura */
-    --semaphore-danger-bg:  #3B1C22;
-    --semaphore-warning-bg: #3A2218;
-    --semaphore-info-bg:    #1A2A3D;
-    --semaphore-success-bg: #1A2E1F;
+  --semaphore-danger-bg:  #3B1C22;
+  --semaphore-warning-bg: #3A2218;
+  --semaphore-info-bg:    #1A2A3D;
+  --semaphore-success-bg: #1A2E1F;
 
-    --color-primary-light:  #1E3A5F;
-    --color-accent-light:   #3D1F24;
+  --color-primary-light:  #1E3A5F;
+  --color-accent-light:   #3D1F24;
 
-    --color-link:           #7CB8FF;
-    --color-link-visited:   #B8A0E8;
+  --color-link:           #7CB8FF;
+  --color-link-visited:   #B8A0E8;
 
-    --elevation-01: 0 1px 3px rgba(0, 0, 0, 0.45);
-    --elevation-02: 0 4px 12px rgba(0, 0, 0, 0.50);
-    --elevation-03: 0 8px 16px rgba(0, 0, 0, 0.55);
-    --elevation-04: 0 12px 24px rgba(0, 0, 0, 0.60);
-    --elevation-05: 0 16px 32px rgba(0, 0, 0, 0.65);
-    --shadow-fab:   0 4px 16px rgba(255, 71, 49, 0.45);
-  }
+  --elevation-01: 0 1px 3px rgba(0, 0, 0, 0.45);
+  --elevation-02: 0 4px 12px rgba(0, 0, 0, 0.50);
+  --elevation-03: 0 8px 16px rgba(0, 0, 0, 0.55);
+  --elevation-04: 0 12px 24px rgba(0, 0, 0, 0.60);
+  --elevation-05: 0 16px 32px rgba(0, 0, 0, 0.65);
+  --shadow-fab:   0 4px 16px rgba(255, 71, 49, 0.45);
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color-scheme: light;
-  }
+html:not(.dark) {
+  color-scheme: light;
 }
 
 /* === REDUCCIÓN DE MOVIMIENTO === */

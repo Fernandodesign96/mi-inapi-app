@@ -122,7 +122,12 @@ export default function LoginPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      <TopBar variant="home" showNotifications={false} showProfile={false} />
+      <TopBar
+        variant="home"
+        showNotifications={false}
+        showThemeToggle={true}
+        showProfile={false}
+      />
 
       <div className="flex-1 overflow-y-auto px-6 flex flex-col items-stretch screen-enter">
         <div className="mt-10 mb-6 flex justify-center">

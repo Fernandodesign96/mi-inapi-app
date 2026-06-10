@@ -45,8 +45,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es-CL" className={`${roboto.variable} ${robotoSlab.variable}`}>
+    <html
+      lang="es-CL"
+      className={`dark ${roboto.variable} ${robotoSlab.variable}`}
+      suppressHydrationWarning
+    >
       <body className="font-sans antialiased bg-background text-foreground">
+        <Script
+          id="miinapi-theme-init"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('miinapi-theme');if(t==='light'){document.documentElement.classList.remove('dark');}else{document.documentElement.classList.add('dark');}}catch(e){document.documentElement.classList.add('dark');}})();`,
+          }}
+        />
         <div className="app-frame gob-container">{children}</div>
 
         {/* --- Trackers & Analytics --- */}
