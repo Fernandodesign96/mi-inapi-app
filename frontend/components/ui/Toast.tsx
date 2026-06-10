@@ -43,11 +43,13 @@ export default function Toast({ message, type = "success", onDismiss }: ToastPro
   const { bg, text, icon: Icon, iconClass } = config[type];
 
   return (
-    <div className={clsx(
-      "fixed z-60 left-1/2 -translate-x-1/2 w-full px-4",
-      "bottom-[calc(64px+16px+env(safe-area-inset-bottom))]",
-      "max-w-[390px]"
-    )}>
+    <div
+      className={clsx(
+        "fixed z-60 left-1/2 -translate-x-1/2 w-full px-4",
+        "bottom-[calc(var(--bottomnav-height)+16px+env(safe-area-inset-bottom))]",
+        "max-w-gob-md"
+      )}
+    >
       <div
         className={clsx(
           "toast-enter flex items-center gap-[10px] w-full p-4 rounded-md shadow-lg",

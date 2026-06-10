@@ -50,7 +50,7 @@ const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
         {/* Label */}
         <label
           htmlFor={id}
-          className="text-label text-[#4B5563] mb-[6px] block"
+          className="text-label text-muted-secondary mb-[6px] block"
         >
           {label}
         </label>

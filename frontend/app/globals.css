@@ -167,7 +167,7 @@ body {
   padding: 0;
 }
 
-/* === SHELL (Fase 3 quitará max-width inline del dashboard) === */
+/* === SHELL APP (ancho máximo vía .gob-container) === */
 .app-frame {
   width: 100%;
   min-height: 100vh;
@@ -255,6 +255,10 @@ body {
 }
 
 .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+
+.pb-safe-bottomnav {
+  padding-bottom: calc(var(--bottomnav-height) + env(safe-area-inset-bottom));
+}
 
 .font-tabular { font-variant-numeric: tabular-nums; }
 

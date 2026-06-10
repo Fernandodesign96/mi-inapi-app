@@ -97,7 +97,7 @@ export default function TopBar({
             {showProfile && (
               <Link
                 href="/perfil"
-                className="w-11 h-11 flex items-center justify-center text-[#4B5563] active:opacity-60 transition-opacity"
+                className="w-11 h-11 flex items-center justify-center text-muted-secondary active:opacity-60 transition-opacity focus-visible:ring-2 focus-visible:ring-focus rounded-sm"
               >
                 <User size={22} strokeWidth={2} />
               </Link>
