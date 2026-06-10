@@ -59,7 +59,7 @@ export default function BottomNav() {
   return (
     <nav
       role="navigation"
-      className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[390px] bg-white border-t border-[#E5E7EB] safe-bottom z-50 h-[64px]"
+      className="fixed bottom-0 inset-x-0 w-full bg-surface border-t border-border safe-bottom z-50 h-bottomnav"
     >
       <div className="flex items-center h-full">
         {navItems.map((item) => {
@@ -73,7 +73,7 @@ export default function BottomNav() {
               aria-current={isActive ? "page" : undefined}
               className={clsx(
                 "flex flex-col items-center justify-center flex-1 h-full min-w-[48px] outline-none transition-colors duration-150",
-                isActive ? "text-[#1A56DB]" : "text-[#9CA3AF]"
+                isActive ? "text-primary" : "text-muted"
               )}
             >
               <div className="flex flex-col items-center gap-[2px]">
@@ -83,7 +83,7 @@ export default function BottomNav() {
                 />
                 <span
                   className={clsx(
-                    "text-[10px] font-sans",
+                    "text-body-xs font-sans",
                     isActive ? "font-semibold" : "font-normal"
                   )}
                 >

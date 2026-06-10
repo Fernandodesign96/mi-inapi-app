@@ -1,7 +1,7 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
-import { clsx } from "clsx";
+import { cn } from "@/lib/utils";
 
 export type ButtonVariant =
   | "primary"
@@ -28,20 +28,21 @@ interface CTAButtonProps {
 }
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: "bg-[#1A56DB] text-white hover:bg-[#1E3A8A]",
-  "primary-dark": "bg-[#1E3A8A] text-white opacity-100 hover:opacity-90",
-  danger: "bg-[#DC2626] text-white hover:bg-[#B91C1C]",
-  warning: "bg-[#D97706] text-white hover:bg-[#B45309]",
-  info: "bg-[#2563EB] text-white hover:bg-[#1D4ED8]",
-  success: "bg-[#059669] text-white hover:bg-[#047857]",
-  outline: "bg-transparent border-2 border-[#E5E7EB] text-[#1A56DB] hover:border-[#1A56DB]",
-  ghost: "bg-transparent text-[#4B5563] hover:bg-[#F3F4F6]",
+  primary: "bg-primary text-primary-foreground hover:bg-primary-dark",
+  "primary-dark": "bg-primary-dark text-primary-foreground hover:opacity-90",
+  danger: "bg-danger text-white hover:opacity-90",
+  warning: "bg-warning text-white hover:opacity-90",
+  info: "bg-info text-white hover:opacity-90",
+  success: "bg-success text-white hover:opacity-90",
+  outline:
+    "bg-transparent border-2 border-border text-primary hover:border-primary",
+  ghost: "bg-transparent text-muted-secondary hover:bg-surface-elevated",
 };
 
 const sizeClasses: Record<string, string> = {
-  sm: "px-4 py-2 text-[14px] min-h-[36px]",
-  md: "px-6 py-3 text-[15px] min-h-[48px]",
-  lg: "px-7 py-3.5 text-[15px] min-h-[52px]",
+  sm: "px-4 py-2 text-body-sm min-h-[36px]",
+  md: "px-6 py-3 text-btn min-h-[48px]",
+  lg: "px-7 py-3.5 text-btn min-h-[52px]",
 };
 
 export default function CTAButton({
@@ -65,10 +66,10 @@ export default function CTAButton({
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={clsx(
+      className={cn(
         "font-sans font-semibold inline-flex items-center justify-center gap-2 transition-all duration-150",
-        "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1A56DB] active:scale-[0.98]",
-        !className?.includes("rounded-") && "rounded-xl",
+        "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-focus active:scale-[0.98]",
+        !className?.includes("rounded-") && "rounded-md",
         variantClasses[variant],
         sizeClasses[size],
         fullWidth && "w-full",

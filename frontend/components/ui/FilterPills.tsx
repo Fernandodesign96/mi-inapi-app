@@ -49,10 +49,11 @@ export default function FilterPills({
             aria-selected={isActive}
             onClick={() => onChange(opt.value)}
             className={clsx(
-              "flex-shrink-0 min-h-[36px] px-4 py-[6px] rounded-full text-[13px] font-sans transition-all duration-150 outline-none",
+              "flex-shrink-0 min-h-[36px] px-4 py-[6px] rounded-full text-body-sm font-sans transition-all duration-150 outline-none",
+              "focus-visible:ring-2 focus-visible:ring-focus",
               isActive
-                ? "bg-[#1A56DB] text-white font-semibold"
-                : "bg-[#F3F4F6] text-[#4B5563] border border-[#E5E7EB] font-medium hover:bg-[#E5E7EB]"
+                ? "bg-primary text-primary-foreground font-semibold"
+                : "bg-surface-elevated text-muted-secondary border border-border font-medium hover:bg-border"
             )}
           >
             {opt.label}

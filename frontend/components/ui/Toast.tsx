@@ -10,24 +10,27 @@ interface ToastProps {
   onDismiss: () => void;
 }
 
-const config: Record<string, { bg: string; text: string; icon: LucideIcon; iconColor: string }> = {
+const config: Record<
+  string,
+  { bg: string; text: string; icon: LucideIcon; iconClass: string }
+> = {
   success: {
-    bg: "bg-[#D1FAE5]",
-    text: "text-[#065F46]",
+    bg: "bg-success-bg",
+    text: "text-foreground",
     icon: CheckCircle,
-    iconColor: "#059669",
+    iconClass: "text-success",
   },
   error: {
-    bg: "bg-[#FEE2E2]",
-    text: "text-[#991B1B]",
+    bg: "bg-danger-bg",
+    text: "text-foreground",
     icon: XCircle,
-    iconColor: "#DC2626",
+    iconClass: "text-danger",
   },
   info: {
-    bg: "bg-[#DBEAFE]",
-    text: "text-[#1E40AF]",
+    bg: "bg-info-bg",
+    text: "text-foreground",
     icon: Info,
-    iconColor: "#2563EB",
+    iconClass: "text-info",
   },
 };
 
@@ -37,7 +40,7 @@ export default function Toast({ message, type = "success", onDismiss }: ToastPro
     return () => clearTimeout(timer);
   }, [onDismiss]);
 
-  const { bg, text, icon: Icon, iconColor } = config[type];
+  const { bg, text, icon: Icon, iconClass } = config[type];
 
   return (
     <div className={clsx(
@@ -45,13 +48,15 @@ export default function Toast({ message, type = "success", onDismiss }: ToastPro
       "bottom-[calc(64px+16px+env(safe-area-inset-bottom))]",
       "max-w-[390px]"
     )}>
-      <div className={clsx(
-        "toast-enter flex items-center gap-[10px] w-full p-4 rounded-[12px] shadow-lg",
-        bg,
-        text
-      )}>
-        <Icon size={18} color={iconColor} strokeWidth={2.5} />
-        <p className="text-[14px] font-sans font-medium">{message}</p>
+      <div
+        className={clsx(
+          "toast-enter flex items-center gap-[10px] w-full p-4 rounded-md shadow-lg",
+          bg,
+          text
+        )}
+      >
+        <Icon size={18} className={iconClass} strokeWidth={2.5} />
+        <p className="text-body-sm font-sans font-medium">{message}</p>
       </div>
     </div>
   );
