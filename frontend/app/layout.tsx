@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
-import { DM_Sans, DM_Mono } from "next/font/google";
+import { Roboto, Roboto_Slab } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
 
-const dmSans = DM_Sans({
+const roboto = Roboto({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  variable: "--font-dm-sans",
+  weight: ["400", "500", "700"],
+  variable: "--font-roboto",
   display: "swap",
 });
 
-const dmMono = DM_Mono({
+const robotoSlab = Roboto_Slab({
   subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-dm-mono",
+  weight: ["400", "500", "700"],
+  variable: "--font-roboto-slab",
   display: "swap",
 });
 
@@ -45,9 +45,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es-CL" className={`${dmSans.variable} ${dmMono.variable}`}>
-      <body className="font-sans antialiased bg-[--bg-base]">
-        <div className="app-frame">{children}</div>
+    <html
+      lang="es-CL"
+      className={`dark ${roboto.variable} ${robotoSlab.variable}`}
+      suppressHydrationWarning
+    >
+      <body className="font-sans antialiased bg-background text-foreground">
+        <Script
+          id="miinapi-theme-init"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('miinapi-theme');if(t==='light'){document.documentElement.classList.remove('dark');}else{document.documentElement.classList.add('dark');}}catch(e){document.documentElement.classList.add('dark');}})();`,
+          }}
+        />
+        <div className="app-frame gob-container">{children}</div>
 
         {/* --- Trackers & Analytics --- */}
         {/* Google Analytics 4 */}

@@ -3,5 +3,11 @@
     "pdf-parse": "^2.4.5",
     "pdf2json": "^4.0.2",
     "pdfjs-dist": "^3.4.120"
+  },
+  "scripts": {
+    "dev": "bun run --cwd frontend dev",
+    "lint": "bun run --cwd frontend lint",
+    "typecheck": "bun run --cwd frontend typecheck",
+    "build": "bun run --cwd frontend build"
   }
 }

@@ -1,9 +1,9 @@
 "use client";
 
-import { clsx } from "clsx";
+import { cn } from "@/lib/utils";
 import { AlertTriangle, AlertCircle, RefreshCw, CheckCircle, LucideIcon } from "lucide-react";
 
-export type BadgeVariant = 'danger' | 'warning' | 'info' | 'success';
+export type BadgeVariant = "danger" | "warning" | "info" | "success";
 
 interface StatusBadgeProps {
   variant: BadgeVariant;
@@ -13,23 +13,23 @@ interface StatusBadgeProps {
 
 const variantConfig: Record<BadgeVariant, { bg: string; text: string; icon: LucideIcon }> = {
   danger: {
-    bg: "bg-[#FEE2E2]",
-    text: "text-[#DC2626]",
+    bg: "bg-danger-bg",
+    text: "text-danger",
     icon: AlertTriangle,
   },
   warning: {
-    bg: "bg-[#FEF3C7]",
-    text: "text-[#D97706]",
+    bg: "bg-warning-bg",
+    text: "text-warning",
     icon: AlertCircle,
   },
   info: {
-    bg: "bg-[#DBEAFE]",
-    text: "text-[#2563EB]",
+    bg: "bg-info-bg",
+    text: "text-info",
     icon: RefreshCw,
   },
   success: {
-    bg: "bg-[#D1FAE5]",
-    text: "text-[#059669]",
+    bg: "bg-success-bg",
+    text: "text-success",
     icon: CheckCircle,
   },
 };
@@ -44,9 +44,9 @@ export default function StatusBadge({
 
   return (
     <div
-      className={clsx(
-        "inline-flex items-center gap-1 px-[10px] py-[2px] rounded-full",
-        "font-sans text-[11px] font-semibold uppercase tracking-[0.05em]",
+      className={cn(
+        "inline-flex items-center gap-1 px-[10px] py-[2px] rounded-full min-h-[29px] touch-target-chip",
+        "text-label",
         config.bg,
         config.text
       )}

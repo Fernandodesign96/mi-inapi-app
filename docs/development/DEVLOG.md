@@ -3,9 +3,106 @@
 Este documento describe el proceso de desarrollo del proyecto **MiINAPI**. Es un registro de las decisiones tomadas, los aprendizajes adquiridos, los problemas que surgieron y la forma en que se resolvieron, y el progreso realizado.
 
 ## 📑 Índice
+- [[2026-06-10] - Frontend | Sprint 3: Implementación UI Kit GOB v3.0.1 — cierre de migración](#2026-06-10---frontend--sprint-3-implementación-ui-kit-gob-v301--cierre-de-migración)
+- [[2026-06-10] - Frontend | Sprint 3: Migración UI Kit GOB v3.0.1 — documentación](#2026-06-10---frontend--sprint-3-migración-ui-kit-gob-v301--documentación)
 - [[2026-04-06 - 2026-04-13] - Frontend | Sprint 1: Fundamentos, Design System y App Router](#2026-04-06---2026-04-13---frontend--sprint-1-fundamentos-design-system-y-app-router)
 - [[2026-04-13] - Frontend | Sprint 1.5: Cierre, Seguridad y Navegación Contextual](#2026-04-13---frontend--sprint-15-cierre-seguridad-y-navegación-contextual)
 - [[2026-04-14] - Frontend | Sprint 2: Stepper, Mock Data, Login y Polish Final](#2026-04-14---frontend--sprint-2-stepper-mock-data-login-y-polish-final)
+
+---
+
+## [2026-06-10] - Frontend | Sprint 3: Implementación UI Kit GOB v3.0.1 — cierre de migración
+
+### Contexto y objetivos:
+
+Tras documentar la migración al UI Kit Gobierno de Chile v3.0.1 (Fase 0), el objetivo de esta jornada fue **implementar en código** la totalidad del plan en `docs/UI_MIGRATION_PLAN.md`: tokens, componentes, layouts, páginas, accesibilidad y cierre visual con identidad institucional INAPI. El MVP debía abandonar el frame móvil de 390 px, los hex legacy y las fuentes DM Sans/Outfit a favor de Roboto, tokens semánticos GOB y componentes React propios (sin Bootstrap).
+
+### Implementación técnica:
+
+**Fase 1 — Tokens e infraestructura**
+- `frontend/app/globals.css`: variables CSS GOB (`--color-primary`, semáforos, neutros, ClaveÚnica, elevación, radius, grilla).
+- `frontend/tailwind.config.ts`: breakpoints 600/905/1240/1440 px, paleta semántica, tipografía y sombras.
+- `frontend/app/layout.tsx`: fuentes Roboto Sans + Roboto Slab vía `next/font`, clases `bg-background` / `text-foreground`, contenedor `gob-container`.
+- `frontend/lib/utils.ts`: utilidad `cn()` con `clsx` + `tailwind-merge`.
+- `frontend/package.json`: script `typecheck` (`tsc --noEmit`).
+
+**Fase 2 — Componentes UI**
+- Creación de `ClaveUnicaButton.tsx` con tokens `--claveunica-*` y cinco estados interactivos documentados.
+- Migración de componentes en `frontend/components/ui/` a tokens GOB: `CTAButton`, `StatusBadge`, `SemaphoreCard`, `FormInput`, `FilterPills`, `TopBar`, `BottomNav`, `Toast`, `ChatIAFab`, etc.
+- Eliminación de hex arbitrarios en favor de clases semánticas (`bg-primary`, `text-muted`, `border-border`).
+
+**Fase 3 — Layouts y shell**
+- Eliminación del frame fijo 390 px en `frontend/app/(dashboard)/layout.tsx`.
+- Shell full-width con `min-h-dvh`, grilla GOB y utilidad `pb-safe-bottomnav` para respetar `BottomNav`.
+- `ChatIAFab` reposicionado sin wrapper duplicado; layout auth alineado a `bg-background`.
+
+**Fase 4 — Páginas**
+- Migración de las 13 rutas en `frontend/app/`: login, inicio, solicitudes, detalle, notificaciones, certificados, biblioteca, soporte, chat, chat ejecutivo, perfil, diario oficial.
+- Login integra `ClaveUnicaButton` (reemplaza `CTAButton` outline + ícono Fingerprint).
+- Patrones unificados: headers sticky, padding inferior seguro, tokens en cards y tablas.
+
+**Fase 5 — Accesibilidad y dark mode**
+- Tokens dark mode ampliados en `globals.css` (`html.dark`): fondos semánticos, links, elevaciones.
+- `prefers-reduced-motion`: desactivación de skeleton, animaciones de entrada y transiciones de cards.
+- Focus visible unificado con anillo `#FFBE5C` (`focus-gob`, `focus-visible:ring-focus`).
+- Touch targets ≥ 44 px en botones; ≥ 29 px en chips y badges.
+
+**Toggle modo día/noche (mejora posterior)**
+- `frontend/lib/themeStore.ts`: store Zustand con persistencia en `localStorage` (`miinapi-theme`), default `dark`.
+- `frontend/components/ui/ThemeToggle.tsx`: botón Sol/Luna en `TopBar` (campana → toggle → perfil).
+- `globals.css`: reemplazo de `@media (prefers-color-scheme)` por clase `html.dark` controlada manualmente.
+- `layout.tsx`: script `beforeInteractive` para aplicar tema antes del paint y evitar flash; `suppressHydrationWarning` en `<html>`.
+- Login expone toggle de tema sin campana ni perfil (`showThemeToggle={true}`).
+
+**Corrección de contraste en botones sólidos (modo día)**
+- Causa: `tailwind-merge` eliminaba `text-white` / `text-primary-foreground` al fusionar con clases tipográficas custom (`text-btn`, `text-body-sm`, etc.), dejando heredar `--foreground` (#373737) sobre fondos saturados.
+- Solución: `extendTailwindMerge` en `lib/utils.ts` registrando las clases tipográficas del design system como grupo `font-size`, no como color.
+- Afectaba `CTAButton` (Ingresar, Ir a la notificación), `ClaveUnicaButton` y cualquier componente que usara `cn()` con el mismo patrón.
+
+**Logo institucional INAPI**
+- Incorporación de `docs/uikit_gob/references/inapi_logo.jpg` como asset oficial en `frontend/public/images/inapi-logo.jpg`.
+- Actualización de `TopBar.tsx`: `next/image` con alt descriptivo, dimensiones intrínsecas y escala `h-8 w-auto object-contain`.
+- Eliminación del placeholder `inapi-logo.png` y del archivo legacy `docs/logo_inapi.png`.
+- Inventario actualizado en `docs/uikit_gob/references/README.md`.
+
+### 💡 Repaso técnico: Colisión `text-*` tipografía vs color en tailwind-merge
+
+Las utilidades tipográficas del design system (`text-btn`, `text-body`, `text-h1`, …) comparten prefijo `text-` con las utilidades de color de Tailwind (`text-white`, `text-primary-foreground`). Sin configuración, `twMerge` asume que son mutuamente excluyentes y conserva la última en el orden de fusión — típicamente `text-btn`, que en `globals.css` solo define tamaño y peso, no color. En modo oscuro el bug era invisible porque `--foreground` ya es claro; en modo día el texto quedaba ilegible sobre botones primarios, semáforos y ClaveÚnica. La extensión de `classGroups.font-size` en `extendTailwindMerge` separa ambos namespaces sin renombrar las clases del design system.
+
+### Próximos pasos:
+
+- Fase 6 — QA visual: grep de hex arbitrarios en `frontend/` (objetivo cero), checklist breakpoints 600/905/1240/1440 px y verificación de los cinco estados ClaveÚnica.
+- Validar despliegue en GitHub Pages con `basePath` `/mi-inapi-app` y logo institucional.
+- Commit final, PR y merge de la rama `docs/ui-kit-gob-v3-migration` hacia `main`.
+
+---
+
+### Contexto y objetivos:
+
+Tras incorporar la carpeta `docs/uikit_gob/` con capturas del UI Kit Gobierno de Chile v3.0.1 y la lámina `claveunica-button-states.PNG`, era necesario alinear la documentación de MiINAPI antes de tocar código. El MVP frontend aún usa tokens legacy (DM Sans, `#1A56DB`, frame 390 px, ~90 hex hardcodeados), pero la dirección acordada es **tokens GOB en Tailwind + componentes React propios**, descartando el Framework kit Bootstrap (`@gobdigital-cl/gob.cl`) por incompatibilidad con Next.js 15 y MVPs SPA.
+
+Este sprint documenta la migración completa (Fase 0 del plan); la implementación en `frontend/` queda para sprints posteriores.
+
+### Implementación técnica:
+
+- **`docs/DESIGN_SYSTEM.md` v2.0.0-gob:** reescritura con paleta `GOB.COLOR.*`, tipografía Roboto Slab/Sans, espaciado kit (4–64 px), grilla responsiva (600/905/1240/1440 px, 4/8/12 columnas), elevación y radius GOB, semáforo INAPI remapeado a estados semánticos, componente dedicado `ClaveUnicaButton` (§9.14) y tokens `--claveunica-*`.
+- **`docs/UI_MIGRATION_PLAN.md`:** plan en 6 fases (documentación → tokens CSS → componentes → layouts → páginas → QA), decisiones de arquitectura y mapa legacy→GOB.
+- **`docs/uikit_gob/references/`:** `README.md` actualizado con inventario PNG incluyendo ClaveÚnica; `DESIGN_SYSTEM.md` de referencia enlazado al DS MiINAPI v2.
+- **`docs/FLOW_DIAGRAMS.md`:** colores Mermaid alineados a GOB (`#FB3B3B`, `#FF5722`, `#2196F3`, `#4CAF50`).
+- **`docs/USER_JOURNEY.md`:** nota de equipo con enlace al nuevo design system y reglas de semáforo/ClaveÚnica.
+- **`docs/prompts/`:** aviso de obsolescencia parcial (v1) en `correccion.md`, `v0_prompt_v2.md` y `Antigravity_Prompt_MiINAPI_v2.md`.
+
+### 💡 Repaso técnico: UI Kit v3.0.1 vs Framework kit Gobierno
+
+El sitio [framework.digital.gob.cl](https://framework.digital.gob.cl/) distribuye `@gobdigital-cl/gob.cl` sobre Bootstrap 4 + jQuery (breakpoints 576/768/992/1200 px). El UI Kit v3.0.1 en Figma/PDF usa otra grilla (600/905/1240/1440 px) y tokens `GOB.COLOR.*`. Para MiINAPI (Next.js + Tailwind v4), la estrategia correcta es **extraer tokens y patrones**, no instalar el paquete npm legacy. El botón ClaveÚnica es un caso especial: identidad propia documentada en `claveunica-button-states.PNG`, independiente del accent GOB `#FF4731`.
+
+### Próximos pasos:
+
+- Fase 1: propagar tokens a `frontend/app/globals.css`, `tailwind.config.ts` y `layout.tsx` (Roboto).
+- Fase 2: crear `ClaveUnicaButton.tsx` y migrar componentes `ui/` a clases semánticas.
+- Fase 3: eliminar frame 390 px; adoptar contenedor GOB en layouts.
+- Fase 4: migrar páginas, empezando por `login/page.tsx`.
+- Completar hex pendientes: escala `GOB.COLOR.GRIS` y valores CSS de Elevation-01…05.
 
 ---
 

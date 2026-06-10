@@ -25,17 +25,17 @@ export default function EmptyState({
       )}
     >
       {/* Icon wrapper */}
-      <div className="w-[64px] h-[64px] rounded-full bg-[#F3F4F6] flex items-center justify-center text-[#9CA3AF]">
+      <div className="w-[64px] h-[64px] rounded-full bg-surface-elevated flex items-center justify-center text-muted">
         <Icon size={32} strokeWidth={2} />
       </div>
 
-      <h3 className="text-h3 text-[#111827] mt-[16px]">{title}</h3>
-      <p className="text-body-sm text-[#4B5563] mt-[8px] max-w-[280px]">
+      <h3 className="text-h3 text-foreground mt-4">{title}</h3>
+      <p className="text-body-sm text-muted-secondary mt-2 max-w-[280px]">
         {description}
       </p>
 
       {action && (
-        <div className="mt-[20px]">
+        <div className="mt-6">
           <CTAButton
             variant="outline"
             label={action.label}

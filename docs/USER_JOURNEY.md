@@ -134,6 +134,7 @@ journey
 
 ## Notas para el equipo
 
+- **Design system (2026-06-10):** MiINAPI migra al UI Kit Gobierno de Chile v3.0.1. Fuente de verdad: [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md) v2.0.0-gob y plan de implementación [`UI_MIGRATION_PLAN.md`](UI_MIGRATION_PLAN.md). Tokens clave: primario `#4282E0`, semáforo mapeado a GOB (error `#FB3B3B`, advertencia `#FF5722`, info `#2196F3`, éxito `#4CAF50`), tipografía Roboto Slab/Sans, grilla 4/8/12 columnas. Login con componente dedicado `ClaveUnicaButton` (no reutilizar CTAButton outline).
 - **Consistencia con emails de TI:** Hasta que el equipo de TI no defina el contenido exacto de las notificaciones por correo, el copy en la app debe ser genérico pero coherente. Trabajar con plantillas de notificación que se puedan parametrizar.
-- **Sistema semáforo:** Rojo (urgente/riesgo) → Naranja (atención/requerimiento) → Azul (en revisión) → Verde (finalizado). Este código debe ser consistente en Dashboard, Notificaciones y Stepper de etapas.
+- **Sistema semáforo:** Rojo (urgente/riesgo) → Naranja (atención/requerimiento) → Azul (en revisión) → Verde (finalizado). Este código debe ser consistente en Dashboard, Notificaciones y Stepper de etapas. Colores alineados a tokens GOB v2 (ver design system).
 - **Pantallas fuera del MVP:** Simulador y Asistente IA quedan para Etapa 2. No wireframear ni desarrollar hasta validar el MVP core.

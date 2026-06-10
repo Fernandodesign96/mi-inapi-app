@@ -11,24 +11,24 @@ interface SemaphoreCardProps {
 
 const variantStyles: Record<Urgency, { border: string; bg: string }> = {
   danger: {
-    border: "border-l-[#DC2626]",
-    bg: "bg-[linear-gradient(to_right,#FFF5F5_0%,#FFFFFF_40%)]",
+    border: "border-l-danger",
+    bg: "bg-gradient-to-r from-danger-bg to-surface",
   },
   warning: {
-    border: "border-l-[#D97706]",
-    bg: "bg-[linear-gradient(to_right,#FFFBEB_0%,#FFFFFF_40%)]",
+    border: "border-l-warning",
+    bg: "bg-gradient-to-r from-warning-bg to-surface",
   },
   info: {
-    border: "border-l-[#2563EB]",
-    bg: "bg-[linear-gradient(to_right,#EFF6FF_0%,#FFFFFF_40%)]",
+    border: "border-l-info",
+    bg: "bg-gradient-to-r from-info-bg to-surface",
   },
   success: {
-    border: "border-l-[#059669]",
-    bg: "bg-[linear-gradient(to_right,#F0FDF4_0%,#FFFFFF_40%)]",
+    border: "border-l-success",
+    bg: "bg-gradient-to-r from-success-bg to-surface",
   },
   neutral: {
-    border: "border-l-[#E5E7EB]",
-    bg: "bg-[#FFFFFF]",
+    border: "border-l-border",
+    bg: "bg-surface",
   },
 };
 
@@ -44,7 +44,7 @@ export default function SemaphoreCard({
     <div
       onClick={onClick}
       className={clsx(
-        "rounded-[14px] border-l-4 shadow-card transition-card",
+        "rounded-lg border-l-4 shadow-card transition-card",
         styles.border,
         styles.bg,
         onClick && "cursor-pointer hover:shadow-elevated active:scale-[0.99]",

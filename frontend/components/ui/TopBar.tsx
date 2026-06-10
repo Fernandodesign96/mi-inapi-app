@@ -1,6 +1,7 @@
 "use client";
 
 import { Bell, User, ChevronLeft } from "lucide-react";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -11,6 +12,7 @@ interface TopBarProps {
   variant?: "home" | "section";
   title?: string;
   showNotifications?: boolean;
+  showThemeToggle?: boolean;
   showProfile?: boolean;
   hasUnreadNotifications?: boolean;
   onBack?: () => void;
@@ -21,6 +23,7 @@ export default function TopBar({
   variant = "home",
   title,
   showNotifications = true,
+  showThemeToggle = true,
   showProfile = true,
   hasUnreadNotifications = true,
   onBack,
@@ -38,12 +41,12 @@ export default function TopBar({
   };
 
   return (
-    <header className="h-[56px] bg-white border-b border-[#E5E7EB] flex items-center px-4 sticky top-0 z-40 w-full shrink-0">
+    <header className="h-topbar bg-surface border-b border-border flex items-center px-4 sticky top-0 z-40 w-full shrink-0">
       <div className="flex-1 flex items-center">
         {variant === "section" ? (
           <button
             onClick={handleBack}
-            className="w-11 h-11 -ml-2 flex items-center justify-center text-[#111827] active:opacity-60 transition-opacity"
+                        className="w-11 h-11 -ml-2 flex items-center justify-center text-foreground active:opacity-60 transition-opacity focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm touch-target"
             aria-label="Volver"
           >
             <ChevronLeft size={24} strokeWidth={2.5} />
@@ -51,21 +54,21 @@ export default function TopBar({
         ) : (
           <div className="flex items-center gap-2">
             {imgError ? (
-              <div className="w-8 h-8 bg-[#1E3A8A] flex items-center justify-center">
+              <div className="w-8 h-8 bg-primary-dark flex items-center justify-center rounded-sm">
                 <span className="text-white font-bold text-sm font-sans">I</span>
               </div>
             ) : (
               <Image
-                src="/images/inapi-logo.png"
-                alt="INAPI"
-                width={32}
-                height={32}
-                className="object-contain"
+                src="/images/inapi-logo.jpg"
+                alt="INAPI — Instituto Nacional de Propiedad Industrial, Gobierno de Chile"
+                width={1904}
+                height={1742}
+                className="h-8 w-auto object-contain"
                 onError={() => setImgError(true)}
                 priority
               />
             )}
-            <span className="font-semibold text-[16px] text-[#111827] font-sans tracking-tight">
+            <span className="font-semibold text-body text-foreground font-sans tracking-tight">
               MiINAPI
             </span>
           </div>
@@ -74,7 +77,7 @@ export default function TopBar({
 
       {variant === "section" && title && (
         <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center w-max">
-          <h1 className="text-h3 text-[#111827]">{title}</h1>
+          <h1 className="text-h3 text-foreground">{title}</h1>
         </div>
       )}
 
@@ -86,18 +89,19 @@ export default function TopBar({
             {showNotifications && (
               <Link
                 href="/notificaciones"
-                className="w-11 h-11 flex items-center justify-center text-[#4B5563] relative active:opacity-60 transition-opacity"
+                className="w-11 h-11 flex items-center justify-center text-muted-secondary relative active:opacity-60 transition-opacity focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm touch-target"
               >
                 <Bell size={22} strokeWidth={2} />
                 {hasUnreadNotifications && (
-                  <div className="absolute top-[10px] right-[10px] w-2 h-2 bg-[#DC2626] rounded-full border border-white" />
+                  <div className="absolute top-[10px] right-[10px] w-2 h-2 bg-danger rounded-full border border-surface" />
                 )}
               </Link>
             )}
+            {showThemeToggle && <ThemeToggle />}
             {showProfile && (
               <Link
                 href="/perfil"
-                className="w-11 h-11 flex items-center justify-center text-[#4B5563] active:opacity-60 transition-opacity"
+                className="w-11 h-11 flex items-center justify-center text-muted-secondary active:opacity-60 transition-opacity focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm touch-target"
               >
                 <User size={22} strokeWidth={2} />
               </Link>

@@ -20,10 +20,10 @@ const DEFAULT_STEPS = [
 ];
 
 const urgencyColors = {
-  danger: "#DC2626",
-  warning: "#D97706",
-  info: "#2563EB",
-  success: "#059669",
+  danger: "#FB3B3B",
+  warning: "#FF5722",
+  info: "#2196F3",
+  success: "#4CAF50",
 };
 
 export const getStepStates = (estado: string): StepState[] => {
@@ -82,9 +82,9 @@ export default function StepperProgress({
                     <span
                       className={clsx(
                         "text-[9px] uppercase font-sans tracking-tight leading-none",
-                        state === "completed" && "text-[#059669] font-medium",
+                        state === "completed" && "text-success font-medium",
                         state === "current" && "font-bold",
-                        state === "pending" && "text-[#9CA3AF] font-normal"
+                        state === "pending" && "text-muted font-normal"
                       )}
                       style={state === "current" ? { color: currentColor } : {}}
                     >
@@ -108,9 +108,9 @@ export default function StepperProgress({
                 <div
                   className={clsx(
                     "w-4 h-4 rounded-full flex items-center justify-center shrink-0 transition-colors z-10",
-                    state === "completed" && "bg-[#059669]",
+                    state === "completed" && "bg-success",
                     state === "current" && "bg-current",
-                    state === "pending" && "bg-[#E5E7EB] border-2 border-[#D1D5DB]"
+                    state === "pending" && "bg-surface-elevated border-2 border-border-strong"
                   )}
                   style={state === "current" ? { backgroundColor: currentColor } : {}}
                 >
@@ -124,8 +124,8 @@ export default function StepperProgress({
                     className={clsx(
                       "flex-1 h-[2px] transition-colors -ml-1 -mr-1",
                       state === "completed" && stepStates[i + 1] !== "pending"
-                        ? "bg-[#059669]"
-                        : "bg-[#E5E7EB]"
+                        ? "bg-success"
+                        : "bg-border"
                     )}
                   />
                 )}
@@ -138,9 +138,9 @@ export default function StepperProgress({
                     <span
                       className={clsx(
                         "text-[9px] uppercase font-sans tracking-tight leading-none",
-                        state === "completed" && "text-[#059669] font-medium",
+                        state === "completed" && "text-success font-medium",
                         state === "current" && "font-bold",
-                        state === "pending" && "text-[#9CA3AF] font-normal"
+                        state === "pending" && "text-muted font-normal"
                       )}
                       style={state === "current" ? { color: currentColor } : {}}
                     >
