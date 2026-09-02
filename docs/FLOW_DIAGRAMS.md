@@ -4,6 +4,8 @@
 
 > **Colores en diagramas (2026-06-10):** alineados a tokens semánticos GOB v3.0.1 — error `#FB3B3B`, advertencia `#FF5722`, info `#2196F3`, éxito `#4CAF50`. Ver [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md) v2.0.0-gob.
 
+**Documentación relacionada:** [Arquitectura](ARCHITECTURE.md) · [PRD](PRD.md) · [User journey](USER_JOURNEY.md) · [Base de datos](DATABASE.md)
+
 ---
 
 ## 1. Flujo: Login / Autenticación

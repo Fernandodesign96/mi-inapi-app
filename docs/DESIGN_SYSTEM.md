@@ -6,7 +6,7 @@
 |-----------|---------|
 | **Versión** | 2.0.0-gob |
 | **Fuente visual institucional** | UI Kit v3.0.1 — Secretaría de Gobierno (Transformación Digital) |
-| **Referencias** | [`docs/uikit_gob/references/`](uikit_gob/references/) · [Plan de migración](UI_MIGRATION_PLAN.md) |
+| **Referencias** | [`docs/uikit_gob/references/`](uikit_gob/references/) · [Plan de migración](UI_MIGRATION_PLAN.md) · [PRD](PRD.md) · [Arquitectura](ARCHITECTURE.md) |
 | **Stack** | Next.js 15 (App Router) · TypeScript · Tailwind CSS v4 · Lucide React |
 | **Estado código** | Tokens legacy (DM Sans, `#1A56DB`, frame 390 px) — migración documentada, implementación pendiente |
 

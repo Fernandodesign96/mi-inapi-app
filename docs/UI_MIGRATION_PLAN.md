@@ -2,7 +2,7 @@
 
 **Estado:** Documentación completada (Fase 0). Implementación en código pendiente.  
 **Última actualización:** 2026-06-10  
-**Design system de referencia:** [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md) v2.0.0-gob
+**Design system de referencia:** [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md) v2.0.0-gob · **Arquitectura:** [ARCHITECTURE.md](ARCHITECTURE.md) · **Roadmap:** [ROADMAP.md](ROADMAP.md)
 
 ---
 

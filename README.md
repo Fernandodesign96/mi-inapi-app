@@ -52,7 +52,20 @@ Para este MVP, hemos integrado herramientas de observabilidad para recolectar fe
 - **GA4**: Métricas de uso y embudos de conversión.
 
 ## Documentación Técnica
-- [Roadmap de Desarrollo](docs/roadmap_dev.md)
+
+Producto y alcance:
+- [PRD](docs/PRD.md)
+- [Roadmap de Desarrollo](docs/ROADMAP.md)
+- [User journey](docs/USER_JOURNEY.md)
+
+Arquitectura y datos:
+- [Arquitectura del sistema](docs/ARCHITECTURE.md)
+- [Diseño de la base de datos](docs/DATABASE.md)
+- [Diagramas de flujo](docs/FLOW_DIAGRAMS.md)
+
+Diseño e implementación:
+- [Design system](docs/DESIGN_SYSTEM.md)
+- [Plan de migración UI Kit GOB](docs/UI_MIGRATION_PLAN.md)
 - [Registro de Desarrollo (Devlog)](docs/development/DEVLOG.md)
 
 ---

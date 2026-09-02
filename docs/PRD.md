@@ -1,6 +1,8 @@
 # Documento de Requerimientos de Producto (PRD): MiINAPI
 
-Este documento define los requisitos de producto del MVP de MiINAPI, basado directamente en el *Documento de Fundamentos* oficial y el Roadmap del proyecto.
+Este documento define los requisitos de producto del MVP de MiINAPI, basado directamente en el *Documento de Fundamentos* oficial y el [Roadmap](ROADMAP.md) del proyecto.
+
+**Documentación relacionada:** [Arquitectura](ARCHITECTURE.md) · [Roadmap](ROADMAP.md) · [User journey](USER_JOURNEY.md) · [Design system](DESIGN_SYSTEM.md)
 
 | Metadatos | Detalle |
 | --- | --- |

@@ -2,6 +2,8 @@
 Actualizado: 12 de abril, 2026
 Rol: Senior Product Designer + Senior FE/BE Developer
 
+**Documentación relacionada:** [PRD](PRD.md) · [Arquitectura](ARCHITECTURE.md) · [Base de datos](DATABASE.md) · [Devlog](development/DEVLOG.md)
+
 ---
 
 ## Contexto
