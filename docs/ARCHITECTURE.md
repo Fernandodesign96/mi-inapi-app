@@ -2,6 +2,8 @@
 
 Este documento describe la arquitectura del sistema MiINAPI, abarcando desde la visión general estratégica hasta los detalles técnicos de cada capa operativa.
 
+**Documentación relacionada:** [PRD](PRD.md) · [Roadmap](ROADMAP.md) · [Base de datos](DATABASE.md) · [Diagramas de flujo](FLOW_DIAGRAMS.md)
+
 ## Tabla de Contenidos
 1. [Visión General y Propósito](#1-visión-general-y-propósito)
 2. [Diseño de Alto Nivel (High-Level Design)](#2-diseño-de-alto-nivel-high-level-design)
@@ -108,7 +110,15 @@ El código reside en un monorepo administrado de la siguiente manera:
 │   ├── tailwind.config.ts    # Configuración de diseño y tokens
 │   └── package.json
 │
-├── /docs                     # Documentación (PRD, Arquitectura, BD)
+├── /docs                     # Documentación de producto y técnica
+│   ├── ARCHITECTURE.md
+│   ├── DATABASE.md
+│   ├── PRD.md
+│   ├── ROADMAP.md
+│   ├── DESIGN_SYSTEM.md
+│   ├── FLOW_DIAGRAMS.md
+│   ├── USER_JOURNEY.md
+│   └── /development          # DEVLOG y registro de sprints
 └── docker-compose.yml        # Infraestructura (BD, Redis)
 ```
 
@@ -130,6 +140,8 @@ Desarrollada con **NestJS 10** por su arquitectura modular inspirada en Angular,
 * **Colas de Tareas:** `BullMQ` manejado a través de Redis para procesamiento asíncrono (ej. envío masivo de correos de caducidad, generación demorada de certificados en PDF).
 
 ## 6. Capa de Datos y Persistencia
+
+El modelo relacional, índices y reglas de auditoría están especificados en [`DATABASE.md`](DATABASE.md).
 
 * **ORM:** Prisma 5 provee seguridad de tipos impecable desde la base de datos hasta el front-end a través de relaciones TypeScript generadas automáticamente.
 * **Motor:** PostgreSQL 16 proporciona soporte relacional y soporte JSONB para flexibilidad en requerimientos de trámites específicos.

@@ -1,6 +1,8 @@
 # Diseño de la Base de Datos: MiINAPI
 
-Este documento define la capa de persistencia de MiINAPI. La base de datos está optimizada para la resiliencia legal, alta escalabilidad y actualización en tiempo real del estado de los trámites mediante la combinación de **PostgreSQL 16** y el ORM **Prisma 5**.
+Este documento define la capa de persistencia de MiINAPI. La base de datos está optimizada para la resiliencia legal, alta escalabilidad y actualización en tiempo real del estado de los trámites mediante la combinación de **PostgreSQL 16** y el ORM **Prisma 5**. Complementa la [arquitectura del sistema](ARCHITECTURE.md).
+
+**Documentación relacionada:** [Arquitectura](ARCHITECTURE.md) · [PRD](PRD.md) · [Roadmap](ROADMAP.md)
 
 ## Tabla de contenidos
 1. [Modelo Entidad-Relación (ERD)](#1-modelo-entidad-relación-erd)

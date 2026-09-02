@@ -15,9 +15,13 @@
 
 ## Journey Principal: "Revisar mi solicitud y completar una acción requerida"
 
+El flujo completo se muestra en **tres diagramas** (acceso → dashboard/detalle → notificación/cierre) para que cada tramo se lea a tamaño usable.
+
+### Parte 1 de 3 — Trigger y acceso
+
 ```mermaid
 journey
-    title Usuario Ocasional: Revisar solicitud y completar acción requerida
+    title Parte 1/3 — Trigger y acceso
     section Trigger externo
       Recibe email de INAPI notificando acción requerida: 3: Usuario
       Abre el enlace o descarga la app MiINAPI: 4: Usuario
@@ -25,6 +29,15 @@ journey
       Ingresa con RUT y contraseña: 4: Usuario
       Sistema valida credenciales via API: 3: Sistema
       Redirige al Dashboard: 5: Sistema
+```
+
+↓ Continúa en el Dashboard.
+
+### Parte 2 de 3 — Dashboard y detalle
+
+```mermaid
+journey
+    title Parte 2/3 — Dashboard y detalle
     section Dashboard
       Ve resumen: En Proceso / Acción Requerida / Finalizadas: 4: Usuario
       Identifica visualmente la solicitud urgente (rojo): 5: Usuario
@@ -32,6 +45,15 @@ journey
     section Detalle de Solicitud
       Lee el próximo paso requerido: 4: Usuario
       Hace clic en Ir a la Notificación: 4: Usuario
+```
+
+↓ Continúa en Notificaciones.
+
+### Parte 3 de 3 — Notificación y resolución
+
+```mermaid
+journey
+    title Parte 3/3 — Notificación y resolución
     section Notificaciones
       Ve la notificación urgente destacada: 5: Usuario
       Lee la tabla con los alcances de la etapa: 3: Usuario
@@ -134,6 +156,7 @@ journey
 
 ## Notas para el equipo
 
+- **Alcance y arquitectura:** historias y pantallas en el [PRD](PRD.md); flujos por pantalla en [FLOW_DIAGRAMS.md](FLOW_DIAGRAMS.md); capas técnicas en [ARCHITECTURE.md](ARCHITECTURE.md).
 - **Design system (2026-06-10):** MiINAPI migra al UI Kit Gobierno de Chile v3.0.1. Fuente de verdad: [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md) v2.0.0-gob y plan de implementación [`UI_MIGRATION_PLAN.md`](UI_MIGRATION_PLAN.md). Tokens clave: primario `#4282E0`, semáforo mapeado a GOB (error `#FB3B3B`, advertencia `#FF5722`, info `#2196F3`, éxito `#4CAF50`), tipografía Roboto Slab/Sans, grilla 4/8/12 columnas. Login con componente dedicado `ClaveUnicaButton` (no reutilizar CTAButton outline).
 - **Consistencia con emails de TI:** Hasta que el equipo de TI no defina el contenido exacto de las notificaciones por correo, el copy en la app debe ser genérico pero coherente. Trabajar con plantillas de notificación que se puedan parametrizar.
 - **Sistema semáforo:** Rojo (urgente/riesgo) → Naranja (atención/requerimiento) → Azul (en revisión) → Verde (finalizado). Este código debe ser consistente en Dashboard, Notificaciones y Stepper de etapas. Colores alineados a tokens GOB v2 (ver design system).
