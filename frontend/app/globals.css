@@ -312,6 +312,17 @@ html.dark .bottom-nav-shell {
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.45);
 }
 
+/* Cabecera: queda fija al hacer scroll dentro de #dashboard-scroll */
+.topbar-shell {
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+html.dark .topbar-shell {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
 .font-tabular { font-variant-numeric: tabular-nums; }
 
 /* === ACCESIBILIDAD (Fase 5) === */

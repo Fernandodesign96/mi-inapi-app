@@ -36,7 +36,7 @@ export default function DiarioOficialPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      <header className="h-topbar border-b border-border flex items-center justify-between px-4 sticky top-0 bg-surface z-40">
+      <header className="topbar-shell h-topbar flex items-center justify-between px-4 sticky top-0 z-[60]">
         <div className="flex items-center gap-2">
           <button onClick={() => router.back()} className="p-2 -ml-2 text-foreground">
             <ArrowLeft size={24} />

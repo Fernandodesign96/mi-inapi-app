@@ -91,7 +91,7 @@ export default function TopBar({
 
   if (variant === "detail") {
     return (
-      <header className="h-topbar bg-surface border-b border-border flex items-center gap-1 px-4 sticky top-0 z-40 w-full shrink-0">
+      <header className="topbar-shell h-topbar flex items-center gap-1 px-4 sticky top-0 z-[60] w-full shrink-0">
         <button
           type="button"
           onClick={handleBack}
@@ -127,7 +127,7 @@ export default function TopBar({
   }
 
   return (
-    <header className="h-topbar bg-surface border-b border-border flex items-center px-4 sticky top-0 z-40 w-full shrink-0">
+    <header className="topbar-shell h-topbar flex items-center px-4 sticky top-0 z-[60] w-full shrink-0">
       <div className="flex-1 flex items-center">
         {variant === "section" ? (
           <button

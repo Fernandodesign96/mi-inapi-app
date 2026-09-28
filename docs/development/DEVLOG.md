@@ -38,7 +38,8 @@ Se creó la rama **`fase1-mvp-actualizacion`** desde `origin/main` para implemen
 
 **Notificaciones e inicio**
 - `notificaciones/page.tsx`: urgencia tomada del trámite vinculado; CTA único al detalle con variante de semáforo.
-- `inicio/page.tsx` (usuario **new**): bloque «Para qué sirve esta app», teasers (YouTube INAPI, biblioteca, herramientas con enlaces oficiales), «Primer paso» al [portal de solicitud de marca](https://tramites.inapi.cl/Trademark/TrademarkApplication/IndexTrademark); accesos Biblioteca/Contacto; ítems con acentos de color distintos.
+- `inicio/page.tsx` (usuario **new**): bloque «Para qué sirve esta app», teasers (YouTube INAPI, biblioteca, herramientas con enlaces oficiales y acceso a `/herramientas`), «Primer paso» al [portal de solicitud de marca](https://tramites.inapi.cl/Trademark/TrademarkApplication/IndexTrademark); accesos Biblioteca/Contacto; ítems con acentos de color distintos.
+- `perfil/page.tsx` + `app/(dashboard)/herramientas/page.tsx`: acceso **Herramientas INAPI** (búsqueda y revisión de marcas, patentes y clasificación) con catálogo explicado, filtros y CTAs al sitio oficial (`lib/inapiHerramientas.ts`).
 
 **Contacto y biblioteca**
 - `lib/inapiContact.ts` + `InapiContactCard.tsx`: canales estructurados, iconos con fondos diferenciados, sin card semáforo naranja envolvente.
