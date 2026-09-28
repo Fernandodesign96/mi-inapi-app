@@ -1,14 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import { clsx } from "clsx";
 import { useRouter } from "next/navigation";
-import { Mail, Phone, MessageCircle, Headphones, ChevronRight, User, ExternalLink } from "lucide-react";
+import { Mail, Phone, MessageCircle, ChevronRight, User, ExternalLink } from "lucide-react";
+import InapiContactCard from "@/components/ui/InapiContactCard";
 import TopBar from "@/components/ui/TopBar";
 import CollapsibleCard from "@/components/ui/CollapsibleCard";
 import StatusBadge from "@/components/ui/StatusBadge";
 import FilterPills from "@/components/ui/FilterPills";
 import CTAButton from "@/components/ui/CTAButton";
-import SemaphoreCard from "@/components/ui/SemaphoreCard";
+import { phase2HiddenClass } from "@/lib/featureFlags";
 
 type CanalType = "email" | "llamada" | "chat";
 type FilterType = "todos" | CanalType;
@@ -131,17 +133,22 @@ export default function SoportePage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      <TopBar variant="section" title="Soporte e Historial" />
+      <TopBar variant="section" title="Contacto" />
 
       <div className="flex-1 overflow-y-auto pb-safe-bottomnav screen-enter">
         <div className="px-6 pt-6 pb-2">
-          <h1 className="text-h1 text-foreground">Centro de Ayuda</h1>
+          <h1 className="text-h1 text-foreground">Contáctate con INAPI</h1>
           <p className="text-body-sm text-muted-secondary mt-1">
-            Revisa tus consultas anteriores o contáctate con un ejecutivo
+            Revisa los métodos de contacto
           </p>
         </div>
 
-        <div className="sticky top-topbar z-30 bg-background/80 backdrop-blur-md px-6 py-4">
+        <div
+          className={clsx(
+            "sticky top-topbar z-30 bg-background/80 backdrop-blur-md px-6 py-4",
+            phase2HiddenClass()
+          )}
+        >
           <FilterPills
             options={filterOptions}
             activeValue={activeFilter}
@@ -150,23 +157,9 @@ export default function SoportePage() {
         </div>
 
         <div className="px-6 space-y-6">
-          <SemaphoreCard urgency="warning">
-            <div className="space-y-4">
-              <div className="flex gap-4">
-                <div className="w-10 h-10 rounded-full bg-warning-bg flex items-center justify-center text-warning shrink-0">
-                  <Headphones size={20} />
-                </div>
-                <div className="space-y-1">
-                  <h4 className="text-body-sm font-bold text-foreground">
-                    ¿Necesitas ayuda inmediata?
-                  </h4>
-                  <p className="text-body-xs text-muted-secondary">
-                    Estamos disponibles de Lun a Vie, 09:00 – 18:00 hrs.
-                  </p>
-                </div>
-              </div>
+          <InapiContactCard />
 
-              <div className="flex flex-col gap-3 pt-1">
+          <div className={clsx("flex flex-col gap-3", phase2HiddenClass())}>
                 <CTAButton
                   label="Chatea con un ejecutivo"
                   variant="primary"
@@ -182,11 +175,9 @@ export default function SoportePage() {
                   size="md"
                   icon={<Phone size={18} />}
                 />
-              </div>
-            </div>
-          </SemaphoreCard>
+          </div>
 
-          <div className="space-y-4">
+          <div className={clsx("space-y-4", phase2HiddenClass())}>
             <p className="text-label text-muted">INTERACCIONES RECIENTES</p>
             {filtered.map((item) => (
               <CollapsibleCard
@@ -251,7 +242,7 @@ export default function SoportePage() {
             ))}
           </div>
 
-          <div className="space-y-4 pb-4">
+          <div className={clsx("space-y-4 pb-4", phase2HiddenClass())}>
             <p className="text-label text-muted">PREGUNTAS FRECUENTES</p>
             <p className="text-body-xs text-muted-secondary -mt-2">
               Chats recientes con ejecutivos de INAPI
@@ -329,7 +320,12 @@ export default function SoportePage() {
             </a>
           </div>
 
-          <p className="text-center text-body-xs text-muted leading-relaxed">
+          <p
+            className={clsx(
+              "text-center text-body-xs text-muted leading-relaxed",
+              phase2HiddenClass()
+            )}
+          >
             Mostrando historial de los últimos 6 meses · <br />
             <span className="font-bold underline cursor-pointer">
               Ver historial completo

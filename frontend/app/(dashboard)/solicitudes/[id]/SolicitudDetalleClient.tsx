@@ -1,13 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import TopBar from "@/components/ui/TopBar";
 import {
-  ArrowLeft,
   FileText,
   AlertCircle,
   CheckCircle2,
   Info,
-  Download,
   Tag,
   User,
   Users,
@@ -18,7 +17,7 @@ import {
 import SemaphoreCard from "@/components/ui/SemaphoreCard";
 import StepperProgress, { getStepStates } from "@/components/ui/StepperProgress";
 import StatusBadge from "@/components/ui/StatusBadge";
-import CTAButton from "@/components/ui/CTAButton";
+import AccionRequeridaDetalle from "@/components/ui/AccionRequeridaDetalle";
 import { Solicitud } from "@/lib/mockData";
 import { clsx } from "clsx";
 
@@ -46,19 +45,12 @@ export default function SolicitudDetalleClient({ solicitud }: { solicitud: Solic
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      <header className="h-topbar border-b border-border flex items-center px-4 sticky top-0 bg-surface z-40">
-        <button onClick={() => router.back()} className="p-2 -ml-2 text-foreground">
-          <ArrowLeft size={24} />
-        </button>
-        <div className="ml-2 flex-1 min-w-0">
-          <span className="text-h4 font-bold text-foreground truncate block">
-            {solicitud.nombre}
-          </span>
-          <span className="text-body-xs font-bold text-muted uppercase tracking-wider">
-            #{solicitud.id}
-          </span>
-        </div>
-      </header>
+      <TopBar
+        variant="detail"
+        detailTitle={solicitud.nombre}
+        detailSubtitle={`#${solicitud.id}`}
+        onBack={() => router.back()}
+      />
 
       <div className="flex-1 overflow-y-auto pb-10 screen-enter">
         <div className="px-6 py-6 space-y-6">
@@ -143,66 +135,28 @@ export default function SolicitudDetalleClient({ solicitud }: { solicitud: Solic
             </div>
           </section>
 
-          {(solicitud.estado === "ACCION_REQUERIDA" || solicitud.notificacion) && (
-            <section className="space-y-3">
-              <p className="text-label text-muted">ACCIÓN REQUERIDA</p>
-              <SemaphoreCard urgency={solicitud.urgency === "danger" ? "danger" : "warning"}>
-                <div className="flex gap-3">
-                  <AlertCircle
-                    size={20}
-                    className={clsx(
-                      "shrink-0 mt-0.5",
-                      solicitud.urgency === "danger" ? "text-danger" : "text-warning"
-                    )}
-                  />
-                  <div className="space-y-4 flex-1">
-                    <div className="space-y-1">
-                      <h4 className="text-body-sm font-bold text-foreground">
-                        {solicitud.accion ?? "Acción pendiente"}
-                      </h4>
-                      {solicitud.notificacion && (
-                        <div className="space-y-1.5 pt-2 text-body-xs text-muted-secondary">
-                          <p>
-                            <span className="font-semibold text-foreground">Requerimiento:</span>{" "}
-                            {solicitud.notificacion.requerimiento}
-                          </p>
-                          <p>
-                            <span className="font-semibold text-foreground">Plazo límite:</span>{" "}
-                            <span
-                              className={clsx(
-                                "font-bold",
-                                solicitud.urgency === "danger" ? "text-danger" : "text-warning"
-                              )}
-                            >
-                              {solicitud.notificacion.plazo}
-                            </span>
-                          </p>
-                          <p>
-                            <span className="font-semibold text-foreground">Contacto:</span>{" "}
-                            {solicitud.notificacion.contacto}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                    <CTAButton
-                      label="Gestionar en Notificaciones"
-                      variant={solicitud.urgency === "danger" ? "danger" : "warning"}
-                      fullWidth
-                      size="sm"
-                      onClick={() => router.push("/notificaciones")}
-                    />
-                  </div>
-                </div>
-              </SemaphoreCard>
-            </section>
-          )}
+          <AccionRequeridaDetalle solicitud={solicitud} />
 
           <section className="space-y-3 pt-2">
             <p className="text-label text-muted">DOCUMENTOS GENERADOS</p>
             <div className="bg-surface rounded-lg border border-border overflow-hidden shadow-sm">
-              <DocRow title="Formulario Solicitud F-01" date="15 ENE 2024" />
-              <DocRow title="Resolución de Aceptación" date="02 FEB 2024" />
-              <DocRow title="Publicación Diario Oficial" date="10 MAR 2024" isLast />
+              {solicitud.estado === "FINALIZADA" ? (
+                <DocRow
+                  title="Certificado de registro de marca (PDF)"
+                  date="15 MAR 2026"
+                  isLast
+                />
+              ) : (
+                <>
+                  <DocRow title="Formulario Solicitud F-01" date="15 ENE 2024" />
+                  <DocRow title="Resolución de Aceptación" date="02 FEB 2024" />
+                  <DocRow
+                    title="Publicación Diario Oficial"
+                    date="10 MAR 2024"
+                    isLast
+                  />
+                </>
+              )}
             </div>
           </section>
         </div>
@@ -265,7 +219,7 @@ function DocRow({ title, date, isLast }: { title: string; date: string; isLast?:
           <p className="text-body-xs text-muted-secondary">{date} · PDF</p>
         </div>
       </div>
-      <Download size={18} className="text-muted" />
+      <FileText size={18} className="text-muted" aria-hidden />
     </div>
   );
 }

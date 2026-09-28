@@ -10,11 +10,58 @@ Las entradas se listan de **más reciente a más antigua**.
 
 Orden: más reciente → más antiguo.
 
-1. [2026-06-10 — Frontend | Sprint 3: Implementación UI Kit GOB v3.0.1 — cierre de migración](#2026-06-10---frontend--sprint-3-implementación-ui-kit-gob-v301--cierre-de-migración)
-2. [2026-06-10 — Frontend | Sprint 3: Migración UI Kit GOB v3.0.1 — documentación](#2026-06-10---frontend--sprint-3-migración-ui-kit-gob-v301--documentación)
-3. [2026-04-14 — Frontend | Sprint 2: Stepper, Mock Data, Login y Polish Final](#2026-04-14---frontend--sprint-2-stepper-mock-data-login-y-polish-final)
-4. [2026-04-13 — Frontend | Sprint 1.5: Cierre, Seguridad y Navegación Contextual](#2026-04-13---frontend--sprint-15-cierre-seguridad-y-navegación-contextual)
-5. [2026-04-13 — Frontend | Sprint 1: Fundamentos, Design System y App Router (desde 2026-04-06)](#2026-04-13---frontend--sprint-1-fundamentos-design-system-y-app-router-desde-2026-04-06)
+1. [2026-09-28 — Frontend | Fase 1 MVP: alcance UI, seguimiento y pulido de producto](#2026-09-28---frontend--fase-1-mvp-alcance-ui-seguimiento-y-pulido-de-producto)
+2. [2026-06-10 — Frontend | Sprint 3: Implementación UI Kit GOB v3.0.1 — cierre de migración](#2026-06-10---frontend--sprint-3-implementación-ui-kit-gob-v301--cierre-de-migración)
+3. [2026-06-10 — Frontend | Sprint 3: Migración UI Kit GOB v3.0.1 — documentación](#2026-06-10---frontend--sprint-3-migración-ui-kit-gob-v301--documentación)
+4. [2026-04-14 — Frontend | Sprint 2: Stepper, Mock Data, Login y Polish Final](#2026-04-14---frontend--sprint-2-stepper-mock-data-login-y-polish-final)
+5. [2026-04-13 — Frontend | Sprint 1.5: Cierre, Seguridad y Navegación Contextual](#2026-04-13---frontend--sprint-15-cierre-seguridad-y-navegación-contextual)
+6. [2026-04-13 — Frontend | Sprint 1: Fundamentos, Design System y App Router (desde 2026-04-06)](#2026-04-13---frontend--sprint-1-fundamentos-design-system-y-app-router-desde-2026-04-06)
+
+---
+
+## [2026-09-28] - Frontend | Fase 1 MVP: alcance UI, seguimiento y pulido de producto
+
+### Contexto y objetivos:
+
+Se creó la rama **`fase1-mvp-actualizacion`** desde `origin/main` para implementar en UI el alcance de **Fase 1** del documento técnico del proyecto (seguimiento, notificaciones, contacto y recursos), **sin borrar** funcionalidades reservadas para Fase 2 (chat IA, diario oficial, pagos en perfil, etc.). El objetivo fue entregar una experiencia coherente con el semáforo INAPI, copy alineado a trámites reales y mocks consistentes entre pantallas, manteniendo el stack GOB ya migrado en Sprint 3.
+
+### Implementación técnica:
+
+**Feature flags y Fase 2 oculta**
+- `frontend/lib/featureFlags.ts`: `PHASE_2_UI_ENABLED`, `phase2HiddenClass()`, etiqueta unificada `LABEL_VER_DETALLE_SOLICITUD`, helper `ctaVariantForSemaphore()` para CTAs alineados al color del trámite.
+- Ocultación vía CSS `hidden` en: FAB Chat IA (`layout.tsx`), secciones de perfil, historial/FAQ de soporte (código conservado).
+
+**Solicitudes y detalle**
+- `AccionRequeridaDetalle.tsx`: sección visible para todos los estados (acción vs. informativo info/success); tabla de detalle en `<details>` colapsable; botón **Descargar PDF del registro de la marca** solo si `estado === FINALIZADA` y semáforo verde (`lib/solicitudActions.ts`). La descarga es simulada (toast).
+- `mockData.ts`: textos ampliados (`accionRequeridaDetalle`, `notificacion`); `getSolicitudById()`; perfil `active-no-urgent` alineado con trm-004.
+- `SolicitudDetalleClient.tsx`: documentos según estado; sin CTAs duplicados de acción fuera de la sección acordada.
+
+**Notificaciones e inicio**
+- `notificaciones/page.tsx`: urgencia tomada del trámite vinculado; CTA único al detalle con variante de semáforo.
+- `inicio/page.tsx` (usuario **new**): bloque «Para qué sirve esta app», teasers (YouTube INAPI, biblioteca, herramientas con enlaces oficiales), «Primer paso» al [portal de solicitud de marca](https://tramites.inapi.cl/Trademark/TrademarkApplication/IndexTrademark); accesos Biblioteca/Contacto; ítems con acentos de color distintos.
+
+**Contacto y biblioteca**
+- `lib/inapiContact.ts` + `InapiContactCard.tsx`: canales estructurados, iconos con fondos diferenciados, sin card semáforo naranja envolvente.
+- `biblioteca/page.tsx`: tarjetas por tipo de recurso (PDF guía/manual, video, web, herramientas) con chips e iconos propios; atajos por categoría; sin `SemaphoreCard` azul uniforme en todos los ítems.
+
+**Navegación inferior**
+- `BottomNav.tsx`: estados activo/hover/focus, indicador superior, `z-[100]`.
+- Corrección de tokens Tailwind v4 en `globals.css`: `--color-surface`, `--color-surface-elevated`, `--color-muted-secondary`, `@config` hacia `tailwind.config.ts`, clase `.bottom-nav-shell` con `background-color: var(--surface)` para evitar transparencia al hacer scroll.
+
+**Otros**
+- Contacto renombrado en navegación («Contacto»); textos de cabeceras en solicitudes/notificaciones.
+- `next.config.ts` / `TopBar`: logo con `basePath` para GitHub Pages (heredado de commits previos en la línea de trabajo).
+
+### 💡 Repaso técnico: `bg-surface` y barra inferior aparentemente transparente
+
+En Tailwind v4 el bloque `@theme` definía `--color-bg-surface` pero no `--color-surface`, por lo que la utilidad `bg-surface` **no generaba color de fondo** y el contenido scrollable se veía bajo el `BottomNav`. La solución fue registrar `--color-surface` / `--color-surface-elevated`, cargar `tailwind.config.ts` con `@config` y reforzar la barra con `.bottom-nav-shell { background-color: var(--surface); }`.
+
+### Próximos pasos:
+
+- Commit y PR de `fase1-mvp-actualizacion` hacia `main` (revisión con stakeholders INAPI).
+- README raíz y handoff desarrollador backend cuando se abra integración API.
+- Fase 2: reactivar `PHASE_2_UI_ENABLED` y conectar servicios reales.
+- QA visual: contraste AA en modo día/noche, safe areas iOS y despliegue GitHub Pages.
 
 ---
 

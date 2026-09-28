@@ -16,6 +16,7 @@ import {
 import TopBar from "@/components/ui/TopBar";
 import { mockUser } from "@/lib/mockData";
 import { clsx } from "clsx";
+import { phase2HiddenClass } from "@/lib/featureFlags";
 
 export default function PerfilPage() {
   const router = useRouter();
@@ -28,6 +29,7 @@ export default function PerfilPage() {
       icon: <MessageSquare size={20} />,
       color: "bg-accent-light text-accent",
       href: "/chat",
+      phase2: true,
     },
     {
       id: "biblioteca",
@@ -44,11 +46,12 @@ export default function PerfilPage() {
       icon: <Newspaper size={20} />,
       color: "bg-warning-bg text-warning",
       href: "/diario-oficial",
+      phase2: true,
     },
     {
       id: "soporte",
-      title: "Soporte e Historial",
-      subtitle: "Tus consultas enviadas",
+      title: "Contacto",
+      subtitle: "Métodos de contacto con INAPI",
       icon: <HelpCircle size={20} />,
       color: "bg-success-bg text-success",
       href: "/soporte",
@@ -85,7 +88,8 @@ export default function PerfilPage() {
                   onClick={() => router.push(tool.href)}
                   className={clsx(
                     "w-full flex items-center justify-between p-4 hover:bg-background active:bg-surface-elevated transition-colors",
-                    idx !== toolGroup.length - 1 && "border-b border-border"
+                    idx !== toolGroup.length - 1 && "border-b border-border",
+                    tool.phase2 && phase2HiddenClass()
                   )}
                 >
                   <div className="flex items-center gap-4">
@@ -114,7 +118,9 @@ export default function PerfilPage() {
               <AccountItem icon={<Bell size={20} />} label="Notificaciones Push" />
               <AccountItem icon={<ShieldCheck size={20} />} label="Privacidad y Datos" />
               <AccountItem icon={<Lock size={20} />} label="Seguridad" />
-              <AccountItem icon={<CreditCard size={20} />} label="Métodos de Pago" />
+              <div className={phase2HiddenClass()}>
+                <AccountItem icon={<CreditCard size={20} />} label="Métodos de Pago" />
+              </div>
               <button
                 onClick={() => {
                   document.cookie =

@@ -1,4 +1,4 @@
-import { mockSolicitudes } from "@/lib/mockData";
+import { getSolicitudById, mockSolicitudes } from "@/lib/mockData";
 import SolicitudDetalleClient from "./SolicitudDetalleClient";
 
 export async function generateStaticParams() {
@@ -9,7 +9,7 @@ export async function generateStaticParams() {
 
 export default async function SolicitudDetallePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const solicitud = mockSolicitudes.find(s => s.id === id) || mockSolicitudes[0];
+  const solicitud = getSolicitudById(id) ?? mockSolicitudes[0];
 
   return <SolicitudDetalleClient solicitud={solicitud} />;
 }
