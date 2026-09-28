@@ -5,6 +5,7 @@ import BottomNav from "@/components/ui/BottomNav";
 import ChatIAFab from "@/components/ui/ChatIAFab";
 import { cn } from "@/lib/utils";
 import { useAppStore, UserState } from "@/lib/store";
+import { PHASE_2_UI_ENABLED } from "@/lib/featureFlags";
 
 export default function DashboardLayout({
   children,
@@ -34,7 +35,7 @@ export default function DashboardLayout({
       </main>
 
       {/* FAB: posición propia en ChatIAFab (sin wrapper extra) */}
-      {showChatIA && !isChatView && (
+      {PHASE_2_UI_ENABLED && showChatIA && !isChatView && (
         <ChatIAFab onClick={() => router.push("/chat")} />
       )}
 

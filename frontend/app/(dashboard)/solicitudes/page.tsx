@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Search, Clock, ChevronRight } from "lucide-react";
+import TopBar from "@/components/ui/TopBar";
 import SemaphoreCard from "@/components/ui/SemaphoreCard";
 import StepperProgress, { getStepStates } from "@/components/ui/StepperProgress";
 import StatusBadge from "@/components/ui/StatusBadge";
@@ -55,12 +56,14 @@ export default function SolicitudesPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
+      <TopBar variant="section" title="Solicitudes" />
+
       <div className="flex-1 overflow-y-auto pb-safe-bottomnav screen-enter">
         {/* Header Block */}
         <div className="px-6 pt-6 pb-2">
-          <h1 className="text-h1 text-foreground">Seguimiento</h1>
+          <h1 className="text-h1 text-foreground">Seguimiento de tus solicitudes</h1>
           <p className="text-body-sm text-muted-secondary mt-1">
-            Revisa el estado de tus registros en tiempo real
+            Revisa el estado de tus trámites
           </p>
         </div>
 

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@config "../tailwind.config.ts";
 
 :root {
   /* === INSTITUCIONAL GOB === */
@@ -91,9 +92,13 @@
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
   --color-muted: var(--foreground-muted);
+  --color-muted-secondary: var(--foreground-secondary);
   --color-border: var(--border);
   --color-border-strong: var(--border-strong);
+  --color-primary-light: #BFEEFF;
   --color-focus: var(--ring);
   --color-link: var(--color-link);
 
@@ -294,6 +299,17 @@ body {
 
 .pb-safe-bottomnav {
   padding-bottom: calc(var(--bottomnav-height) + env(safe-area-inset-bottom));
+}
+
+/* Barra inferior: fondo siempre opaco (evita bleed del scroll) */
+.bottom-nav-shell {
+  background-color: var(--surface);
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
+}
+
+html.dark .bottom-nav-shell {
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.45);
 }
 
 .font-tabular { font-variant-numeric: tabular-nums; }

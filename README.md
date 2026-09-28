@@ -1,72 +1,102 @@
 # MiINAPI — Instituto Nacional de Propiedad Industrial
 
-¡Bienvenido al repositorio oficial de **MiINAPI**! Esta es la plataforma ciudadana digital del Instituto Nacional de Propiedad Industrial (Chile), diseñada para transformar la experiencia de gestión de marcas, patentes y diseños industriales mediante una interfaz moderna, intuitiva y centrada en el usuario.
+Plataforma ciudadana digital del **Instituto Nacional de Propiedad Industrial (Chile)** para seguir marcas, patentes y diseños industriales con una interfaz alineada al **UI Kit Gobierno de Chile v3.0.1**.
 
-## Descripción del Proyecto
-MiINAPI nace como un **MVP (Minimum Viable Product)** con el objetivo de centralizar la gestión de trámites de propiedad industrial. El proyecto utiliza un enfoque de **Monorepo** para mantener el Frontend y el Backend en un único lugar, asegurando coherencia técnica y facilidad de despliegue.
+## Descripción del proyecto
 
-## Stack Tecnológico
+MiINAPI es un **MVP frontend** que centraliza el seguimiento de trámites de propiedad industrial. El repositorio usa un enfoque de **monorepo** (`frontend/` activo; `backend/` planificado) para mantener coherencia técnica y facilitar el despliegue.
+
+## Stack tecnológico
 
 ### Frontend (`/frontend`)
-- **Framework**: [Next.js 15+](https://nextjs.org/) (App Router + Turbopack)
-- **Lenguaje**: TypeScript
-- **Estilos**: [Tailwind CSS v4](https://tailwindcss.com/)
-- **Gestión de Estado**: [Zustand](https://github.com/pmndrs/zustand)
-- **Componentes**: Biblioteca personalizada basada en el MiINAPI Design System (premium aesthetics).
-- **Analítica**: Microsoft Clarity & Google Analytics 4 (GA4).
 
-### Backend (`/backend`) — *Próximamente*
-- **Framework**: [NestJS](https://nestjs.com/)
-- **Base de Datos**: PostgreSQL (via Prisma ORM)
-- **Cache/Colas**: Redis & BullMQ
-- **Auth**: JWT & ClaveÚnica (OIDC)
+| Área | Tecnología |
+|------|------------|
+| Framework | [Next.js 15](https://nextjs.org/) (App Router, Turbopack en dev) |
+| Lenguaje | TypeScript |
+| Estilos | [Tailwind CSS v4](https://tailwindcss.com/) + tokens GOB en `globals.css` |
+| Estado | [Zustand](https://github.com/pmndrs/zustand) (`userState`, tema) |
+| UI | Componentes propios en `components/ui/` (sin Bootstrap GOB npm) |
+| Formularios | react-hook-form + zod |
+| Iconos | lucide-react |
+| Analítica | Microsoft Clarity y GA4 (según despliegue) |
 
-## Estado Actual: Fase 1 - Frontend MVP Completado
-Hemos finalizado con éxito la primera etapa del desarrollo, logrando:
-- **Design System**: Implementación de tokens semánticos, tipografía premium y componentes atómicos.
-- **Navegación Contextual**: Interfaz adaptativa según el estado del usuario (Nuevo vs. Activo).
-- **Seguridad Frontend**: Middleware de protección de rutas y validación robusta de RUT.
-- **Mock Data**: Flujo funcional completo con datos simulados para validación con usuarios.
+### Backend (`/backend`) — *planificado*
 
-## Instalación y Desarrollo
+NestJS, PostgreSQL (Prisma), Redis/BullMQ, JWT y ClaveÚnica (OIDC).
 
-1. **Clonar el repositorio:**
-   ```bash
-   git clone https://github.com/tu-usuario/mi-inapi-app.git
-   cd mi-inapi-app/frontend
-   ```
+## Estado actual (rama `fase1-mvp-actualizacion`)
 
-2. **Instalar dependencias:**
-   ```bash
-   npm install
-   ```
+Trabajo en curso sobre **Fase 1 del alcance funcional** (documento técnico del proyecto): experiencia de seguimiento y notificaciones en UI, sin eliminar código de Fase 2.
 
-3. **Ejecutar en modo desarrollo:**
-   ```bash
-   npm run dev
-   ```
+### Implementado en frontend
 
-## Seguimiento y Mejora Continua
-Para este MVP, hemos integrado herramientas de observabilidad para recolectar feedback cualitativo y cuantitativo antes de la fase de Backend:
-- **Microsoft Clarity**: Grabación de sesiones y mapas de calor para detectar fricciones.
-- **GA4**: Métricas de uso y embudos de conversión.
+- **UI Kit GOB v3.0.1**: tokens, Roboto, grilla responsiva, semáforo INAPI, `ClaveUnicaButton`, modo día/noche manual.
+- **Feature flags** (`lib/featureFlags.ts`): Fase 2 oculta en UI (`PHASE_2_UI_ENABLED = false`); Chat IA, chat ejecutivo, historial de soporte avanzado, etc. conservados en código.
+- **Módulos Fase 1**:
+  - **Inicio**: perfiles `new`, `active-urgent`, `active-no-urgent` (toggle dev en layout).
+  - **Solicitudes** y **detalle**: sección «Acción requerida» / informativa por semáforo; detalle desplegable; única acción ejecutable: descargar PDF de registro en solicitudes **finalizadas** (`lib/solicitudActions.ts`).
+  - **Notificaciones**: CTA al detalle con variante de color según urgencia del trámite.
+  - **Contacto** (`/soporte`): canales INAPI (`InapiContactCard`, `lib/inapiContact.ts`).
+  - **Biblioteca**: recursos por tipo (PDF, video, web, herramientas) con jerarquía visual diferenciada.
+- **Navegación inferior**: `BottomNav` contextual por estado de usuario; fondo opaco y estados activo/hover/focus.
+- **Mocks**: `mockData.ts` alineado entre listados, notificaciones y detalle (`getSolicitudById`).
 
-## Documentación Técnica
+### Pendiente / Fase 2 (código presente, UI oculta)
 
-Producto y alcance:
+Chat inteligente, diario oficial, métodos de pago en perfil, flujos ejecutivos de soporte ampliados, integración API real.
+
+## Instalación y desarrollo
+
+```bash
+git clone <url-del-repo>
+cd mi-inapi-app/frontend
+npm install
+npm run dev
+```
+
+Abrir [http://localhost:3000](http://localhost:3000). Para GitHub Pages, `basePath` está en `next.config.ts` (`/mi-inapi-app`).
+
+### Scripts útiles
+
+| Comando | Uso |
+|---------|-----|
+| `npm run dev` | Servidor de desarrollo |
+| `npm run build` | Build de producción |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm run lint` | ESLint |
+
+### Toggle de estado mock (solo desarrollo)
+
+En el dashboard, esquina superior izquierda: **new** / **active-urgent** / **active-no-urgent**.
+
+## Documentación técnica
+
+**Producto y alcance**
+
 - [PRD](docs/PRD.md)
-- [Roadmap de Desarrollo](docs/ROADMAP.md)
+- [Roadmap](docs/ROADMAP.md)
 - [User journey](docs/USER_JOURNEY.md)
+- Documento de alcance Fase 1 (PDF en repo): `docs/Doc tecnico - corrc feña.docx.pdf`
 
-Arquitectura y datos:
-- [Arquitectura del sistema](docs/ARCHITECTURE.md)
-- [Diseño de la base de datos](docs/DATABASE.md)
+**Arquitectura y datos**
+
+- [Arquitectura](docs/ARCHITECTURE.md)
+- [Base de datos](docs/DATABASE.md)
 - [Diagramas de flujo](docs/FLOW_DIAGRAMS.md)
 
-Diseño e implementación:
+**Diseño e implementación**
+
 - [Design system](docs/DESIGN_SYSTEM.md)
-- [Plan de migración UI Kit GOB](docs/UI_MIGRATION_PLAN.md)
-- [Registro de Desarrollo (Devlog)](docs/development/DEVLOG.md)
+- [Plan migración UI Kit GOB](docs/UI_MIGRATION_PLAN.md)
+- [Referencias UI Kit](docs/uikit_gob/references/README.md)
+- [DEVLOG](docs/development/DEVLOG.md)
+
+## Seguimiento y mejora continua
+
+- **Microsoft Clarity**: sesiones y mapas de calor.
+- **GA4**: uso y embudos (según configuración de despliegue).
 
 ---
+
 © 2026 Instituto Nacional de Propiedad Industrial | Gobierno de Chile

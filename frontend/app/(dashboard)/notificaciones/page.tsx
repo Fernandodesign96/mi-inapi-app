@@ -10,7 +10,15 @@ import NotificationTable, { NotificationRow } from "@/components/ui/Notification
 import CTAButton from "@/components/ui/CTAButton";
 import SkeletonCard from "@/components/ui/SkeletonCard";
 import { useAppStore } from "@/lib/store";
-import { mockNotificacionesUrgent, mockNotificacionesNoUrgent } from "@/lib/mockData";
+import {
+  getSolicitudById,
+  mockNotificacionesUrgent,
+  mockNotificacionesNoUrgent,
+} from "@/lib/mockData";
+import {
+  LABEL_VER_DETALLE_SOLICITUD,
+  ctaVariantForSemaphore,
+} from "@/lib/featureFlags";
 
 type FilterType = "todas" | "urgente" | "info" | "exito";
 type UrgencyType = "danger" | "warning" | "info" | "success";
@@ -60,9 +68,9 @@ export default function NotificacionesPage() {
       <div className="flex-1 overflow-y-auto pb-safe-bottomnav screen-enter">
         {/* Header Block */}
         <div className="px-6 pt-6 pb-2">
-          <h1 className="text-h1 text-foreground">Centro de Alertas</h1>
+          <h1 className="text-h1 text-foreground">Notificaciones de tus trámites</h1>
           <p className="text-body-sm text-muted-secondary mt-1">
-            Gestiona los requerimientos de tus trámites
+            Revisa el detalle de las acciones que debes realizar para continuar con tus trámites
           </p>
         </div>
 
@@ -87,28 +95,52 @@ export default function NotificacionesPage() {
             <>
               {filteredNotifs.map((notif) => {
                 const isOpen = expandedId === notif.id;
+                const solicitudVinculada = notif.solicitudId
+                  ? getSolicitudById(notif.solicitudId)
+                  : undefined;
+                const cardUrgency = (solicitudVinculada?.urgency ??
+                  notif.urgency) as UrgencyType;
 
-                const tableRows: NotificationRow[] = notif.detalle ? [
-                  { label: "Etapa actual", value: notif.detalle.etapa },
-                  { label: "N° Solicitud", value: notif.solicitudId || "N/A", isMono: true },
-                  { label: "Requerimiento", value: notif.detalle.requerimiento },
-                  { label: "Plazo límite", value: notif.detalle.plazo },
-                  { label: "Contacto", value: notif.detalle.contacto },
-                ] : [];
+                const detalleFuente =
+                  notif.detalle ?? solicitudVinculada?.notificacion;
+
+                const tableRows: NotificationRow[] = detalleFuente
+                  ? [
+                      { label: "Etapa actual", value: detalleFuente.etapa },
+                      {
+                        label: "N° Solicitud",
+                        value: notif.solicitudId || "N/A",
+                        isMono: true,
+                      },
+                      {
+                        label: "Requerimiento",
+                        value: detalleFuente.requerimiento,
+                      },
+                      { label: "Plazo límite", value: detalleFuente.plazo },
+                      { label: "Contacto", value: detalleFuente.contacto },
+                    ]
+                  : [];
 
                 return (
                   <div key={notif.id}>
                     <CollapsibleCard
-                      variant={notif.urgency as UrgencyType}
+                      variant={cardUrgency}
                       isOpen={isOpen}
                       onToggle={() => setExpandedId(isOpen ? null : notif.id)}
                       header={
                         <div className="space-y-2">
                           <div className="flex justify-between items-center">
                             <StatusBadge
-                              variant={notif.urgency as UrgencyType}
-                              label={getBadgeLabel(notif.urgency, notif.detalle?.etapa)}
-                              showIcon={notif.urgency === "danger" || notif.urgency === "warning"}
+                              variant={cardUrgency}
+                              label={getBadgeLabel(
+                                cardUrgency,
+                                detalleFuente?.etapa ??
+                                  solicitudVinculada?.etapaLabel
+                              )}
+                              showIcon={
+                                cardUrgency === "danger" ||
+                                cardUrgency === "warning"
+                              }
                             />
                             <span className="text-timestamp">{notif.tiempo}</span>
                           </div>
@@ -128,23 +160,16 @@ export default function NotificacionesPage() {
                             <NotificationTable rows={tableRows} />
                           )}
 
-                          {notif.cta && (
+                          {notif.solicitudId && (
                             <CTAButton
-                              label={notif.cta}
-                              variant={notif.urgency === "danger" ? "danger" :
-                                       notif.urgency === "warning" ? "warning" : "primary"}
+                              label={LABEL_VER_DETALLE_SOLICITUD}
+                              variant={ctaVariantForSemaphore(cardUrgency)}
                               fullWidth
                               size="md"
+                              onClick={() =>
+                                router.push(`/solicitudes/${notif.solicitudId}`)
+                              }
                             />
-                          )}
-
-                          {notif.solicitudId && (
-                            <button
-                              onClick={() => router.push(`/solicitudes/${notif.solicitudId}`)}
-                              className="w-full text-center text-body-xs font-bold text-primary py-2 border-t border-border mt-1 hover:bg-info-bg rounded-b-xl transition-colors"
-                            >
-                              Ver detalle completo de la solicitud →
-                            </button>
                           )}
                         </div>
                       }

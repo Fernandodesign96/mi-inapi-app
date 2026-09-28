@@ -44,6 +44,15 @@ export interface Solicitud {
     plazo: string;
     contacto: string;
   };
+  /** Detalle ampliado para la sección ACCIÓN REQUERIDA en pantalla de solicitud (Fase 1). */
+  accionRequeridaDetalle?: {
+    explicacionClara: string;
+    consecuencia?: string;
+    documentos?: string[];
+    pasos?: string[];
+    canalPresentacion?: string;
+    referencia?: string;
+  };
 }
 
 export const mockUser: User = {
@@ -57,40 +66,14 @@ export const mockUser: User = {
 // DATOS ESTADO "NO-URGENT" (SOLO 1 SOLICITUD)
 // ============================================
 
-export const mockTramitesNoUrgent: Solicitud[] = [
-  {
-    id: "trm-004",
-    nombre: "NeoGraphix Design",
-    tipo: "marca",
-    estado: "PUBLICACION",
-    etapa: "EXAMEN",
-    urgency: "info",
-    accion: null,
-    estimacion: "6 meses restantes",
-    diasRestantes: 14,
-    nizaClass: "35",
-    solicitante: "Juan Díaz",
-    representante: "Juan Díaz",
-    tasa: "3 UTM",
-    etapaLabel: "Publicación en Diario Oficial"
-  }
-];
+/** Perfil con una sola solicitud: mismo trámite y urgencia que en el set «urgent». */
+export const mockTramitesNoUrgent: Solicitud[] = [];
 
-export const mockNotificacionesNoUrgent: Notification[] = [
-  {
-    id: "notif-neo",
-    tipo: "CAMBIO_ESTADO",
-    urgency: "info",
-    titulo: "Tu marca pasó a Publicación",
-    cuerpo: "NeoGraphix Design se encuentra lista para publicación en el Diario Oficial.",
-    tiempo: "Hace 1 día",
-    cta: "Ver estado"
-  }
-];
+export const mockNotificacionesNoUrgent: Notification[] = [];
 
 export const mockSummaryNoUrgent = {
   enProceso: 1,
-  accionRequerida: 0,
+  accionRequerida: 1,
   finalizadas: 0,
 };
 
@@ -120,7 +103,27 @@ export const mockTramitesUrgent: Solicitud[] = [
       requerimiento: "Adjuntar Poder Notariado", 
       plazo: "18 de abril, 2026", 
       contacto: "forma@inapi.cl" 
-    }
+    },
+    accionRequeridaDetalle: {
+      explicacionClara:
+        "INAPI emitió una observación de forma: debes adjuntar un poder notariado que acredite la representación del solicitante antes de que el examinador pueda continuar con tu solicitud de marca Eco-Tech Solutions.",
+      consecuencia:
+        "Si no presentas el documento dentro del plazo, la solicitud podría quedar sin efecto o requerir una reposición con costos adicionales.",
+      documentos: [
+        "Poder notarial vigente (original o copia autorizada ante notario)",
+        "Identificación del apoderado y del titular",
+        "Formulario de respuesta a observación de forma (si aplica)",
+      ],
+      pasos: [
+        "Revisa el correo oficial o la notificación en MiINAPI con el detalle de la observación.",
+        "Prepara el poder notariado con las facultades necesarias para actuar ante INAPI.",
+        "Envía el antecedente al correo forma@inapi.cl indicando el N° de solicitud trm-001 en el asunto.",
+        "Conserva el comprobante de envío hasta recibir acuse de recepción.",
+      ],
+      canalPresentacion:
+        "Correo electrónico forma@inapi.cl o ventanilla/documentos según instrucciones del oficio.",
+      referencia: "Observación de forma — Examen de forma (Ley 19.039, reglamento INAPI).",
+    },
   },
   {
     id: "trm-002",
@@ -136,7 +139,31 @@ export const mockTramitesUrgent: Solicitud[] = [
     solicitante: "Juan Díaz",
     representante: "Juan Díaz",
     tasa: "2 UTM",
-    etapaLabel: "Corrección de Fondo"
+    etapaLabel: "Corrección de Fondo",
+    notificacion: {
+      etapa: "Corrección de Fondo",
+      requerimiento: "Corregir descripción de productos Clase 5",
+      plazo: "2 de mayo, 2026",
+      contacto: "examenes@inapi.cl",
+    },
+    accionRequeridaDetalle: {
+      explicacionClara:
+        "El examinador de fondo determinó que la descripción de productos de la Clase 5 de Niza es demasiado genérica. Debes precisar qué productos farmacéuticos o preparaciones médicas deseas proteger bajo la marca FarmaTech Chile.",
+      consecuencia:
+        "Sin la corrección, la solicitud no podrá avanzar a publicación y podrías perder prioridad de fecha de presentación.",
+      documentos: [
+        "Nueva redacción de la descripción de productos/servicios (Clase 5)",
+        "Listado detallado y específico (evitar términos amplios como «productos químicos»)",
+      ],
+      pasos: [
+        "Descarga el oficio de observación desde tu correo o solicita copia a examenes@inapi.cl.",
+        "Redacta una descripción específica (ej.: «preparaciones farmacéuticas para uso veterinario en…»).",
+        "Envía la corrección por el canal indicado en el oficio, citando solicitud trm-002.",
+        "Espera confirmación de recepción antes del 2 de mayo de 2026.",
+      ],
+      canalPresentacion: "examenes@inapi.cl — asunto: Corrección fondo trm-002",
+      referencia: "Observación de fondo — Examen de fondo, Clase 5 Niza.",
+    },
   },
   {
     id: "trm-003",
@@ -151,7 +178,23 @@ export const mockTramitesUrgent: Solicitud[] = [
     solicitante: "Juan Díaz",
     representante: "Juan Díaz",
     tasa: "3 UTM",
-    etapaLabel: "Examen de Fondo"
+    etapaLabel: "Examen de Fondo",
+    notificacion: {
+      etapa: "Examen de Fondo",
+      requerimiento: "Sin gestión pendiente de tu parte",
+      plazo: "Tiempo estimado de resolución: variable según complejidad",
+      contacto: "examenes@inapi.cl",
+    },
+    accionRequeridaDetalle: {
+      explicacionClara:
+        "INAPI está analizando si tu marca Aura Cosmetics cumple los requisitos legales de fondo (distintividad, prohibiciones, similitudes con marcas previas). No debes realizar ninguna acción en este momento; te avisaremos si se requiere antecedente adicional.",
+      pasos: [
+        "El equipo de examen de fondo revisa antecedentes y bases de datos de marcas.",
+        "Si no hay observaciones, el trámite avanza a resolución o etapas posteriores.",
+        "Recibirás una notificación en MiINAPI ante cualquier cambio de estado.",
+      ],
+      referencia: "Examen de fondo — Ley 19.039 sobre Propiedad Industrial.",
+    },
   },
   {
     id: "trm-004",
@@ -167,7 +210,32 @@ export const mockTramitesUrgent: Solicitud[] = [
     solicitante: "Juan Díaz",
     representante: "Juan Díaz",
     tasa: "3 UTM",
-    etapaLabel: "Publicación en Diario Oficial"
+    etapaLabel: "Publicación en Diario Oficial",
+    notificacion: {
+      etapa: "Publicación en Diario Oficial",
+      requerimiento: "Efectuar pago de publicación",
+      plazo: "5 días hábiles desde la notificación",
+      contacto: "publicaciones@inapi.cl",
+    },
+    accionRequeridaDetalle: {
+      explicacionClara:
+        "Tu marca NeoGraphix Design fue aceptada para publicación. Debes pagar la tasa de publicación en el Diario Oficial dentro del plazo indicado para que INAPI pueda continuar el trámite (período de oposición).",
+      consecuencia:
+        "Si el pago no se realiza a tiempo, la solicitud puede suspenderse o caducar según normativa vigente.",
+      documentos: [
+        "Comprobante de pago de tasa de publicación",
+        "Identificación del solicitante o representante",
+      ],
+      pasos: [
+        "Revisa el monto y el código de pago en la notificación oficial.",
+        "Realiza el pago por los medios habilitados por INAPI (portal o instrucciones del oficio).",
+        "Guarda el comprobante y verifica que el estado cambie a «publicación pagada» en MiINAPI.",
+        "Ante dudas, escribe a publicaciones@inapi.cl con el N° trm-004.",
+      ],
+      canalPresentacion:
+        "Medios de pago indicados en el portal INAPI y oficio de aceptación a publicación.",
+      referencia: "Publicación en Diario Oficial — artículo 20 Ley 19.039 (procedimiento de marcas).",
+    },
   },
   {
     id: "trm-005",
@@ -182,7 +250,23 @@ export const mockTramitesUrgent: Solicitud[] = [
     solicitante: "Juan Díaz",
     representante: "Juan Díaz",
     tasa: "3 UTM",
-    etapaLabel: "Resolución Final · Marca Registrada"
+    etapaLabel: "Resolución Final · Marca Registrada",
+    notificacion: {
+      etapa: "Registro concedido",
+      requerimiento: "Trámite concluido — marca vigente",
+      plazo: "Renovación según plazo legal del registro",
+      contacto: "renovaciones@inapi.cl",
+    },
+    accionRequeridaDetalle: {
+      explicacionClara:
+        "Tu marca Terra Verde SPA obtuvo registro en Chile. El derecho se encuentra vigente. Desde MiINAPI puedes descargar el PDF del registro de la marca con el botón de esta sección.",
+      pasos: [
+        "Conserva tu certificado de registro y el número de inscripción.",
+        "Monitorea la fecha de renovación para mantener la protección de la marca.",
+        "Ante cambios de titular o representante, actualiza tus datos en INAPI.",
+      ],
+      referencia: "Registro de marca — vigencia y renovación según Ley 19.039.",
+    },
   }
 ];
 
@@ -195,7 +279,7 @@ export const mockNotificacionesUrgent: Notification[] = [
     cuerpo: "La marca 'Eco-Tech Solutions' requiere adjuntar poder notariado dentro del plazo límite.", 
     tiempo: "Hace 2h", 
     solicitudId: "trm-001",
-    cta: "Adjuntar poder",
+    cta: null,
     detalle: {
       etapa: "Observación de Forma",
       requerimiento: "Adjuntar Poder Notariado",
@@ -211,17 +295,23 @@ export const mockNotificacionesUrgent: Notification[] = [
     cuerpo: "La marca 'FarmaTech Chile' tuvo observaciones y requiere corregir la clase.", 
     tiempo: "Hace 1d", 
     solicitudId: "trm-002",
-    cta: "Modificar clase",
+    cta: null,
   },
   { 
     id: "n-neo", 
-    tipo: "CAMBIO_ESTADO", 
+    tipo: "ACCION_REQUERIDA", 
     urgency: "danger", 
     titulo: "Últimos días para pagar publicación en D.O.", 
-    cuerpo: "NeoGraphix Design ha sido aceptado para publicación. Debes efectuar el pago en el Diario Oficial.", 
+    cuerpo: "NeoGraphix Design ha sido aceptado para publicación. Debes efectuar el pago en el Diario Oficial dentro del plazo indicado.", 
     tiempo: "Hace 3h",
     solicitudId: "trm-004",
-    cta: "Ir a pago de publicación" 
+    cta: null,
+    detalle: {
+      etapa: "Publicación en Diario Oficial",
+      requerimiento: "Efectuar pago de publicación",
+      plazo: "5 días hábiles desde la notificación",
+      contacto: "publicaciones@inapi.cl",
+    },
   },
   { 
     id: "n-aura", 
@@ -241,7 +331,7 @@ export const mockNotificacionesUrgent: Notification[] = [
     cuerpo: "Felicitaciones, Terra Verde SPA obtuvo registro. Tu certificado está disponible.", 
     tiempo: "Hace 4d", 
     solicitudId: "trm-005",
-    cta: "Descargar certificado" 
+    cta: null,
   }
 ];
 
@@ -251,8 +341,38 @@ export const mockSummaryUrgent = {
   finalizadas: 1,
 };
 
-// Aliasing retrocompatibles para partes que aún lo necesitan crudo, 
-// aunque la app consumirá los segregados según estado
+const trm004NeoGraphix = mockTramitesUrgent.find((s) => s.id === "trm-004");
+
+if (trm004NeoGraphix) {
+  mockTramitesNoUrgent.push({ ...trm004NeoGraphix });
+}
+
+mockNotificacionesNoUrgent.push({
+  id: "notif-neo",
+  tipo: "ACCION_REQUERIDA",
+  urgency: "danger",
+  titulo: "Últimos días para pagar publicación en D.O.",
+  cuerpo:
+    "NeoGraphix Design ha sido aceptado para publicación. Debes efectuar el pago en el Diario Oficial dentro del plazo indicado.",
+  tiempo: "Hace 1 día",
+  solicitudId: "trm-004",
+  cta: null,
+  detalle: {
+    etapa: "Publicación en Diario Oficial",
+    requerimiento: "Efectuar pago de publicación",
+    plazo: "5 días hábiles desde la notificación",
+    contacto: "publicaciones@inapi.cl",
+  },
+});
+
+/** Busca solicitud en todos los conjuntos mock (misma definición por id). */
+export function getSolicitudById(id: string): Solicitud | undefined {
+  return (
+    mockTramitesUrgent.find((s) => s.id === id) ??
+    mockTramitesNoUrgent.find((s) => s.id === id)
+  );
+}
+
 export const mockSolicitudes = mockTramitesUrgent;
 export const mockNotificaciones = mockNotificacionesUrgent;
 

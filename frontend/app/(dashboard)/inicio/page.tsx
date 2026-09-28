@@ -2,15 +2,38 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { 
-  ExternalLink, 
-  Book, 
-  HelpCircle, 
-  FileText, 
-  CheckCircle2, 
+import {
+  ExternalLink,
+  Book,
+  HelpCircle,
+  FileText,
+  CheckCircle2,
   AlertCircle,
-  ChevronRight
+  ChevronRight,
+  Bell,
+  PlayCircle,
+  Inbox,
+  Wrench,
 } from "lucide-react";
+
+const INAPI_PORTAL_SOLICITUD_MARCA =
+  "https://tramites.inapi.cl/Trademark/TrademarkApplication/IndexTrademark";
+const INAPI_YOUTUBE = "https://www.youtube.com/@INAPICHILE";
+
+const INAPI_HERRAMIENTAS_LINKS = [
+  {
+    label: "Buscador de marcas",
+    href: "https://buscadormarcas.inapi.cl/Marca/BuscarMarca.aspx",
+  },
+  {
+    label: "Clasificador de productos y servicios",
+    href: "https://tramites.inapi.cl/Trademark/TrademarkNizaClassifier",
+  },
+  {
+    label: "Buscador de patentes",
+    href: "https://buscadorpatentes.inapi.cl/UI/MainSearch.aspx",
+  },
+] as const;
 import TopBar from "@/components/ui/TopBar";
 import SemaphoreCard from "@/components/ui/SemaphoreCard";
 import StepperProgress, { getStepStates } from "@/components/ui/StepperProgress";
@@ -19,6 +42,7 @@ import CTAButton from "@/components/ui/CTAButton";
 import SkeletonCard from "@/components/ui/SkeletonCard";
 import { useAppStore } from "@/lib/store";
 import { mockUser, mockTramitesUrgent, mockTramitesNoUrgent, mockSummaryUrgent, mockSummaryNoUrgent } from "@/lib/mockData";
+import { LABEL_VER_DETALLE_SOLICITUD } from "@/lib/featureFlags";
 import { clsx } from "clsx";
 import React from "react";
 
@@ -35,8 +59,19 @@ export default function InicioPage() {
   const currentTramites = userState === 'active-no-urgent' ? mockTramitesNoUrgent : mockTramitesUrgent;
   const currentSummary = userState === 'active-no-urgent' ? mockSummaryNoUrgent : mockSummaryUrgent;
 
-  const urgentSolicitud = currentTramites.find(s => s.estado === "ACCION_REQUERIDA");
-  const recentSolicitud = userState === 'active-no-urgent' ? currentTramites[0] : currentTramites.find(s => s.estado === "EN_REVISION" || s.estado === "PUBLICACION");
+  const urgentSolicitud = currentTramites.find(
+    (s) =>
+      s.estado === "ACCION_REQUERIDA" ||
+      (s.accion &&
+        (s.urgency === "danger" || s.urgency === "warning"))
+  );
+  const recentSolicitud =
+    userState === "active-no-urgent"
+      ? currentTramites[0]
+      : currentTramites.find(
+          (s) => s.estado === "EN_REVISION" || s.estado === "PUBLICACION"
+        );
+  const heroUrgency = urgentSolicitud?.urgency === "warning" ? "warning" : "danger";
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -66,40 +101,116 @@ export default function InicioPage() {
         ) : (
           <>
             {/* STATE A: NEW USER */}
-            {userState === 'new' && (
-              <div className="space-y-6">
-                <SemaphoreCard urgency="info">
-                  <p className="text-body-sm text-primary-dark leading-relaxed">
-                    Aquí verás el estado de tus solicitudes de marcas, patentes y diseños 
-                    en tiempo real. Cuando ingreses una solicitud en el portal de INAPI, 
-                    aparecerá aquí automáticamente.
-                  </p>
-                </SemaphoreCard>
+            {userState === "new" && (
+              <div className="space-y-5">
+                <section className="space-y-3" aria-labelledby="new-user-app-purpose">
+                  <div>
+                    <h2 id="new-user-app-purpose" className="text-label text-muted">
+                      PARA QUÉ SIRVE ESTA APP
+                    </h2>
+                    <p className="text-body-xs text-muted-secondary mt-1 leading-relaxed">
+                      En esta aplicación podrás ver el estado de tus solicitudes y hacer
+                      un seguimiento de todas las acciones pendientes y estados en general
+                      de tus trámites.
+                    </p>
+                  </div>
 
-                <CTAButton 
-                  label="Ir al portal de solicitudes INAPI"
-                  variant="primary"
-                  size="lg"
-                  fullWidth
-                  onClick={() => window.open('https://www.inapi.cl', '_blank')}
-                  icon={<ExternalLink size={18} />}
-                />
-
-                <div className="pt-2">
-                  <h2 className="text-label text-muted mb-4">MIENTRAS TANTO, EXPLORA</h2>
-                  <div className="grid grid-cols-2 gap-3">
-                    <QuickAccessCard 
-                      icon={Book} 
-                      label="Biblioteca de Recursos" 
-                      onClick={() => router.push('/biblioteca')} 
+                  <ul className="space-y-3 pt-1" role="list">
+                    <WelcomePoint
+                      icon={FileText}
+                      accent="tramites"
+                      title="Solicitudes"
+                      text="Consulta la etapa, el estado y si es que tienes una acción requerida de tus trámites."
                     />
-                    <QuickAccessCard 
-                      icon={HelpCircle} 
-                      label="Soporte e Historial" 
-                      onClick={() => router.push('/soporte')} 
+                    <WelcomePoint
+                      icon={Bell}
+                      accent="alertas"
+                      title="Notificaciones"
+                      text="Revisa el detalle de todas tus solicitudes y visualiza cuáles son las que requieren atención prioritaria."
+                    />
+                    <WelcomePoint
+                      icon={Inbox}
+                      accent="inicio"
+                      title="Sin solicitudes"
+                      text="Si no posees solicitudes, revisa el contenido de INAPI como videos, manuales, documentos y herramientas para que comiences a realizar tus primeras solicitudes."
+                    />
+                  </ul>
+                </section>
+
+                <section className="space-y-3">
+                  <div>
+                    <h2 className="text-label text-muted">APRENDE CON INAPI</h2>
+                    <p className="text-body-xs text-muted-secondary mt-1 leading-relaxed">
+                      Material didáctico para conocer la Propiedad Industrial antes de
+                      solicitar. Todo está en{" "}
+                      <span className="font-semibold text-foreground">Biblioteca</span>.
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <ResourceTeaser
+                      icon={PlayCircle}
+                      iconClass="text-danger bg-danger-bg"
+                      title="Tutoriales en video"
+                      description="YouTube INAPI: cómo solicitar marcas y usar trámites en línea."
+                      onClick={() =>
+                        window.open(INAPI_YOUTUBE, "_blank", "noopener,noreferrer")
+                      }
+                    />
+                    <ResourceTeaser
+                      icon={Book}
+                      iconClass="text-primary bg-info-bg"
+                      title="Manuales y guías"
+                      description="PDF oficiales con requisitos, plazos y buenas prácticas."
+                      onClick={() => router.push("/biblioteca")}
+                    />
+                    <InapiHerramientasCard links={INAPI_HERRAMIENTAS_LINKS} />
+                  </div>
+                </section>
+
+                <div className="rounded-lg border border-border bg-surface p-4 shadow-sm space-y-3">
+                  <p className="text-label text-muted">PRIMER PASO</p>
+                  <p className="text-body-sm text-foreground leading-relaxed">
+                    Si aún no tienes una solicitud vigente, inicia tu trámite en el portal
+                    oficial. Luego volverás aquí para seguirlo paso a paso.
+                  </p>
+                  <CTAButton
+                    label="Ir al portal de solicitudes INAPI"
+                    variant="primary"
+                    size="lg"
+                    fullWidth
+                    onClick={() =>
+                      window.open(
+                        INAPI_PORTAL_SOLICITUD_MARCA,
+                        "_blank",
+                        "noopener,noreferrer"
+                      )
+                    }
+                    icon={<ExternalLink size={18} />}
+                  />
+                </div>
+
+                <section className="space-y-3 pt-1">
+                  <div>
+                    <h2 className="text-label text-muted">ACCESOS ÚTILES</h2>
+                    <p className="text-body-xs text-muted-secondary mt-1">
+                      Atajos para seguir aprendiendo o hablar con INAPI.
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <QuickAccessCard
+                      icon={Book}
+                      label="Biblioteca"
+                      description="Videos, manuales y guías"
+                      onClick={() => router.push("/biblioteca")}
+                    />
+                    <QuickAccessCard
+                      icon={HelpCircle}
+                      label="Contacto"
+                      description="Teléfono, correo y horarios"
+                      onClick={() => router.push("/soporte")}
                     />
                   </div>
-                </div>
+                </section>
               </div>
             )}
 
@@ -107,23 +218,32 @@ export default function InicioPage() {
             {(userState === 'active-urgent' || userState === 'active-no-urgent') && (
               <div className="space-y-6">
                 {/* HERO CARD */}
-                {userState === 'active-urgent' ? (
-                  <SemaphoreCard urgency="danger">
+                {urgentSolicitud ? (
+                  <SemaphoreCard urgency={heroUrgency}>
                     <div className="flex justify-between items-center mb-3">
-                      <StatusBadge variant="danger" label="ACCIÓN REQUERIDA" showIcon />
+                      <StatusBadge
+                        variant={heroUrgency}
+                        label="ACCIÓN REQUERIDA"
+                        showIcon
+                      />
                       <span className="text-timestamp">Hace 10 min</span>
                     </div>
                     <h2 className="text-h2 text-foreground mb-1">
-                      {urgentSolicitud?.accion || "Cargar documento"}
+                      {urgentSolicitud.accion || "Cargar documento"}
                     </h2>
                     <p className="text-mono text-muted-secondary mb-4">
-                      #{urgentSolicitud?.id} · {urgentSolicitud?.tipo === 'marca' ? 'Marca Comercial' : 'Patente'}
+                      #{urgentSolicitud.id} ·{" "}
+                      {urgentSolicitud.tipo === "marca"
+                        ? "Marca Comercial"
+                        : "Patente"}
                     </p>
-                    <CTAButton 
-                      label="Ir a la notificación"
-                      variant="danger"
+                    <CTAButton
+                      label={LABEL_VER_DETALLE_SOLICITUD}
+                      variant={heroUrgency}
                       fullWidth
-                      onClick={() => router.push('/notificaciones')}
+                      onClick={() =>
+                        router.push(`/solicitudes/${urgentSolicitud.id}`)
+                      }
                       icon={<ChevronRight size={18} />}
                     />
                   </SemaphoreCard>
@@ -196,7 +316,7 @@ export default function InicioPage() {
                     )}
                     <QuickAccessGhost 
                       icon={HelpCircle} 
-                      label="Soporte" 
+                      label="Contacto" 
                       onClick={() => router.push('/soporte')} 
                     />
                   </div>
@@ -242,24 +362,168 @@ function SummaryCard({
   );
 }
 
-function QuickAccessCard({ 
-  icon: Icon, 
-  label, 
-  onClick 
-}: { 
-  icon: React.ElementType; 
-  label: string; 
+const welcomeAccentStyles = {
+  tramites: {
+    card: "border-border",
+    icon: "border-info/30 bg-info-bg text-info",
+    body: "text-foreground/85",
+  },
+  alertas: {
+    card: "border-border",
+    icon: "border-warning/35 bg-warning-bg text-warning",
+    body: "text-foreground/85",
+  },
+  inicio: {
+    card: "border-border",
+    icon: "border-success/30 bg-success-bg text-success",
+    body: "text-muted-secondary",
+  },
+} as const;
+
+function WelcomePoint({
+  icon: Icon,
+  accent,
+  title,
+  text,
+}: {
+  icon: React.ElementType;
+  accent: keyof typeof welcomeAccentStyles;
+  title: string;
+  text: string;
+}) {
+  const styles = welcomeAccentStyles[accent];
+  return (
+    <li
+      className={clsx(
+        "flex gap-4 rounded-lg border bg-surface px-4 py-3.5 shadow-sm",
+        styles.card
+      )}
+    >
+      <div
+        className={clsx(
+          "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border",
+          styles.icon
+        )}
+        aria-hidden
+      >
+        <Icon size={22} strokeWidth={2.25} />
+      </div>
+      <div className="min-w-0 flex-1 pt-0.5">
+        <h3 className="text-body-sm font-extrabold text-foreground leading-snug">
+          {title}
+        </h3>
+        <p className={clsx("text-body-sm leading-relaxed mt-1.5", styles.body)}>
+          {text}
+        </p>
+      </div>
+    </li>
+  );
+}
+
+function InapiHerramientasCard({
+  links,
+}: {
+  links: readonly { label: string; href: string }[];
+}) {
+  return (
+    <div className="rounded-lg border border-border bg-surface p-3 shadow-sm space-y-3">
+      <div className="flex items-center gap-3">
+        <div
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-success bg-success-bg"
+          aria-hidden
+        >
+          <Wrench size={20} />
+        </div>
+        <p className="text-body-sm font-bold text-foreground">
+          Herramientas de INAPI
+        </p>
+      </div>
+      <ul className="space-y-1.5 border-t border-border pt-3">
+        {links.map((link) => (
+          <li key={link.href}>
+            <a
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-between gap-2 rounded-md px-2 py-2.5 min-h-[44px] text-body-sm font-semibold text-primary hover:bg-info-bg/50 transition-colors"
+            >
+              <span className="leading-snug">{link.label}</span>
+              <ExternalLink size={16} className="shrink-0 text-muted" aria-hidden />
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function ResourceTeaser({
+  icon: Icon,
+  iconClass,
+  title,
+  description,
+  onClick,
+}: {
+  icon: React.ElementType;
+  iconClass: string;
+  title: string;
+  description: string;
   onClick: () => void;
 }) {
   return (
-    <button 
+    <button
+      type="button"
       onClick={onClick}
-      className="flex flex-col items-center justify-center gap-2 p-4 bg-surface border border-border rounded-lg shadow-sm hover:shadow-md active:bg-background transition-all"
+      className="flex w-full items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left shadow-sm transition-all hover:border-primary/25 hover:shadow-md active:bg-surface-elevated min-h-[44px]"
+    >
+      <div
+        className={clsx(
+          "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg",
+          iconClass
+        )}
+        aria-hidden
+      >
+        <Icon size={20} />
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-body-sm font-bold text-foreground">{title}</p>
+        <p className="text-body-xs text-muted-secondary leading-snug mt-0.5 line-clamp-2">
+          {description}
+        </p>
+      </div>
+      <ChevronRight size={18} className="shrink-0 text-muted" aria-hidden />
+    </button>
+  );
+}
+
+function QuickAccessCard({
+  icon: Icon,
+  label,
+  description,
+  onClick,
+}: {
+  icon: React.ElementType;
+  label: string;
+  description?: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="flex flex-col items-center justify-center gap-2 p-4 bg-surface border border-border rounded-lg shadow-sm hover:shadow-md active:bg-background transition-all min-h-[44px]"
     >
       <div className="w-10 h-10 rounded-full bg-info-bg flex items-center justify-center text-primary">
         <Icon size={24} />
       </div>
-      <span className="text-body-sm font-semibold text-foreground leading-tight">{label}</span>
+      <span className="text-body-sm font-semibold text-foreground leading-tight">
+        {label}
+      </span>
+      {description && (
+        <span className="text-body-xs text-muted-secondary text-center leading-snug">
+          {description}
+        </span>
+      )}
     </button>
   );
 }
