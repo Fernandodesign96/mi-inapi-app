@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Roboto, Roboto_Slab } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
+import { basePath } from "@/next.config";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -17,17 +18,25 @@ const robotoSlab = Roboto_Slab({
   display: "swap",
 });
 
+const iconUrl = `${basePath}/images/inapi-logo.jpg`;
+
 export const metadata: Metadata = {
   title: "MiINAPI — Instituto Nacional de Propiedad Industrial",
   description:
     "Plataforma ciudadana digital para gestionar tus trámites de propiedad industrial: marcas, patentes y diseños industriales.",
   keywords: ["INAPI", "marcas", "patentes", "propiedad industrial", "Chile"],
   authors: [{ name: "INAPI" }],
+  icons: {
+    icon: [{ url: iconUrl, type: "image/jpeg" }],
+    shortcut: iconUrl,
+    apple: iconUrl,
+  },
   openGraph: {
     title: "MiINAPI",
     description: "Gestiona tus trámites de propiedad industrial en Chile",
     locale: "es_CL",
     type: "website",
+    images: [{ url: iconUrl, alt: "INAPI — Gobierno de Chile" }],
   },
 };
 

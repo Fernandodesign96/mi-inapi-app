@@ -36,9 +36,23 @@ export default function CertificadosPage() {
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
-  const currentCertificados = userState === 'active-urgent' ? [
-    { id: "cert-terra", name: "Terra Verde SPA", type: "Marca Comercial", typeLabel: "marcas" as FilterType, registration: "8049182", emission: "15 MAR 2026" }
-  ] : mockCertificados;
+  const currentCertificados =
+    userState === "new" || userState === "active-no-urgent"
+      ? []
+      : userState === "active-urgent"
+        ? [
+            {
+              id: "cert-terra",
+              name: "Terra Verde SPA",
+              type: "Marca Comercial",
+              typeLabel: "marcas" as FilterType,
+              registration: "8049182",
+              emission: "15 MAR 2026",
+            },
+          ]
+        : mockCertificados;
+
+  const hasCertificados = currentCertificados.length > 0;
 
   const filtered = currentCertificados.filter(c => {
     const matchesFilter = activeFilter === 'todos' || c.typeLabel === activeFilter;
@@ -76,6 +90,7 @@ export default function CertificadosPage() {
         </div>
 
         {/* Search and Filters */}
+        {hasCertificados && (
         <div className="sticky top-topbar z-30 bg-background/80 backdrop-blur-md px-6 py-4 space-y-4">
           <div className="relative">
             <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" />
@@ -93,6 +108,7 @@ export default function CertificadosPage() {
             onChange={(v) => setActiveFilter(v as FilterType)}
           />
         </div>
+        )}
 
         {/* List */}
         <div className="px-6 space-y-4">
@@ -141,8 +157,7 @@ export default function CertificadosPage() {
           ) : (
             <EmptyState
               icon={FileText}
-              title="No hay certificados"
-              description="No encontramos certificados vigentes que coincidan con tu búsqueda."
+              title="Por el momento no existe ningún certificado de registro de marca o de concesión de patente asociado a tu usuario"
             />
           )}
         </div>

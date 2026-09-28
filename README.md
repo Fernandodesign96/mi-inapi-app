@@ -39,6 +39,7 @@ Trabajo en curso sobre **Fase 1 del alcance funcional** (documento técnico del 
   - **Notificaciones**: CTA al detalle con variante de color según urgencia del trámite.
   - **Contacto** (`/soporte`): canales INAPI (`InapiContactCard`, `lib/inapiContact.ts`).
   - **Biblioteca**: recursos por tipo (PDF, video, web, herramientas) con jerarquía visual diferenciada.
+  - **Herramientas INAPI** (`/herramientas`): buscador de marcas, clasificador de Niza, buscador de patentes y portal de solicitud, con explicación y acceso desde Perfil.
 - **Navegación inferior**: `BottomNav` contextual por estado de usuario; fondo opaco y estados activo/hover/focus.
 - **Mocks**: `mockData.ts` alineado entre listados, notificaciones y detalle (`getSolicitudById`).
 

@@ -16,30 +16,21 @@ import {
   Wrench,
 } from "lucide-react";
 
+import {
+  INAPI_HERRAMIENTAS_INTRO,
+  INAPI_HERRAMIENTAS_LINKS,
+} from "@/lib/inapiHerramientas";
+
 const INAPI_PORTAL_SOLICITUD_MARCA =
   "https://tramites.inapi.cl/Trademark/TrademarkApplication/IndexTrademark";
 const INAPI_YOUTUBE = "https://www.youtube.com/@INAPICHILE";
-
-const INAPI_HERRAMIENTAS_LINKS = [
-  {
-    label: "Buscador de marcas",
-    href: "https://buscadormarcas.inapi.cl/Marca/BuscarMarca.aspx",
-  },
-  {
-    label: "Clasificador de productos y servicios",
-    href: "https://tramites.inapi.cl/Trademark/TrademarkNizaClassifier",
-  },
-  {
-    label: "Buscador de patentes",
-    href: "https://buscadorpatentes.inapi.cl/UI/MainSearch.aspx",
-  },
-] as const;
 import TopBar from "@/components/ui/TopBar";
 import SemaphoreCard from "@/components/ui/SemaphoreCard";
 import StepperProgress, { getStepStates } from "@/components/ui/StepperProgress";
 import StatusBadge from "@/components/ui/StatusBadge";
 import CTAButton from "@/components/ui/CTAButton";
 import SkeletonCard from "@/components/ui/SkeletonCard";
+import ScrollToTopFab from "@/components/ui/ScrollToTopFab";
 import { useAppStore } from "@/lib/store";
 import { mockUser, mockTramitesUrgent, mockTramitesNoUrgent, mockSummaryUrgent, mockSummaryNoUrgent } from "@/lib/mockData";
 import { LABEL_VER_DETALLE_SOLICITUD } from "@/lib/featureFlags";
@@ -163,7 +154,10 @@ export default function InicioPage() {
                       description="PDF oficiales con requisitos, plazos y buenas prácticas."
                       onClick={() => router.push("/biblioteca")}
                     />
-                    <InapiHerramientasCard links={INAPI_HERRAMIENTAS_LINKS} />
+                    <InapiHerramientasCard
+                      links={INAPI_HERRAMIENTAS_LINKS}
+                      onSeeAll={() => router.push("/herramientas")}
+                    />
                   </div>
                 </section>
 
@@ -326,6 +320,8 @@ export default function InicioPage() {
           </>
         )}
       </div>
+
+      {userState === "new" && <ScrollToTopFab />}
     </div>
   );
 }
@@ -422,22 +418,34 @@ function WelcomePoint({
 
 function InapiHerramientasCard({
   links,
+  onSeeAll,
 }: {
   links: readonly { label: string; href: string }[];
+  onSeeAll: () => void;
 }) {
   return (
     <div className="rounded-lg border border-border bg-surface p-3 shadow-sm space-y-3">
-      <div className="flex items-center gap-3">
+      <button
+        type="button"
+        onClick={onSeeAll}
+        className="flex w-full items-center gap-3 text-left rounded-md min-h-[44px] hover:bg-background transition-colors"
+      >
         <div
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-success bg-success-bg"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-primary-dark bg-primary-light"
           aria-hidden
         >
           <Wrench size={20} />
         </div>
-        <p className="text-body-sm font-bold text-foreground">
-          Herramientas de INAPI
-        </p>
-      </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-body-sm font-bold text-foreground">
+            {INAPI_HERRAMIENTAS_INTRO.title}
+          </p>
+          <p className="text-body-xs text-muted-secondary leading-snug mt-0.5">
+            {INAPI_HERRAMIENTAS_INTRO.subtitle}
+          </p>
+        </div>
+        <ChevronRight size={18} className="text-muted shrink-0" aria-hidden />
+      </button>
       <ul className="space-y-1.5 border-t border-border pt-3">
         {links.map((link) => (
           <li key={link.href}>

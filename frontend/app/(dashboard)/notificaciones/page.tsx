@@ -181,7 +181,7 @@ export default function NotificacionesPage() {
               {filteredNotifs.length === 0 && (
                 <div className="py-20 text-center">
                   <p className="text-body-sm text-muted">
-                    No hay notificaciones en esta categoría.
+                    No posees ninguna notificación de tus solicitudes.
                   </p>
                 </div>
               )}

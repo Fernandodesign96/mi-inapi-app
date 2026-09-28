@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { clsx } from "clsx";
 import CTAButton from "./CTAButton";
 import { LucideIcon } from "lucide-react";
@@ -5,7 +6,7 @@ import { LucideIcon } from "lucide-react";
 interface EmptyStateProps {
   icon: LucideIcon;
   title: string;
-  description: string;
+  description?: ReactNode;
   action?: { label: string; onClick: () => void };
   className?: string;
 }
@@ -24,15 +25,16 @@ export default function EmptyState({
         className
       )}
     >
-      {/* Icon wrapper */}
       <div className="w-[64px] h-[64px] rounded-full bg-surface-elevated flex items-center justify-center text-muted">
         <Icon size={32} strokeWidth={2} />
       </div>
 
       <h3 className="text-h3 text-foreground mt-4">{title}</h3>
-      <p className="text-body-sm text-muted-secondary mt-2 max-w-[280px]">
-        {description}
-      </p>
+      {description != null && description !== "" && (
+        <p className="text-body-sm text-muted-secondary mt-2 max-w-[320px] leading-relaxed">
+          {description}
+        </p>
+      )}
 
       {action && (
         <div className="mt-6">

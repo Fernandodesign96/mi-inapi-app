@@ -22,11 +22,12 @@ export default function DashboardLayout({
   const isChatView = pathname === "/chat";
 
   return (
-    <div className="flex flex-col min-h-dvh bg-background w-full relative">
-      {/* Contenido scrollable */}
+    <div className="flex flex-col h-dvh overflow-hidden bg-background w-full relative">
+      {/* Contenido scrollable: altura acotada para que el TopBar sticky funcione */}
       <main
+        id="dashboard-scroll"
         className={cn(
-          "flex-1 overflow-y-auto no-scrollbar w-full",
+          "flex-1 min-h-0 overflow-y-auto no-scrollbar w-full",
           !isChatView &&
             "pb-[calc(var(--bottomnav-height)+env(safe-area-inset-bottom))]"
         )}

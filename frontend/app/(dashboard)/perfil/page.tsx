@@ -6,12 +6,15 @@ import {
   Book,
   Newspaper,
   HelpCircle,
+  Wrench,
   Bell,
   Lock,
   LogOut,
   ChevronRight,
   ShieldCheck,
   CreditCard,
+  FileText,
+  FolderOpen,
 } from "lucide-react";
 import TopBar from "@/components/ui/TopBar";
 import { mockUser } from "@/lib/mockData";
@@ -40,6 +43,15 @@ export default function PerfilPage() {
       href: "/biblioteca",
     },
     {
+      id: "herramientas",
+      title: "Herramientas INAPI",
+      subtitle:
+        "Herramientas de búsqueda y revisión de marcas, patentes y clasificación de productos y servicios",
+      icon: <Wrench size={20} />,
+      color: "bg-primary-light text-primary-dark",
+      href: "/herramientas",
+    },
+    {
       id: "diario-oficial",
       title: "Diario Oficial",
       subtitle: "Publicaciones de marcas y patentes",
@@ -55,6 +67,33 @@ export default function PerfilPage() {
       icon: <HelpCircle size={20} />,
       color: "bg-success-bg text-success",
       href: "/soporte",
+    },
+  ];
+
+  const tramiteGroup = [
+    {
+      id: "solicitudes",
+      title: "Solicitudes",
+      subtitle: "Seguimiento de tus trámites en INAPI",
+      icon: <FileText size={20} />,
+      color: "bg-info-bg text-info",
+      href: "/solicitudes",
+    },
+    {
+      id: "notificaciones",
+      title: "Notificaciones",
+      subtitle: "Avisos y acciones de tus solicitudes",
+      icon: <Bell size={20} />,
+      color: "bg-warning-bg text-warning",
+      href: "/notificaciones",
+    },
+    {
+      id: "certificados",
+      title: "Certificados",
+      subtitle: "Registros de marca y concesiones de patente",
+      icon: <FolderOpen size={20} />,
+      color: "bg-success-bg text-success",
+      href: "/certificados",
     },
   ];
 
@@ -80,6 +119,41 @@ export default function PerfilPage() {
           </div>
 
           <section className="space-y-3">
+            <p className="text-label text-muted px-1">MIS TRÁMITES</p>
+            <div className="bg-surface rounded-lg border border-border overflow-hidden shadow-sm">
+              {tramiteGroup.map((item, idx) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => router.push(item.href)}
+                  className={clsx(
+                    "w-full flex items-start justify-between gap-3 p-4 hover:bg-background active:bg-surface-elevated transition-colors",
+                    idx !== tramiteGroup.length - 1 && "border-b border-border"
+                  )}
+                >
+                  <div className="flex items-start gap-4 min-w-0">
+                    <div
+                      className={clsx(
+                        "w-10 h-10 rounded-full flex items-center justify-center shrink-0 mt-0.5",
+                        item.color
+                      )}
+                    >
+                      {item.icon}
+                    </div>
+                    <div className="text-left min-w-0">
+                      <p className="text-h4 font-bold text-foreground">{item.title}</p>
+                      <p className="text-body-xs text-muted-secondary leading-snug mt-0.5">
+                        {item.subtitle}
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight size={18} className="text-muted shrink-0 mt-2" />
+                </button>
+              ))}
+            </div>
+          </section>
+
+          <section className="space-y-3">
             <p className="text-label text-muted px-1">HERRAMIENTAS Y RECURSOS</p>
             <div className="bg-surface rounded-lg border border-border overflow-hidden shadow-sm">
               {toolGroup.map((tool, idx) => (
@@ -87,26 +161,28 @@ export default function PerfilPage() {
                   key={tool.id}
                   onClick={() => router.push(tool.href)}
                   className={clsx(
-                    "w-full flex items-center justify-between p-4 hover:bg-background active:bg-surface-elevated transition-colors",
+                    "w-full flex items-start justify-between gap-3 p-4 hover:bg-background active:bg-surface-elevated transition-colors",
                     idx !== toolGroup.length - 1 && "border-b border-border",
                     tool.phase2 && phase2HiddenClass()
                   )}
                 >
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-start gap-4 min-w-0">
                     <div
                       className={clsx(
-                        "w-10 h-10 rounded-full flex items-center justify-center shrink-0",
+                        "w-10 h-10 rounded-full flex items-center justify-center shrink-0 mt-0.5",
                         tool.color
                       )}
                     >
                       {tool.icon}
                     </div>
-                    <div className="text-left">
+                    <div className="text-left min-w-0">
                       <p className="text-h4 font-bold text-foreground">{tool.title}</p>
-                      <p className="text-body-xs text-muted-secondary">{tool.subtitle}</p>
+                      <p className="text-body-xs text-muted-secondary leading-snug mt-0.5">
+                        {tool.subtitle}
+                      </p>
                     </div>
                   </div>
-                  <ChevronRight size={18} className="text-muted" />
+                  <ChevronRight size={18} className="text-muted shrink-0 mt-2" />
                 </button>
               ))}
             </div>

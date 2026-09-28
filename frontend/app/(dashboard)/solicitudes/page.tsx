@@ -12,6 +12,9 @@ import EmptyState from "@/components/ui/EmptyState";
 import { useAppStore } from "@/lib/store";
 import { mockTramitesUrgent, mockTramitesNoUrgent } from "@/lib/mockData";
 
+const PORTAL_SOLICITUD_MARCA =
+  "https://tramites.inapi.cl/Trademark/TrademarkApplication/IndexTrademark";
+
 type FilterType = "todas" | "marca" | "patente" | "diseño";
 type UrgencyType = "danger" | "warning" | "info" | "success";
 
@@ -129,12 +132,22 @@ export default function SolicitudesPage() {
           ) : (
             <EmptyState
               icon={Search}
-              title={`Sin solicitudes de ${activeFilter}`}
-              description="No encontramos registros activos en esta categoría. Puedes ingresar uno nuevo en el portal."
-              action={{
-                label: "Ir al portal INAPI",
-                onClick: () => window.open('https://www.inapi.cl', '_blank')
-              }}
+              title="Por el momento no tienes registrada ninguna solicitud en INAPI"
+              description={
+                <>
+                  No hemos encontrado ninguna solicitud asociada a tu usuario.
+                  Puedes comenzar una nueva solicitud haciendo{" "}
+                  <a
+                    href={PORTAL_SOLICITUD_MARCA}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-bold text-primary underline underline-offset-2"
+                  >
+                    click aquí
+                  </a>
+                  .
+                </>
+              }
             />
           )}
         </div>
