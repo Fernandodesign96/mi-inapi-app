@@ -1,22 +1,13 @@
 import type { Metadata } from "next";
-import { Roboto, Roboto_Slab } from "next/font/google";
+import "@fontsource/roboto/latin-400.css";
+import "@fontsource/roboto/latin-500.css";
+import "@fontsource/roboto/latin-700.css";
+import "@fontsource/roboto-slab/latin-400.css";
+import "@fontsource/roboto-slab/latin-500.css";
+import "@fontsource/roboto-slab/latin-700.css";
 import "./globals.css";
 import Script from "next/script";
 import { basePath } from "@/next.config";
-
-const roboto = Roboto({
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
-  variable: "--font-roboto",
-  display: "swap",
-});
-
-const robotoSlab = Roboto_Slab({
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
-  variable: "--font-roboto-slab",
-  display: "swap",
-});
 
 const iconUrl = `${basePath}/images/inapi-logo.jpg`;
 
@@ -54,11 +45,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html
-      lang="es-CL"
-      className={`dark ${roboto.variable} ${robotoSlab.variable}`}
-      suppressHydrationWarning
-    >
+    <html lang="es-CL" className="dark" suppressHydrationWarning>
       <body className="font-sans antialiased bg-background text-foreground">
         <Script
           id="miinapi-theme-init"

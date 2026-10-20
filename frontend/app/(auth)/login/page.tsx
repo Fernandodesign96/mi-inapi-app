@@ -10,16 +10,21 @@ import FormInput from "@/components/ui/FormInput";
 import CTAButton from "@/components/ui/CTAButton";
 import ClaveUnicaButton from "@/components/ui/ClaveUnicaButton";
 import TopBar from "@/components/ui/TopBar";
+import {
+  findInapiCuenta,
+  isInapiRutNum,
+  INAPI_LOGIN_EJEMPLOS,
+} from "@/lib/datosReales";
+import { writeClaveUnicaSession, writeInapiSession } from "@/lib/session";
+import { useAppStore } from "@/lib/store";
 
-/* === Validación RUT chileno === */
-const MOCK_CREDENTIALS = {
-  rut: "12.345.678-9",
-  rutClean: "123456789",
-  password: "miinapi2026",
-};
+function digitsOnly(rut: string): string {
+  return rut.replace(/[^\d]/g, "");
+}
 
 function validateRUT(rut: string): boolean {
   const clean = rut.replace(/[\.\-\s]/g, "").toUpperCase();
+  if (isInapiRutNum(clean) || isInapiRutNum(digitsOnly(clean))) return true;
   if (clean.length < 2) return false;
 
   const body = clean.slice(0, -1);
@@ -37,14 +42,16 @@ function validateRUT(rut: string): boolean {
   const expected =
     remainder === 11 ? "0" : remainder === 10 ? "K" : String(remainder);
 
-  if (clean === MOCK_CREDENTIALS.rutClean) return true;
-
   return expected === dv;
 }
 
 function formatRUT(value: string): string {
   const clean = value.replace(/[^0-9kK]/g, "");
   if (clean.length <= 1) return clean;
+  const digits = clean.replace(/[kK]/g, "");
+  if (/^\d{5,8}$/.test(digits) || isInapiRutNum(digits)) {
+    return digits.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  }
   const body = clean.slice(0, -1);
   const dv = clean.slice(-1);
   const formatted = body.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -53,7 +60,7 @@ function formatRUT(value: string): string {
 
 const loginSchema = z.object({
   rut: z.string().min(1, "Ingresa tu RUT").refine(validateRUT, {
-    message: "RUT inválido. Ej: 12.345.678-9",
+    message: "RUT inválido. Para cuenta INAPI usa el número sin dígito verificador.",
   }),
   password: z
     .string({
@@ -67,6 +74,8 @@ type LoginForm = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const router = useRouter();
+  const setClaveUnicaSession = useAppStore((s) => s.setClaveUnicaSession);
+  const setInapiSession = useAppStore((s) => s.setInapiSession);
   const [isLoading, setIsLoading] = useState(false);
   const [isCULoading, setIsCULoading] = useState(false);
   const [rutValue, setRutValue] = useState("");
@@ -83,12 +92,11 @@ export default function LoginPage() {
     setIsLoading(true);
     await new Promise((r) => setTimeout(r, 800));
 
-    const cleanRut = data.rut.replace(/[\.\-\s]/g, "").toUpperCase();
-    const isDemo =
-      cleanRut === MOCK_CREDENTIALS.rutClean &&
-      data.password === MOCK_CREDENTIALS.password;
+    const cleanRut = digitsOnly(data.rut);
+    const cuenta = findInapiCuenta(cleanRut);
+    const passwordOk = cuenta && data.password === cuenta.password;
 
-    if (!isDemo) {
+    if (!cuenta || !passwordOk) {
       setError("password", {
         message:
           "Rut o contraseña ingresados incorrectos, vuelve a intentar.",
@@ -97,7 +105,8 @@ export default function LoginPage() {
       return;
     }
 
-    document.cookie = "miinapi-auth=mock-session; path=/; max-age=3600";
+    writeInapiSession(cuenta.rutNum);
+    setInapiSession(cuenta.rutNum);
 
     setIsLoading(false);
     router.push("/inicio");
@@ -107,8 +116,8 @@ export default function LoginPage() {
     setIsCULoading(true);
     await new Promise((r) => setTimeout(r, 1200));
 
-    document.cookie =
-      "miinapi-auth=true; path=/; max-age=3600; samesite=lax";
+    writeClaveUnicaSession();
+    setClaveUnicaSession();
 
     setIsCULoading(false);
     router.push("/inicio");
@@ -155,13 +164,13 @@ export default function LoginPage() {
           <FormInput
             id="rut"
             label="RUT"
-            placeholder="12.345.678-9"
+            placeholder="7.046.527"
             icon={<User size={20} />}
             value={rutValue}
             onChange={handleRUTChange}
             error={errors.rut?.message}
             autoComplete="username"
-            hint="Ingresa tu RUT con puntos y guión"
+            hint="Cuenta INAPI: RUT numérico sin dígito verificador"
           />
 
           <div className="space-y-4">
@@ -210,10 +219,50 @@ export default function LoginPage() {
             />
 
             <p className="text-center text-body-xs text-muted mt-2">
-              Demo: RUT{" "}
-              <span className="font-mono">12.345.678-9</span> · Contraseña{" "}
-              <span className="font-mono">miinapi2026</span>
+              Cuenta INAPI: RUT numérico sin dígito verificador y los últimos 4
+              dígitos como clave. ClaveÚnica abre los 3 perfiles de demostración
+              (nuevo, con acciones y con un trámite).
             </p>
+            <details className="mt-3 rounded-lg border border-border bg-surface px-3 py-2 text-left">
+              <summary className="cursor-pointer text-body-xs font-bold text-primary">
+                Cuentas de ejemplo ({INAPI_LOGIN_EJEMPLOS.length})
+              </summary>
+              <p className="mt-2 text-body-xs text-muted-secondary leading-snug">
+                Primero aparecen los casos prioritarios: el usuario debe pagar,
+                responder o adjuntar antecedentes en un plazo. El resto está en
+                revisión de INAPI o ya concluyó.
+              </p>
+              <ul className="mt-2 space-y-2 max-h-72 overflow-y-auto">
+                {INAPI_LOGIN_EJEMPLOS.map((cuenta) => (
+                  <li
+                    key={cuenta.rutNum}
+                    className="text-body-xs text-muted-secondary leading-snug border-b border-border/60 pb-2 last:border-0"
+                  >
+                    <span className="font-mono font-bold text-foreground">
+                      {cuenta.rutNum} / {cuenta.password}
+                    </span>
+                    {cuenta.userAction && (
+                      <span
+                        className={
+                          cuenta.urgency === "danger"
+                            ? "ml-1.5 inline-block rounded-sm bg-danger/15 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-danger"
+                            : "ml-1.5 inline-block rounded-sm bg-warning/15 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-warning"
+                        }
+                      >
+                        Acción del usuario
+                      </span>
+                    )}
+                    <span className="block text-foreground">{cuenta.marca}</span>
+                    <span className="block">{cuenta.statusName}</span>
+                    {cuenta.accion && (
+                      <span className="block font-medium text-foreground">
+                        {cuenta.accion}
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </details>
           </div>
         </form>
 

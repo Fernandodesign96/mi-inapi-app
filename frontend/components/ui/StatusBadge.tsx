@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 import { AlertTriangle, AlertCircle, RefreshCw, CheckCircle, LucideIcon } from "lucide-react";
 
-export type BadgeVariant = "danger" | "warning" | "info" | "success";
+export type BadgeVariant = "danger" | "warning" | "info" | "success" | "neutral";
 
 interface StatusBadgeProps {
   variant: BadgeVariant;
@@ -32,6 +32,11 @@ const variantConfig: Record<BadgeVariant, { bg: string; text: string; icon: Luci
     text: "text-success",
     icon: CheckCircle,
   },
+  neutral: {
+    bg: "bg-surface-elevated",
+    text: "text-muted",
+    icon: AlertCircle,
+  },
 };
 
 export default function StatusBadge({
@@ -46,7 +51,7 @@ export default function StatusBadge({
     <div
       className={cn(
         "inline-flex items-center gap-1 px-[10px] py-[2px] rounded-full min-h-[29px] touch-target-chip",
-        "text-label",
+        "text-[12px] leading-[1.5] font-bold tracking-normal normal-case",
         config.bg,
         config.text
       )}

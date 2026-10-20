@@ -30,14 +30,16 @@ const mockCertificados: Certificate[] = [
 ];
 
 export default function CertificadosPage() {
-  const { userState } = useAppStore();
+  const { userState, loginMode } = useAppStore();
   const [activeFilter, setActiveFilter] = useState<FilterType>("todos");
   const [searchQuery, setSearchQuery] = useState("");
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
   const currentCertificados =
-    userState === "new" || userState === "active-no-urgent"
+    loginMode === "inapi" ||
+    userState === "new" ||
+    userState === "active-no-urgent"
       ? []
       : userState === "active-urgent"
         ? [

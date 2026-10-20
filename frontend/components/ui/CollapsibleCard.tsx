@@ -21,6 +21,10 @@ const variantStyles: Record<SemaphoreVariant, { border: string; bg: string }> = 
     border: "border-l-success",
     bg: "bg-gradient-to-r from-success-bg to-surface",
   },
+  neutral: {
+    border: "border-l-border",
+    bg: "bg-surface",
+  },
 };
 
 interface CollapsibleCardProps {

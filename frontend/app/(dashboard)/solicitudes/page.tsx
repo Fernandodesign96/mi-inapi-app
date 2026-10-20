@@ -5,18 +5,20 @@ import { useRouter } from "next/navigation";
 import { Search, Clock, ChevronRight } from "lucide-react";
 import TopBar from "@/components/ui/TopBar";
 import SemaphoreCard from "@/components/ui/SemaphoreCard";
-import StepperProgress, { getStepStates } from "@/components/ui/StepperProgress";
+import StepperProgress from "@/components/ui/StepperProgress";
 import StatusBadge from "@/components/ui/StatusBadge";
 import FilterPills from "@/components/ui/FilterPills";
 import EmptyState from "@/components/ui/EmptyState";
 import { useAppStore } from "@/lib/store";
-import { mockTramitesUrgent, mockTramitesNoUrgent } from "@/lib/mockData";
+import { useSessionSolicitudes } from "@/lib/sessionData";
+import { getStepStatesForSolicitud } from "@/lib/etapasMiInapi";
+import { badgeLabelForSolicitud } from "@/lib/tramitePresentacion";
 
 const PORTAL_SOLICITUD_MARCA =
   "https://tramites.inapi.cl/Trademark/TrademarkApplication/IndexTrademark";
 
 type FilterType = "todas" | "marca" | "patente" | "diseño";
-type UrgencyType = "danger" | "warning" | "info" | "success";
+type UrgencyType = "danger" | "warning" | "info" | "success" | "neutral";
 
 const filterOptions = [
   { value: "todas", label: "Todas" },
@@ -25,35 +27,28 @@ const filterOptions = [
   { value: "diseño", label: "Diseños" },
 ];
 
-const getBadgeLabel = (urgency: string, etapa: string, notificacionEtapa?: string) => {
-  if (urgency === 'danger') return 'Acción urgente';
-  if (urgency === 'warning') {
-    const et = notificacionEtapa || etapa || '';
-    return et.toLowerCase().includes('fondo') || et === 'RESOLUCION' ? 'Corrección de Fondo' : 'Corrección de Forma';
-  }
-  if (urgency === 'info') return 'En revisión';
-  if (urgency === 'success') return 'Finalizada';
-  return 'En revisión';
-};
-
 export default function SolicitudesPage() {
   const router = useRouter();
-  const { userState } = useAppStore();
+  const { userState, loginMode } = useAppStore();
   const [activeFilter, setActiveFilter] = useState<FilterType>("todas");
-
-  const baseSolicitudes = userState === 'active-no-urgent' ? mockTramitesNoUrgent : mockTramitesUrgent;
+  const baseSolicitudes = useSessionSolicitudes();
 
   const filteredSolicitudes = baseSolicitudes
     .filter((s) => {
-      // 1. State-based filtering
-      if (userState === 'new') return false;
+      if (loginMode !== "inapi" && userState === "new") return false;
 
       // 2. Category filtering
       if (activeFilter === "todas") return true;
       return s.tipo === activeFilter;
     })
     .sort((a, b) => {
-      const order: Record<UrgencyType, number> = { danger: 0, warning: 1, info: 2, success: 3 };
+      const order: Record<UrgencyType, number> = {
+        danger: 0,
+        warning: 1,
+        info: 2,
+        success: 3,
+        neutral: 4,
+      };
       return order[a.urgency as UrgencyType] - order[b.urgency as UrgencyType];
     });
 
@@ -66,7 +61,7 @@ export default function SolicitudesPage() {
         <div className="px-6 pt-6 pb-2">
           <h1 className="text-h1 text-foreground">Seguimiento de tus solicitudes</h1>
           <p className="text-body-sm text-muted-secondary mt-1">
-            Revisa el estado de tus trámites
+            Revisa el estado de tus registros en tiempo real
           </p>
         </div>
 
@@ -95,7 +90,7 @@ export default function SolicitudesPage() {
                       <div className="flex items-center gap-2">
                         <StatusBadge 
                           variant={solicitud.urgency as UrgencyType} 
-                          label={getBadgeLabel(solicitud.urgency, solicitud.etapa, solicitud.notificacion?.etapa)} 
+                          label={badgeLabelForSolicitud(solicitud)} 
                         />
                       </div>
                       <h3 className="text-h3 text-foreground">
@@ -107,8 +102,8 @@ export default function SolicitudesPage() {
 
                   {/* Stepper */}
                   <StepperProgress 
-                    stepStates={getStepStates(solicitud.estado)}
-                    urgency={solicitud.urgency as "danger" | "warning" | "info" | "success"}
+                    stepStates={getStepStatesForSolicitud(solicitud)}
+                    urgency={solicitud.urgency}
                   />
 
                   {/* Footer Info Row */}
@@ -121,7 +116,11 @@ export default function SolicitudesPage() {
                     <div className="flex items-center gap-4">
                       <div className="flex items-center gap-1 text-muted-secondary">
                         <Clock size={14} className="text-muted" />
-                        <span className="text-body-xs font-medium">{solicitud.estimacion}</span>
+                        <span className="text-body-xs font-medium">
+                          {solicitud.fechaPresentacion
+                            ? `Presentada el ${solicitud.fechaPresentacion}`
+                            : solicitud.estimacion}
+                        </span>
                       </div>
                       <ChevronRight size={18} className="text-muted" />
                     </div>

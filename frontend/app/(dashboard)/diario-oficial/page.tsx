@@ -18,7 +18,7 @@ export default function DiarioOficialPage() {
     userState === "active-urgent"
       ? [
           {
-            id: "trm-005",
+            id: "1659012",
             nombre: "Terra Verde SPA",
             fecha: "15 de marzo 2026",
             vence: "15 de marzo 2036",

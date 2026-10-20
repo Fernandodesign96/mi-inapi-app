@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import BottomNav from "@/components/ui/BottomNav";
 import ChatIAFab from "@/components/ui/ChatIAFab";
@@ -14,7 +15,11 @@ export default function DashboardLayout({
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { userState, setUserState } = useAppStore();
+  const { userState, setUserState, loginMode, hydrateSession } = useAppStore();
+
+  useEffect(() => {
+    hydrateSession();
+  }, [hydrateSession]);
 
   const showChatIA = ["/inicio", "/solicitudes", "/notificaciones"].some((p) =>
     pathname.startsWith(p)
@@ -43,7 +48,8 @@ export default function DashboardLayout({
       {/* BottomNav full-width viewport */}
       {!isChatView && <BottomNav />}
 
-      {/* Logic State Toggle (Dev Only) */}
+      {/* Logic State Toggle (Dev Only) — solo ClaveÚnica */}
+      {loginMode !== "inapi" && (
       <div className="fixed top-4 left-4 z-[100] scale-75 origin-top-left opacity-30 hover:opacity-100 transition-opacity">
         <div className="bg-surface/90 backdrop-blur p-2 rounded-lg border border-border shadow-elevated space-y-2 w-32">
           <p className="text-body-xs font-bold text-muted uppercase text-center">
@@ -69,6 +75,7 @@ export default function DashboardLayout({
           </div>
         </div>
       </div>
+      )}
     </div>
   );
 }

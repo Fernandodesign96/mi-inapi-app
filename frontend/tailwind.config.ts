@@ -75,11 +75,11 @@ const config: Config = {
         slab: ["var(--font-roboto-slab)", "Roboto Slab", "Georgia", "serif"],
       },
       fontSize: {
-        display: ["28px", { lineHeight: "1.5", fontWeight: "400" }],
+        display: ["32px", { lineHeight: "1.5", fontWeight: "400" }],
         h1: ["24px", { lineHeight: "1.5", fontWeight: "500" }],
         h2: ["18px", { lineHeight: "1.5", fontWeight: "500" }],
         h3: ["16px", { lineHeight: "1.5", fontWeight: "500" }],
-        h4: ["15px", { lineHeight: "1.5", fontWeight: "500" }],
+        h4: ["16px", { lineHeight: "1.5", fontWeight: "500" }],
         body: ["16px", { lineHeight: "1.5", fontWeight: "400" }],
         "body-sm": ["14px", { lineHeight: "1.5", fontWeight: "400" }],
         "body-xs": ["12px", { lineHeight: "1.5", fontWeight: "400" }],

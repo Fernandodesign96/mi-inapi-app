@@ -13,7 +13,13 @@ export function phase2HiddenClass(): string {
 export const LABEL_VER_DETALLE_SOLICITUD =
   "Ver detalle completo del estado de la solicitud";
 
-export type SemaphoreUrgency = "danger" | "warning" | "info" | "success";
+/** Copy de gestiones que el usuario debe leer, no ejecutar dentro de MiINAPI. */
+export function copyGestionExterna(accion: string): string {
+  const trimmed = accion.trim().replace(/\.+$/, "");
+  return `${trimmed}. Esta gestión se realiza en los canales oficiales de INAPI, no dentro de MiINAPI.`;
+}
+
+export type SemaphoreUrgency = "danger" | "warning" | "info" | "success" | "neutral";
 
 /** Variante de botón alineada al color del semáforo del trámite. */
 export function ctaVariantForSemaphore(
@@ -26,6 +32,8 @@ export function ctaVariantForSemaphore(
       return "warning";
     case "success":
       return "success";
+    case "neutral":
+      return "outline";
     default:
       return "info";
   }

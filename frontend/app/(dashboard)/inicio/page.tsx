@@ -26,20 +26,34 @@ const INAPI_PORTAL_SOLICITUD_MARCA =
 const INAPI_YOUTUBE = "https://www.youtube.com/@INAPICHILE";
 import TopBar from "@/components/ui/TopBar";
 import SemaphoreCard from "@/components/ui/SemaphoreCard";
-import StepperProgress, { getStepStates } from "@/components/ui/StepperProgress";
+import StepperProgress from "@/components/ui/StepperProgress";
 import StatusBadge from "@/components/ui/StatusBadge";
 import CTAButton from "@/components/ui/CTAButton";
 import SkeletonCard from "@/components/ui/SkeletonCard";
 import ScrollToTopFab from "@/components/ui/ScrollToTopFab";
 import { useAppStore } from "@/lib/store";
-import { mockUser, mockTramitesUrgent, mockTramitesNoUrgent, mockSummaryUrgent, mockSummaryNoUrgent } from "@/lib/mockData";
+import {
+  useIsInapiSession,
+  useSessionSolicitudes,
+  useSessionSummary,
+  useSessionUser,
+} from "@/lib/sessionData";
+import { getStepStatesForSolicitud } from "@/lib/etapasMiInapi";
 import { LABEL_VER_DETALLE_SOLICITUD } from "@/lib/featureFlags";
+import {
+  badgeLabelForSolicitud,
+  resumenInicio,
+} from "@/lib/tramitePresentacion";
 import { clsx } from "clsx";
 import React from "react";
 
 export default function InicioPage() {
   const router = useRouter();
   const { userState } = useAppStore();
+  const isInapi = useIsInapiSession();
+  const sessionUser = useSessionUser();
+  const sessionTramites = useSessionSolicitudes();
+  const sessionSummary = useSessionSummary();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -47,22 +61,36 @@ export default function InicioPage() {
     return () => clearTimeout(timer);
   }, []);
 
-  const currentTramites = userState === 'active-no-urgent' ? mockTramitesNoUrgent : mockTramitesUrgent;
-  const currentSummary = userState === 'active-no-urgent' ? mockSummaryNoUrgent : mockSummaryUrgent;
+  const viewState = isInapi
+    ? sessionTramites.length === 0
+      ? "new"
+      : sessionTramites.some((s) => s.urgency === "danger" || s.urgency === "warning")
+        ? "active-urgent"
+        : "active-no-urgent"
+    : userState;
+
+  const currentTramites = sessionTramites;
+  const currentSummary = sessionSummary;
 
   const urgentSolicitud = currentTramites.find(
     (s) =>
       s.estado === "ACCION_REQUERIDA" ||
-      (s.accion &&
-        (s.urgency === "danger" || s.urgency === "warning"))
+      s.urgency === "danger" ||
+      s.urgency === "warning"
   );
   const recentSolicitud =
-    userState === "active-no-urgent"
+    viewState === "active-no-urgent"
       ? currentTramites[0]
       : currentTramites.find(
           (s) => s.estado === "EN_REVISION" || s.estado === "PUBLICACION"
-        );
-  const heroUrgency = urgentSolicitud?.urgency === "warning" ? "warning" : "danger";
+        ) ?? currentTramites[0];
+  const heroSolicitud = urgentSolicitud ?? recentSolicitud;
+  const heroUrgency = (heroSolicitud?.urgency ?? "info") as
+    | "danger"
+    | "warning"
+    | "info"
+    | "success"
+    | "neutral";
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -72,10 +100,10 @@ export default function InicioPage() {
         {/* GREETING */}
         <div className="space-y-1">
           <h1 className="text-display text-foreground">
-            Hola, {mockUser.name.split(' ')[0]} 👋
+            Hola, {sessionUser.name.split(' ')[0]} 👋
           </h1>
           <p className="text-body-sm text-muted-secondary">
-            {userState === 'new' ? 'Bienvenido a MiINAPI' : 'Tienes novedades en tus trámites'}
+            {viewState === 'new' ? 'Bienvenido a MiINAPI' : 'Tienes novedades en tus trámites'}
           </p>
         </div>
 
@@ -92,7 +120,7 @@ export default function InicioPage() {
         ) : (
           <>
             {/* STATE A: NEW USER */}
-            {userState === "new" && (
+            {viewState === "new" && (
               <div className="space-y-5">
                 <section className="space-y-3" aria-labelledby="new-user-app-purpose">
                   <div>
@@ -209,58 +237,47 @@ export default function InicioPage() {
             )}
 
             {/* STATE B & C: ACTIVE USERS */}
-            {(userState === 'active-urgent' || userState === 'active-no-urgent') && (
+            {(viewState === 'active-urgent' || viewState === 'active-no-urgent') && (
               <div className="space-y-6">
                 {/* HERO CARD */}
-                {urgentSolicitud ? (
+                {heroSolicitud && (
                   <SemaphoreCard urgency={heroUrgency}>
                     <div className="flex justify-between items-center mb-3">
                       <StatusBadge
                         variant={heroUrgency}
-                        label="ACCIÓN REQUERIDA"
+                        label={badgeLabelForSolicitud(heroSolicitud)}
                         showIcon
                       />
-                      <span className="text-timestamp">Hace 10 min</span>
+                      <span className="text-timestamp">Actualizado hoy</span>
                     </div>
-                    <h2 className="text-h2 text-foreground mb-1">
-                      {urgentSolicitud.accion || "Cargar documento"}
+                    <h2 className="text-h1 text-foreground mb-1">
+                      {heroSolicitud.nombre}
                     </h2>
-                    <p className="text-mono text-muted-secondary mb-4">
-                      #{urgentSolicitud.id} ·{" "}
-                      {urgentSolicitud.tipo === "marca"
+                    <p className="text-mono text-muted-secondary mb-2">
+                      #{heroSolicitud.id} ·{" "}
+                      {heroSolicitud.tipo === "marca"
                         ? "Marca Comercial"
                         : "Patente"}
                     </p>
-                    <CTAButton
-                      label={LABEL_VER_DETALLE_SOLICITUD}
-                      variant={heroUrgency}
-                      fullWidth
-                      onClick={() =>
-                        router.push(`/solicitudes/${urgentSolicitud.id}`)
-                      }
-                      icon={<ChevronRight size={18} />}
-                    />
-                  </SemaphoreCard>
-                ) : (
-                  <SemaphoreCard urgency="info">
-                    <div className="flex justify-between items-center mb-3">
-                      <StatusBadge variant="info" label="EN REVISIÓN" />
-                      <span className="text-timestamp">Actualizado hoy</span>
-                    </div>
-                    <h2 className="text-h2 text-foreground mb-1">
-                      {recentSolicitud?.nombre}
-                    </h2>
-                    <p className="text-mono text-muted-secondary mb-4">
-                      #{recentSolicitud?.id} · Marca Comercial
+                    <p className="text-body-sm text-muted-secondary leading-relaxed mb-4">
+                      {resumenInicio(heroSolicitud)}
                     </p>
-                    <StepperProgress 
-                      stepStates={getStepStates(recentSolicitud?.estado || 'EN_REVISION')} 
-                      urgency="info"
+                    <StepperProgress
+                      stepStates={getStepStatesForSolicitud(heroSolicitud)}
+                      urgency={heroUrgency}
                     />
-                    <div className="mt-4 p-3 bg-info-bg rounded-md border border-primary-light">
-                      <p className="text-body-xs text-primary-dark">
-                        Esperando fin del período de oposición (30 días).
-                      </p>
+                    <div className="mt-4">
+                      <CTAButton
+                        label={LABEL_VER_DETALLE_SOLICITUD}
+                        variant={
+                          heroUrgency === "neutral" ? "outline" : heroUrgency
+                        }
+                        fullWidth
+                        onClick={() =>
+                          router.push(`/solicitudes/${heroSolicitud.id}`)
+                        }
+                        icon={<ChevronRight size={18} />}
+                      />
                     </div>
                   </SemaphoreCard>
                 )}
@@ -301,7 +318,7 @@ export default function InicioPage() {
                       label="Biblioteca" 
                       onClick={() => router.push('/biblioteca')} 
                     />
-                    {userState !== 'active-no-urgent' && (
+                    {viewState !== 'active-no-urgent' && (
                       <QuickAccessGhost 
                         icon={FileText} 
                         label="Certificados" 
@@ -321,7 +338,7 @@ export default function InicioPage() {
         )}
       </div>
 
-      {userState === "new" && <ScrollToTopFab />}
+      {viewState === "new" && <ScrollToTopFab />}
     </div>
   );
 }

@@ -10,18 +10,16 @@ import NotificationTable, { NotificationRow } from "@/components/ui/Notification
 import CTAButton from "@/components/ui/CTAButton";
 import SkeletonCard from "@/components/ui/SkeletonCard";
 import { useAppStore } from "@/lib/store";
-import {
-  getSolicitudById,
-  mockNotificacionesUrgent,
-  mockNotificacionesNoUrgent,
-} from "@/lib/mockData";
+import { getSolicitudById } from "@/lib/mockData";
+import { useSessionNotificaciones } from "@/lib/sessionData";
 import {
   LABEL_VER_DETALLE_SOLICITUD,
   ctaVariantForSemaphore,
 } from "@/lib/featureFlags";
+import { badgeLabelForSolicitud } from "@/lib/tramitePresentacion";
 
 type FilterType = "todas" | "urgente" | "info" | "exito";
-type UrgencyType = "danger" | "warning" | "info" | "success";
+type UrgencyType = "danger" | "warning" | "info" | "success" | "neutral";
 
 const filterOptions = [
   { value: "todas", label: "Todas" },
@@ -30,19 +28,25 @@ const filterOptions = [
   { value: "exito", label: "Éxito" },
 ];
 
-const getBadgeLabel = (urgency: string, detalleEtapa?: string) => {
-  if (urgency === 'danger') return 'Acción urgente';
-  if (urgency === 'warning') return detalleEtapa?.toLowerCase().includes('fondo') ? 'Corrección de Fondo' : 'Corrección de Forma';
-  if (urgency === 'info') return 'En revisión';
-  if (urgency === 'success') return 'Finalizada';
-  return 'En revisión';
+const getBadgeLabel = (
+  urgency: UrgencyType,
+  solicitudVinculada?: ReturnType<typeof getSolicitudById>
+) => {
+  if (solicitudVinculada) return badgeLabelForSolicitud(solicitudVinculada);
+  if (urgency === "danger" || urgency === "warning") return "Acción requerida";
+  if (urgency === "success") return "Registrada";
+  if (urgency === "neutral") return "Finalizada sin registro";
+  return "En trámite";
 };
 
 export default function NotificacionesPage() {
   const router = useRouter();
-  const { userState } = useAppStore();
+  const { userState, loginMode } = useAppStore();
+  const sessionNotifs = useSessionNotificaciones();
   const [activeFilter, setActiveFilter] = useState<FilterType>("todas");
-  const [expandedId, setExpandedId] = useState<string | null>(userState === 'active-no-urgent' ? 'notif-neo' : 'n-eco');
+  const [expandedId, setExpandedId] = useState<string | null>(
+    loginMode === "inapi" ? null : userState === "active-no-urgent" ? "notif-neo" : "n-eco"
+  );
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -50,13 +54,13 @@ export default function NotificacionesPage() {
     return () => clearTimeout(timer);
   }, []);
 
-  const baseNotifs = userState === 'active-no-urgent' ? mockNotificacionesNoUrgent : mockNotificacionesUrgent;
+  const baseNotifs = sessionNotifs;
 
   const filteredNotifs = baseNotifs.filter((n) => {
-    if (userState === 'new') return false;
+    if (loginMode !== "inapi" && userState === "new") return false;
     if (activeFilter === "todas") return true;
     if (activeFilter === "urgente") return n.urgency === "danger" || n.urgency === "warning";
-    if (activeFilter === "info") return n.urgency === "info";
+    if (activeFilter === "info") return n.urgency === "info" || n.urgency === "neutral";
     if (activeFilter === "exito") return n.urgency === "success";
     return true;
   });
@@ -70,7 +74,7 @@ export default function NotificacionesPage() {
         <div className="px-6 pt-6 pb-2">
           <h1 className="text-h1 text-foreground">Notificaciones de tus trámites</h1>
           <p className="text-body-sm text-muted-secondary mt-1">
-            Revisa el detalle de las acciones que debes realizar para continuar con tus trámites
+            Consulta avisos y el detalle de tus trámites. Las gestiones pendientes se realizan en los canales oficiales de INAPI.
           </p>
         </div>
 
@@ -134,8 +138,7 @@ export default function NotificacionesPage() {
                               variant={cardUrgency}
                               label={getBadgeLabel(
                                 cardUrgency,
-                                detalleFuente?.etapa ??
-                                  solicitudVinculada?.etapaLabel
+                                solicitudVinculada
                               )}
                               showIcon={
                                 cardUrgency === "danger" ||
