@@ -7,36 +7,22 @@ import {
   AlertCircle,
   CheckCircle2,
   Info,
-  Tag,
-  User,
-  Users,
-  Hash,
-  Layers,
-  DollarSign,
+  ChevronDown,
 } from "lucide-react";
 import SemaphoreCard from "@/components/ui/SemaphoreCard";
-import StepperProgress, { getStepStates } from "@/components/ui/StepperProgress";
+import StepperProgress from "@/components/ui/StepperProgress";
 import StatusBadge from "@/components/ui/StatusBadge";
 import AccionRequeridaDetalle from "@/components/ui/AccionRequeridaDetalle";
 import { Solicitud } from "@/lib/mockData";
+import { getStepStatesForSolicitud } from "@/lib/etapasMiInapi";
+import { badgeLabelForSolicitud } from "@/lib/tramitePresentacion";
 import { clsx } from "clsx";
-
-const getBadgeLabel = (urgency: string, etapa?: string) => {
-  if (urgency === "danger") return "Acción urgente";
-  if (urgency === "warning") {
-    return etapa?.toLowerCase().includes("fondo")
-      ? "Corrección de Fondo"
-      : "Corrección de Forma";
-  }
-  if (urgency === "info") return "En revisión";
-  if (urgency === "success") return "Finalizada";
-  return "En revisión";
-};
 
 const getUrgencyIcon = (urgency: string) => {
   if (urgency === "danger") return <AlertCircle size={18} className="text-danger" />;
   if (urgency === "warning") return <AlertCircle size={18} className="text-warning" />;
   if (urgency === "success") return <CheckCircle2 size={18} className="text-success" />;
+  if (urgency === "neutral") return <Info size={18} className="text-muted" />;
   return <Info size={18} className="text-info" />;
 };
 
@@ -57,35 +43,30 @@ export default function SolicitudDetalleClient({ solicitud }: { solicitud: Solic
           <section className="space-y-3">
             <p className="text-label text-muted">ESTADO ACTUAL</p>
 
-            <SemaphoreCard urgency={solicitud.urgency as "danger" | "warning" | "info" | "success"}>
+            <SemaphoreCard urgency={solicitud.urgency}>
               <div className="space-y-4">
-                <div className="flex justify-between items-start gap-3">
-                  <div className="space-y-1.5">
-                    <div className="flex items-center gap-2">
-                      {getUrgencyIcon(solicitud.urgency)}
-                      <StatusBadge
-                        variant={solicitud.urgency as "danger" | "warning" | "info" | "success"}
-                        label={getBadgeLabel(solicitud.urgency, solicitud.etapaLabel)}
-                        showIcon={
-                          solicitud.urgency === "danger" || solicitud.urgency === "warning"
-                        }
-                      />
-                    </div>
-                    <h2 className="text-h3 font-extrabold text-foreground leading-tight">
-                      {solicitud.nombre}
-                    </h2>
-                    <p className="text-body-xs text-muted-secondary">
-                      {solicitud.etapaLabel ?? solicitud.etapa}
-                    </p>
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-2">
+                    {getUrgencyIcon(solicitud.urgency)}
+                    <StatusBadge
+                      variant={solicitud.urgency === "neutral" ? "neutral" : solicitud.urgency}
+                      label={badgeLabelForSolicitud(solicitud)}
+                      showIcon={
+                        solicitud.urgency === "danger" || solicitud.urgency === "warning"
+                      }
+                    />
                   </div>
-                  <div className="w-12 h-12 rounded-xl bg-surface border border-border flex items-center justify-center text-primary shadow-sm shrink-0">
-                    <FileText size={22} />
-                  </div>
+                  <h2 className="text-h3 font-extrabold text-foreground leading-tight">
+                    {solicitud.nombre}
+                  </h2>
+                  <p className="text-body-xs text-muted-secondary">
+                    {solicitud.statusIpas ?? solicitud.etapaLabel ?? solicitud.etapa}
+                  </p>
                 </div>
 
                 <StepperProgress
-                  stepStates={getStepStates(solicitud.estado)}
-                  urgency={solicitud.urgency as "danger" | "warning" | "info" | "success"}
+                  stepStates={getStepStatesForSolicitud(solicitud)}
+                  urgency={solicitud.urgency}
                 />
               </div>
             </SemaphoreCard>
@@ -93,46 +74,66 @@ export default function SolicitudDetalleClient({ solicitud }: { solicitud: Solic
 
           <section className="space-y-3">
             <p className="text-label text-muted">NOTIFICACIÓN INAPI</p>
-            <div className="bg-surface rounded-lg border border-border shadow-sm overflow-hidden">
-              <div className="px-4 py-3 bg-surface-elevated border-b border-border flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-primary-light flex items-center justify-center text-primary shrink-0">
-                  <FileText size={14} />
+            <details className="group bg-surface rounded-lg border border-border shadow-sm overflow-hidden">
+              <summary
+                className={clsx(
+                  "flex cursor-pointer list-none items-center justify-between gap-3",
+                  "px-4 py-3 bg-surface-elevated min-h-[44px]",
+                  "hover:bg-surface-elevated/80 transition-colors",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-inset",
+                  "[&::-webkit-details-marker]:hidden"
+                )}
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className="w-7 h-7 rounded-lg bg-primary-light flex items-center justify-center text-primary shrink-0">
+                    <FileText size={14} />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-body-xs font-bold text-primary">
+                      Notificación Oficial INAPI
+                    </p>
+                    <p className="text-body-xs text-muted truncate">
+                      {solicitud.statusIpas ??
+                        "Datos equivalentes al correo oficial del expediente"}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-body-xs font-bold text-primary">Notificación Oficial INAPI</p>
-                  <p className="text-body-xs text-muted">
-                    Información equivalente al correo oficial enviado al solicitante
-                  </p>
-                </div>
-              </div>
-
-              <div className="divide-y divide-surface-elevated">
-                <InfoRow icon={Tag} label="Categoría" value="Marca" />
-                <InfoRow icon={Hash} label="Nombre (Denominación)" value={solicitud.nombre} />
+                <ChevronDown
+                  size={18}
+                  className="shrink-0 text-muted transition-transform duration-200 group-open:rotate-180"
+                  aria-hidden
+                />
+              </summary>
+              <div className="divide-y divide-border border-t border-border">
+                <InfoRow label="Categoría" value={solicitud.categoria ?? "Marca"} />
+                <InfoRow label="Nombre (Denominación)" value={solicitud.nombre} />
                 <InfoRow
-                  icon={Layers}
                   label="Clasificación de Niza"
                   value={solicitud.nizaClass ? `Clase ${solicitud.nizaClass}` : "—"}
                 />
                 <InfoRow
-                  icon={User}
                   label="Solicitante"
-                  value={solicitud.solicitante ?? "Juan Díaz"}
+                  value={solicitud.solicitante ?? "—"}
                 />
                 <InfoRow
-                  icon={Users}
                   label="Representante"
-                  value={solicitud.representante ?? "Juan Díaz"}
+                  value={solicitud.representante ?? "—"}
                 />
-                <InfoRow icon={DollarSign} label="Tasa (UTM)" value={solicitud.tasa ?? "—"} />
+                <InfoRow label="Tasa (UTM)" value={solicitud.tasa ?? "—"} />
                 <InfoRow
-                  icon={Info}
-                  label="Etapa de la solicitud"
-                  value={solicitud.etapaLabel ?? solicitud.etapa}
-                  highlight
+                  label="Estado unificado"
+                  value={solicitud.estadoUnificado ?? badgeLabelForSolicitud(solicitud)}
+                />
+                <InfoRow
+                  label="Estado IPAS"
+                  value={solicitud.statusIpas ?? solicitud.etapaLabel ?? "—"}
+                />
+                <InfoRow
+                  label="Fecha de presentación"
+                  value={solicitud.fechaPresentacion ?? "—"}
                 />
               </div>
-            </div>
+            </details>
           </section>
 
           <AccionRequeridaDetalle solicitud={solicitud} />
@@ -140,7 +141,7 @@ export default function SolicitudDetalleClient({ solicitud }: { solicitud: Solic
           <section className="space-y-3 pt-2">
             <p className="text-label text-muted">DOCUMENTOS GENERADOS</p>
             <div className="bg-surface rounded-lg border border-border overflow-hidden shadow-sm">
-              {solicitud.estado === "FINALIZADA" ? (
+              {solicitud.estadoUnificado === "Registrada" ? (
                 <DocRow
                   title="Certificado de registro de marca (PDF)"
                   date="15 MAR 2026"
@@ -166,36 +167,18 @@ export default function SolicitudDetalleClient({ solicitud }: { solicitud: Solic
 }
 
 function InfoRow({
-  icon: Icon,
   label,
   value,
-  highlight,
 }: {
-  icon: React.ElementType;
   label: string;
   value: string;
-  highlight?: boolean;
 }) {
   return (
-    <div
-      className={clsx(
-        "flex items-center justify-between px-4 py-3 gap-3",
-        highlight && "bg-warning-bg"
-      )}
-    >
-      <div className="flex items-center gap-2.5 min-w-0">
-        <Icon
-          size={14}
-          className={clsx("shrink-0", highlight ? "text-warning" : "text-muted")}
-        />
-        <span className="text-body-xs font-medium text-muted-secondary truncate">{label}</span>
-      </div>
-      <span
-        className={clsx(
-          "text-body-sm font-bold shrink-0 text-right max-w-[55%] truncate",
-          highlight ? "text-warning" : "text-foreground"
-        )}
-      >
+    <div className="flex items-start justify-between px-4 py-3 gap-4">
+      <span className="text-body-xs font-medium text-muted-secondary shrink-0 pt-0.5">
+        {label}
+      </span>
+      <span className="text-body-sm font-bold text-foreground text-right max-w-[60%] leading-snug">
         {value}
       </span>
     </div>

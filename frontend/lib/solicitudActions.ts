@@ -5,7 +5,10 @@ export const LABEL_DESCARGAR_REGISTRO_MARCA =
   "Descargar PDF del registro de la marca";
 
 export function puedeDescargarRegistroMarca(solicitud: Solicitud): boolean {
-  return solicitud.urgency === "success" && solicitud.estado === "FINALIZADA";
+  return (
+    solicitud.statusIpas === "Registrada" ||
+    solicitud.estadoUnificado === "Registrada"
+  );
 }
 
 /** Simula descarga del certificado de registro (MVP). */

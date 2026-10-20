@@ -21,32 +21,28 @@ import {
   puedeDescargarRegistroMarca,
   simularDescargaRegistroMarca,
 } from "@/lib/solicitudActions";
+import {
+  badgeLabelForSolicitud,
+  type CardUrgency,
+} from "@/lib/tramitePresentacion";
 import { clsx } from "clsx";
 
 interface AccionRequeridaDetalleProps {
   solicitud: Solicitud;
 }
 
-type CardUrgency = "danger" | "warning" | "info" | "success";
-
 function esModoAccion(solicitud: Solicitud): boolean {
-  if (solicitud.urgency === "info" || solicitud.urgency === "success") {
-    return false;
-  }
-  return Boolean(
-    solicitud.accion ||
-      solicitud.estado === "ACCION_REQUERIDA" ||
-      solicitud.notificacion
+  return (
+    solicitud.estado === "ACCION_REQUERIDA" ||
+    solicitud.urgency === "danger" ||
+    solicitud.urgency === "warning"
   );
 }
 
-function tituloSeccion(): string {
-  return "ACCIÓN REQUERIDA";
-}
-
-function badgeInformativo(urgency: CardUrgency): string {
-  if (urgency === "success") return "Finalizada";
-  return "En revisión";
+function tituloSeccion(solicitud: Solicitud): string {
+  if (esModoAccion(solicitud)) return "Acción requerida";
+  if (solicitud.estadoUnificado === "Registrada") return "Estado del registro";
+  return "Estado del trámite";
 }
 
 function explicacionPorDefecto(solicitud: Solicitud): string {
@@ -71,14 +67,12 @@ export default function AccionRequeridaDetalle({
   const detalle = solicitud.accionRequeridaDetalle;
   const notif = solicitud.notificacion;
 
-  const tituloPrincipal =
-    solicitud.accion ??
-    notif?.requerimiento ??
-    solicitud.etapaLabel ??
-    "Estado actual del trámite";
+  const tituloPrincipal = solicitud.nombre;
 
-  const explicacion =
+  const explicacionBase =
     detalle?.explicacionClara ?? explicacionPorDefecto(solicitud);
+
+  const explicacion = explicacionBase;
 
   const filasEstado: { label: string; value: string; highlight?: boolean }[] =
     [];
@@ -89,6 +83,15 @@ export default function AccionRequeridaDetalle({
     });
   }
   filasEstado.push({ label: "N° Solicitud", value: solicitud.id });
+  if (solicitud.statusIpas) {
+    filasEstado.push({ label: "Estado IPAS", value: solicitud.statusIpas });
+  }
+  if (solicitud.estadoUnificado) {
+    filasEstado.push({
+      label: "Estado unificado",
+      value: solicitud.estadoUnificado,
+    });
+  }
   filasEstado.push({
     label: "Tipo de derecho",
     value:
@@ -129,6 +132,7 @@ export default function AccionRequeridaDetalle({
     warning: "border-warning/50",
     info: "border-info/50",
     success: "border-success/50",
+    neutral: "border-border",
   }[cardUrgency];
 
   const pasosTitulo = modoAccion
@@ -174,7 +178,7 @@ export default function AccionRequeridaDetalle({
         />
       )}
       <p id="accion-requerida-heading" className="text-label text-muted">
-        {tituloSeccion()}
+        {tituloSeccion(solicitud)}
       </p>
 
       <SemaphoreCard urgency={cardUrgency}>
@@ -183,13 +187,7 @@ export default function AccionRequeridaDetalle({
             <div className="flex flex-wrap items-center justify-between gap-2">
               <StatusBadge
                 variant={cardUrgency}
-                label={
-                  modoAccion
-                    ? cardUrgency === "danger"
-                      ? "Acción urgente"
-                      : "Corrección requerida"
-                    : badgeInformativo(cardUrgency)
-                }
+                label={badgeLabelForSolicitud(solicitud)}
                 showIcon={modoAccion || cardUrgency === "success"}
               />
               {modoAccion && notif?.plazo && (
@@ -226,7 +224,8 @@ export default function AccionRequeridaDetalle({
                 cardUrgency === "danger" && "border-l-danger",
                 cardUrgency === "warning" && "border-l-warning",
                 cardUrgency === "info" && "border-l-info",
-                cardUrgency === "success" && "border-l-success"
+                cardUrgency === "success" && "border-l-success",
+                cardUrgency === "neutral" && "border-l-border"
               )}
             >
               <summary
@@ -295,7 +294,8 @@ export default function AccionRequeridaDetalle({
                 cardUrgency === "danger" && "border-danger/40 bg-surface",
                 cardUrgency === "warning" && "border-warning/40 bg-surface",
                 cardUrgency === "info" && "border-info/40 bg-surface",
-                cardUrgency === "success" && "border-success/40 bg-surface"
+                cardUrgency === "success" && "border-success/40 bg-surface",
+                cardUrgency === "neutral" && "border-border bg-surface"
               )}
             >
               <div className="flex items-center gap-2 mb-4">
@@ -305,7 +305,8 @@ export default function AccionRequeridaDetalle({
                     cardUrgency === "danger" && "bg-danger",
                     cardUrgency === "warning" && "bg-warning",
                     cardUrgency === "info" && "bg-info",
-                    cardUrgency === "success" && "bg-success"
+                    cardUrgency === "success" && "bg-success",
+                    cardUrgency === "neutral" && "bg-muted"
                   )}
                 >
                   {modoAccion ? (
@@ -333,7 +334,8 @@ export default function AccionRequeridaDetalle({
                         cardUrgency === "danger" && "bg-danger",
                         cardUrgency === "warning" && "bg-warning",
                         cardUrgency === "info" && "bg-info",
-                        cardUrgency === "success" && "bg-success"
+                        cardUrgency === "success" && "bg-success",
+                    cardUrgency === "neutral" && "bg-muted"
                       )}
                       aria-hidden
                     >

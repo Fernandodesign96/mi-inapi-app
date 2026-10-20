@@ -14,7 +14,7 @@ interface TopBarProps {
   title?: string;
   /** Título principal en variante `detail` (p. ej. nombre de la solicitud). */
   detailTitle?: string;
-  /** Subtítulo en variante `detail` (p. ej. #trm-001). */
+  /** Subtítulo en variante `detail` (p. ej. #1612458). */
   detailSubtitle?: string;
   showNotifications?: boolean;
   showThemeToggle?: boolean;

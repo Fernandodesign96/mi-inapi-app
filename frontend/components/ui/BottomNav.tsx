@@ -24,9 +24,19 @@ interface NavItem {
 export default function BottomNav() {
   const router = useRouter();
   const pathname = usePathname();
-  const { userState } = useAppStore();
+  const { userState, loginMode } = useAppStore();
 
   const getNavItems = (): NavItem[] => {
+    if (loginMode === "inapi") {
+      return [
+        { id: "inicio",         label: "Inicio",         icon: Home,        path: "/inicio" },
+        { id: "solicitudes",    label: "Solicitudes",    icon: FileText,    path: "/solicitudes" },
+        { id: "notificaciones", label: "Notificaciones", icon: Bell,        path: "/notificaciones" },
+        { id: "certificados",   label: "Certificados",   icon: FolderOpen,  path: "/certificados" },
+        { id: "perfil",         label: "Perfil",         icon: User,        path: "/perfil" },
+      ];
+    }
+
     if (userState === "new") {
       return [
         { id: "inicio",         label: "Inicio",         icon: Home,        path: "/inicio" },

@@ -17,12 +17,15 @@ import {
   FolderOpen,
 } from "lucide-react";
 import TopBar from "@/components/ui/TopBar";
-import { mockUser } from "@/lib/mockData";
 import { clsx } from "clsx";
 import { phase2HiddenClass } from "@/lib/featureFlags";
+import { useSessionUser } from "@/lib/sessionData";
+import { useAppStore } from "@/lib/store";
 
 export default function PerfilPage() {
   const router = useRouter();
+  const mockUser = useSessionUser();
+  const setClaveUnicaSession = useAppStore((s) => s.setClaveUnicaSession);
 
   const toolGroup = [
     {
@@ -201,6 +204,11 @@ export default function PerfilPage() {
                 onClick={() => {
                   document.cookie =
                     "miinapi-auth=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+                  document.cookie =
+                    "miinapi-mode=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+                  document.cookie =
+                    "miinapi-rut=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+                  setClaveUnicaSession();
                   router.push("/login");
                 }}
                 className="w-full flex items-center gap-4 p-4 hover:bg-danger-bg active:bg-danger-bg transition-colors"

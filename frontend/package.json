@@ -10,17 +10,19 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@fontsource/roboto": "^5.3.0",
+    "@fontsource/roboto-slab": "^5.3.0",
+    "@hookform/resolvers": "^3.9.1",
+    "@tanstack/react-query": "^5.67.0",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.475.0",
     "next": "^15.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "lucide-react": "^0.475.0",
-    "clsx": "^2.1.1",
-    "tailwind-merge": "^2.5.4",
     "react-hook-form": "^7.54.2",
+    "tailwind-merge": "^2.5.4",
     "zod": "^3.24.1",
-    "@hookform/resolvers": "^3.9.1",
-    "zustand": "^5.0.3",
-    "@tanstack/react-query": "^5.67.0"
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "typescript": "^5",
