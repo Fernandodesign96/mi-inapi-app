@@ -110,7 +110,7 @@ export default function StepperProgress({
         }}
         aria-label="Etapas del trámite. Arrastra o desliza hacia los lados para ver todas."
       >
-        <div className="flex min-w-[920px] w-full pr-10">
+        <div className="flex min-w-[1100px] w-full pr-10">
           {steps.map((step, i) => {
             const state = stepStates[i];
             const isLast = i === steps.length - 1;

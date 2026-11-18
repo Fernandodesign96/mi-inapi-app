@@ -36,7 +36,7 @@ const getBadgeLabel = (
   if (urgency === "danger" || urgency === "warning") return "Acción requerida";
   if (urgency === "success") return "Registrada";
   if (urgency === "neutral") return "Finalizada sin registro";
-  return "En trámite";
+  return "En Trámite";
 };
 
 export default function NotificacionesPage() {
@@ -111,6 +111,12 @@ export default function NotificacionesPage() {
                 const tableRows: NotificationRow[] = detalleFuente
                   ? [
                       { label: "Etapa actual", value: detalleFuente.etapa },
+                      {
+                        label: "Estado Mi INAPI",
+                        value:
+                          solicitudVinculada?.estadoUnificado ??
+                          getBadgeLabel(cardUrgency, solicitudVinculada),
+                      },
                       {
                         label: "N° Solicitud",
                         value: notif.solicitudId || "N/A",
