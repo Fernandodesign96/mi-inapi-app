@@ -96,6 +96,11 @@ export default function SolicitudesPage() {
                       <h3 className="text-h3 text-foreground">
                         {solicitud.nombre}
                       </h3>
+                      {solicitud.etapaLabel ? (
+                        <p className="text-body-sm text-muted-secondary">
+                          {solicitud.etapaLabel}
+                        </p>
+                      ) : null}
                     </div>
                     <span className="text-timestamp shrink-0 mt-1">Actualizado ayer</span>
                   </div>

@@ -3,6 +3,7 @@ import {
   resolveEtapaFromStatusName,
   type EtapaTerminal,
 } from "@/lib/etapasMiInapi";
+import { IPAS_CLASIFICACION } from "@/lib/statusNameToEtapa";
 import type { Solicitud } from "@/lib/mockData";
 
 export type CardUrgency = "danger" | "warning" | "info" | "success" | "neutral";
@@ -16,47 +17,57 @@ export type UserActionKind =
   | "respuesta-oposiciones"
   | "presentacion-copias"
   | "abandonar"
-  | "no-presentada";
+  | "no-presentada"
+  | "recurso-apelacion";
 
 export function resolveUserActionKind(
   statusName: string
 ): UserActionKind | null {
+  const clasificado = IPAS_CLASIFICACION[statusName];
+  if (clasificado && !clasificado.userAction) return null;
+
   const s = statusName.toLowerCase();
 
+  if (s.includes("recurso de apelación") || s.includes("recurso de apelacion") || s.includes("rechazo")) {
+    if (clasificado?.userAction) return "recurso-apelacion";
+  }
   if (
     s.includes("pago de concesión") ||
     s.includes("pago de concesion") ||
-    s.includes("falta de pago de concesión") ||
-    s.includes("falta de pago de concesion")
+    s.includes("pago de tasa de registro") ||
+    s.includes("pago de tasa de registo")
   ) {
     return "pago-concesion";
   }
   if (
     s.includes("pago de publicación") ||
-    s.includes("pago de publicacion") ||
-    s.includes("falta de publicación") ||
-    s.includes("falta de publicacion")
+    s.includes("pago de publicacion")
   ) {
     return "pago-publicacion";
   }
-  if (s.includes("para tener por no presentada")) return "no-presentada";
   if (s.includes("docs de prioridad")) return "docs-prioridad";
   if (s.includes("respuesta a oposiciones")) return "respuesta-oposiciones";
   if (s.includes("presentación de copias") || s.includes("presentacion de copias")) {
     return "presentacion-copias";
   }
-  if (s.includes("observaciones de fondo")) return "observaciones-fondo";
+  if (s.includes("observaciones de fondo") || s.includes("observaciones de forma en fondo")) {
+    return "observaciones-fondo";
+  }
   if (s.includes("observaciones de forma")) return "observaciones-forma";
-  if (s.includes("para abandonar")) return "abandonar";
+  if (clasificado?.userAction && (s.includes("aceptación parcial") || s.includes("aceptacion parcial"))) {
+    return "recurso-apelacion";
+  }
 
-  return null;
+  return clasificado?.userAction ? "abandonar" : null;
 }
 
 export function isUserActionStatus(statusName: string): boolean {
-  return resolveUserActionKind(statusName) !== null;
+  return IPAS_CLASIFICACION[statusName]?.userAction === true;
 }
 
 export function accionCiudadana(statusName: string): string | null {
+  const texto = IPAS_CLASIFICACION[statusName]?.accionTexto;
+  if (texto) return texto;
   switch (resolveUserActionKind(statusName)) {
     case "pago-concesion":
       return "Pagar derechos de concesión y registro";
@@ -72,6 +83,8 @@ export function accionCiudadana(statusName: string): string | null {
       return "Responder a la oposición presentada";
     case "presentacion-copias":
       return "Presentar copias del expediente";
+    case "recurso-apelacion":
+      return "Revisar la resolución de INAPI. Puedes presentar un recurso de apelación dentro del plazo.";
     case "abandonar":
       return "Regularizar el expediente antes de que se declare abandonado";
     case "no-presentada":
@@ -93,6 +106,10 @@ function urgencyForUserAction(kind: UserActionKind): CardUrgency {
   return "warning";
 }
 
+function esEnTramite(estado: string): boolean {
+  return estado.trim().toLowerCase() === "en trámite";
+}
+
 export function classifyTramite(statusName: string): {
   urgency: CardUrgency;
   estado: Solicitud["estado"];
@@ -104,11 +121,10 @@ export function classifyTramite(statusName: string): {
   etapaIndex: number;
 } {
   const etapa = resolveEtapaFromStatusName(statusName);
-  const s = statusName.trim();
-  const lower = s.toLowerCase();
-  const actionKind = resolveUserActionKind(s);
+  const estadoMiInapi = etapa.estadoMiInapi;
+  const actionKind = etapa.userAction ? resolveUserActionKind(statusName) : null;
 
-  if (lower === "registrada") {
+  if (estadoMiInapi === "Registrada") {
     return {
       urgency: "success",
       estado: "FINALIZADA",
@@ -126,8 +142,8 @@ export function classifyTramite(statusName: string): {
       urgency: "neutral",
       estado: "FINALIZADA",
       userAction: false,
-      estadoUnificado: s,
-      badgeLabel: s,
+      estadoUnificado: "Registro no vigente",
+      badgeLabel: "Registro no vigente",
       terminal: etapa.terminal,
       etapaLabel: etapa.etapaLabel,
       etapaIndex: etapa.index,
@@ -139,20 +155,46 @@ export function classifyTramite(statusName: string): {
       urgency: "neutral",
       estado: "EN_REVISION",
       userAction: false,
-      estadoUnificado: s,
-      badgeLabel: s,
+      estadoUnificado: "Finalizada sin registro",
+      badgeLabel: "Finalizada sin registro",
       terminal: etapa.terminal,
       etapaLabel: etapa.etapaLabel,
       etapaIndex: etapa.index,
     };
   }
 
-  if (actionKind) {
+  if (etapa.terminal === "modificaciones-registro") {
+    return {
+      urgency: "info",
+      estado: "EN_REVISION",
+      userAction: false,
+      estadoUnificado: "Modificaciones al registro",
+      badgeLabel: "Modificaciones al registro",
+      terminal: etapa.terminal,
+      etapaLabel: etapa.etapaLabel,
+      etapaIndex: etapa.index,
+    };
+  }
+
+  if (etapa.terminal === "proceso-renovacion") {
+    return {
+      urgency: "info",
+      estado: "EN_REVISION",
+      userAction: false,
+      estadoUnificado: "Proceso de Renovación",
+      badgeLabel: "Proceso de Renovación",
+      terminal: etapa.terminal,
+      etapaLabel: etapa.etapaLabel,
+      etapaIndex: etapa.index,
+    };
+  }
+
+  if (etapa.userAction && actionKind) {
     return {
       urgency: urgencyForUserAction(actionKind),
       estado: "ACCION_REQUERIDA",
       userAction: true,
-      estadoUnificado: "En trámite",
+      estadoUnificado: "En Trámite",
       badgeLabel: "Acción requerida",
       terminal: etapa.terminal,
       etapaLabel: etapa.etapaLabel,
@@ -164,8 +206,8 @@ export function classifyTramite(statusName: string): {
     urgency: "info",
     estado: "EN_REVISION",
     userAction: false,
-    estadoUnificado: "En trámite",
-    badgeLabel: "En trámite",
+    estadoUnificado: "En Trámite",
+    badgeLabel: "En Trámite",
     terminal: etapa.terminal,
     etapaLabel: etapa.etapaLabel,
     etapaIndex: etapa.index,
@@ -180,7 +222,7 @@ export function badgeLabelForSolicitud(
 ): string {
   if (
     solicitud.estadoUnificado &&
-    solicitud.estadoUnificado !== "En trámite"
+    !esEnTramite(solicitud.estadoUnificado)
   ) {
     return solicitud.estadoUnificado;
   }
@@ -192,7 +234,7 @@ export function badgeLabelForSolicitud(
     return "Acción requerida";
   }
   if (solicitud.urgency === "success") return "Registrada";
-  return solicitud.estadoUnificado ?? "En trámite";
+  return solicitud.estadoUnificado ?? "En Trámite";
 }
 
 export function semaphoreUrgency(
@@ -348,6 +390,18 @@ function copiaAccionCiudadana(args: {
         ],
         canalPresentacion: canalPago,
       };
+    case "recurso-apelacion":
+      return {
+        explicacionClara: intro,
+        consecuencia:
+          "Si no presentas el recurso dentro del plazo, la resolución de INAPI quedará firme.",
+        pasos: [
+          "Lee la resolución notificada por INAPI y el plazo de apelación.",
+          "Si decides recurrir, presenta el recurso en los canales oficiales dentro del plazo.",
+          "MiINAPI no tramita el recurso: la gestión se hace ante INAPI.",
+        ],
+        canalPresentacion: canalEscritos,
+      };
   }
 }
 
@@ -360,7 +414,9 @@ export function buildIpasCopy(args: {
   userAction: boolean;
   terminal: EtapaTerminal;
 }): NonNullable<Solicitud["accionRequeridaDetalle"]> {
-  const etapa = ETAPAS_MI_INAPI.find((e) => e.label === args.etapaLabel);
+  const etapa = ETAPAS_MI_INAPI.find((e) =>
+    e.prefixes.some((p) => args.etapaLabel.startsWith(p))
+  );
   const descEtapa = etapa?.descripcion
     ? `${etapa.descripcion}.`
     : `${args.etapaLabel}.`;

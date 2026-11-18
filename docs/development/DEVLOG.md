@@ -10,12 +10,38 @@ Las entradas se listan de **más reciente a más antigua**.
 
 Orden: más reciente → más antiguo.
 
-1. [2026-09-28 — Frontend | Fase 1 MVP: alcance UI, seguimiento y pulido de producto](#2026-09-28---frontend--fase-1-mvp-alcance-ui-seguimiento-y-pulido-de-producto)
-2. [2026-06-10 — Frontend | Sprint 3: Implementación UI Kit GOB v3.0.1 — cierre de migración](#2026-06-10---frontend--sprint-3-implementación-ui-kit-gob-v301--cierre-de-migración)
-3. [2026-06-10 — Frontend | Sprint 3: Migración UI Kit GOB v3.0.1 — documentación](#2026-06-10---frontend--sprint-3-migración-ui-kit-gob-v301--documentación)
-4. [2026-04-14 — Frontend | Sprint 2: Stepper, Mock Data, Login y Polish Final](#2026-04-14---frontend--sprint-2-stepper-mock-data-login-y-polish-final)
-5. [2026-04-13 — Frontend | Sprint 1.5: Cierre, Seguridad y Navegación Contextual](#2026-04-13---frontend--sprint-15-cierre-seguridad-y-navegación-contextual)
-6. [2026-04-13 — Frontend | Sprint 1: Fundamentos, Design System y App Router (desde 2026-04-06)](#2026-04-13---frontend--sprint-1-fundamentos-design-system-y-app-router-desde-2026-04-06)
+1. [2026-11-18 — Frontend | Etapas y estados Mi INAPI validados](#2026-11-18---frontend--etapas-y-estados-mi-inapi-validados)
+2. [2026-09-28 — Frontend | Fase 1 MVP: alcance UI, seguimiento y pulido de producto](#2026-09-28---frontend--fase-1-mvp-alcance-ui-seguimiento-y-pulido-de-producto)
+3. [2026-06-10 — Frontend | Sprint 3: Implementación UI Kit GOB v3.0.1 — cierre de migración](#2026-06-10---frontend--sprint-3-implementación-ui-kit-gob-v301--cierre-de-migración)
+4. [2026-06-10 — Frontend | Sprint 3: Migración UI Kit GOB v3.0.1 — documentación](#2026-06-10---frontend--sprint-3-migración-ui-kit-gob-v301--documentación)
+5. [2026-04-14 — Frontend | Sprint 2: Stepper, Mock Data, Login y Polish Final](#2026-04-14---frontend--sprint-2-stepper-mock-data-login-y-polish-final)
+6. [2026-04-13 — Frontend | Sprint 1.5: Cierre, Seguridad y Navegación Contextual](#2026-04-13---frontend--sprint-15-cierre-seguridad-y-navegación-contextual)
+7. [2026-04-13 — Frontend | Sprint 1: Fundamentos, Design System y App Router (desde 2026-04-06)](#2026-04-13---frontend--sprint-1-fundamentos-design-system-y-app-router-desde-2026-04-06)
+
+---
+
+## [2026-11-18] - Frontend | Etapas y estados Mi INAPI validados
+
+### Contexto y objetivos:
+
+El consolidado de marcas validado reemplaza la planilla IPAS previa. Mi INAPI debe mostrar **etapas ciudadanas** (principales + subetapas) y **estados Mi INAPI** (En Trámite, Registrada, Finalizada sin registro, Registro no vigente, Proceso de Renovación, Modificaciones al registro), no el `statusName` IPAS como etiqueta principal.
+
+### Implementación técnica:
+
+- Fuente: `docs/datos_reales/Clasificación Estados_Marcas_ Mi_Inapi_validado.xlsx`. Se eliminó `estados_y_etapas_IPAS_(rev_JMV).xlsx`.
+- Stepper de 8 pasos principales (1–6, 8 y 9). La oposición deja de ser nodo propio y pasa a subetapa de fondo (`4.1`).
+- `statusNameToEtapa.ts` y `etapasMiInapi.ts` mapean cada estado IPAS a subetapa + estado Mi INAPI. Las notificaciones de acción al usuario salen de la columna «Acción usuario» del consolidado.
+- Solicitudes, notificaciones, detalle e inicio muestran la etapa/subetapa; el estado IPAS queda como referencia secundaria.
+- Perfil ClaveÚnica no urgente: un trámite informativo en examen de forma (sin acción ciudadana).
+
+### 💡 Repaso técnico: Subetapa vs paso del stepper
+
+El consolidado lista subetapas (`2.1`, `3.1`, `4.1`, `6.1`…) que no caben como nodos. El stepper avanza por el número principal; el texto de la card comunica la subetapa vigente.
+
+### Próximos pasos:
+
+- Validar copy de las 21 cuentas INAPI con el equipo de marcas.
+- Instalar `@fontsource/roboto` y `@fontsource/roboto-slab` en cada máquina nueva (`bun install` en `frontend`).
 
 ---
 

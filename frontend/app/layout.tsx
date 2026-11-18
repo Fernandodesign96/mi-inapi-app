@@ -12,6 +12,11 @@ import { basePath } from "@/next.config";
 const iconUrl = `${basePath}/images/inapi-logo.jpg`;
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NODE_ENV === "production"
+      ? `https://fernandodesign96.github.io${basePath}`
+      : "http://localhost:3000"
+  ),
   title: "MiINAPI — Instituto Nacional de Propiedad Industrial",
   description:
     "Plataforma ciudadana digital para gestionar tus trámites de propiedad industrial: marcas, patentes y diseños industriales.",

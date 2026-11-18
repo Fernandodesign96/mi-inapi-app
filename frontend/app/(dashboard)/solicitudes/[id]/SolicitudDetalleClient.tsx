@@ -59,9 +59,14 @@ export default function SolicitudDetalleClient({ solicitud }: { solicitud: Solic
                   <h2 className="text-h3 font-extrabold text-foreground leading-tight">
                     {solicitud.nombre}
                   </h2>
-                  <p className="text-body-xs text-muted-secondary">
-                    {solicitud.statusIpas ?? solicitud.etapaLabel ?? solicitud.etapa}
+                  <p className="text-body-sm text-muted-secondary">
+                    {solicitud.etapaLabel ?? solicitud.etapa}
                   </p>
+                  {solicitud.statusIpas ? (
+                    <p className="text-body-xs text-muted">
+                      Referencia IPAS: {solicitud.statusIpas}
+                    </p>
+                  ) : null}
                 </div>
 
                 <StepperProgress

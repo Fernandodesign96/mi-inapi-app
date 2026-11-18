@@ -259,6 +259,11 @@ export default function InicioPage() {
                         ? "Marca Comercial"
                         : "Patente"}
                     </p>
+                    {heroSolicitud.etapaLabel ? (
+                      <p className="text-body-sm text-muted-secondary mb-2">
+                        {heroSolicitud.etapaLabel}
+                      </p>
+                    ) : null}
                     <p className="text-body-sm text-muted-secondary leading-relaxed mb-4">
                       {resumenInicio(heroSolicitud)}
                     </p>

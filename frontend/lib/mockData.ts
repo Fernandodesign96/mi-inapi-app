@@ -82,7 +82,7 @@ export const mockNotificacionesNoUrgent: Notification[] = [];
 
 export const mockSummaryNoUrgent = {
   enProceso: 1,
-  accionRequerida: 1,
+  accionRequerida: 0,
   finalizadas: 0,
 };
 
@@ -107,12 +107,12 @@ export const mockTramitesUrgent: Solicitud[] = [
     representante: "Juan Díaz",
     tasa: "2 UTM",
     fechaPresentacion: "10/03/2026",
-    estadoUnificado: "En trámite",
+    estadoUnificado: "En Trámite",
     statusIpas: "Aguardando fin de plazo de observaciones de forma",
     etapaIndex: 1,
-    etapaLabel: "Revisión de requisitos (Examen de Forma)",
+    etapaLabel: "2.1 Esperando respuesta a observaciones de forma",
     notificacion: { 
-      etapa: "Revisión de requisitos (Examen de Forma)", 
+      etapa: "2.1 Esperando respuesta a observaciones de forma", 
       requerimiento: "Resolución de observaciones de forma", 
       plazo: "Según expediente IPAS", 
       contacto: "forma@inapi.cl" 
@@ -130,7 +130,7 @@ export const mockTramitesUrgent: Solicitud[] = [
       canalPresentacion:
         "Canales oficiales de INAPI según el oficio o la notificación del expediente.",
       referencia:
-        "Etapa MiINAPI: Revisión de requisitos (Examen de Forma) · Estado IPAS: Aguardando fin de plazo de observaciones de forma",
+        "Etapa MiINAPI: 2.1 Esperando respuesta a observaciones de forma · Estado IPAS: Aguardando fin de plazo de observaciones de forma",
     },
   },
   {
@@ -148,12 +148,12 @@ export const mockTramitesUrgent: Solicitud[] = [
     representante: "Juan Díaz",
     tasa: "2 UTM",
     fechaPresentacion: "22/01/2026",
-    estadoUnificado: "En trámite",
+    estadoUnificado: "En Trámite",
     statusIpas: "Aguardando fin de plazo de observaciones de fondo",
-    etapaIndex: 4,
-    etapaLabel: "Revisión legal y de fondo (Examen de Fondo)",
+    etapaIndex: 3,
+    etapaLabel: "4.1 Esperando respuesta a observaciones de fondo",
     notificacion: {
-      etapa: "Revisión legal y de fondo (Examen de Fondo)",
+      etapa: "4.1 Esperando respuesta a observaciones de fondo",
       requerimiento: "Resolución de observaciones de fondo",
       plazo: "Según expediente IPAS",
       contacto: "examenes@inapi.cl",
@@ -171,7 +171,7 @@ export const mockTramitesUrgent: Solicitud[] = [
       canalPresentacion:
         "Canales oficiales de INAPI según el oficio o la notificación del expediente.",
       referencia:
-        "Etapa MiINAPI: Revisión legal y de fondo (Examen de Fondo) · Estado IPAS: Aguardando fin de plazo de observaciones de fondo",
+        "Etapa MiINAPI: 4.1 Esperando respuesta a observaciones de fondo · Estado IPAS: Aguardando fin de plazo de observaciones de fondo",
     },
   },
   {
@@ -188,12 +188,12 @@ export const mockTramitesUrgent: Solicitud[] = [
     representante: "Juan Díaz",
     tasa: "3 UTM",
     fechaPresentacion: "04/11/2025",
-    estadoUnificado: "En trámite",
+    estadoUnificado: "En Trámite",
     statusIpas: "En examen de fondo",
-    etapaIndex: 4,
-    etapaLabel: "Revisión legal y de fondo (Examen de Fondo)",
+    etapaIndex: 3,
+    etapaLabel: "4. Revisión legal y de fondo (Examen de Fondo)",
     notificacion: {
-      etapa: "Revisión legal y de fondo (Examen de Fondo)",
+      etapa: "4. Revisión legal y de fondo (Examen de Fondo)",
       requerimiento: "Sin gestión pendiente de tu parte",
       plazo: "Según expediente IPAS",
       contacto: "examenes@inapi.cl",
@@ -206,7 +206,7 @@ export const mockTramitesUrgent: Solicitud[] = [
         "Te avisaremos en MiINAPI si el estado cambia o si INAPI requiere una gestión posterior.",
       ],
       referencia:
-        "Etapa MiINAPI: Revisión legal y de fondo (Examen de Fondo) · Estado IPAS: En examen de fondo",
+        "Etapa MiINAPI: 4. Revisión legal y de fondo (Examen de Fondo) · Estado IPAS: En examen de fondo",
     },
   },
   {
@@ -224,12 +224,12 @@ export const mockTramitesUrgent: Solicitud[] = [
     representante: "Juan Díaz",
     tasa: "3 UTM",
     fechaPresentacion: "18/02/2026",
-    estadoUnificado: "En trámite",
+    estadoUnificado: "En Trámite",
     statusIpas: "Aguardando fin de plazo de pago de publicación al Diario Oficial",
     etapaIndex: 2,
-    etapaLabel: "Publicación en Diario Oficial y plazo de oposiciones",
+    etapaLabel: "3.1 A la espera del pago en el Diario Oficial",
     notificacion: {
-      etapa: "Publicación en Diario Oficial y plazo de oposiciones",
+      etapa: "3.1 A la espera del pago en el Diario Oficial",
       requerimiento: "Resolución de aceptación a trámite de marca",
       plazo: "Según expediente IPAS",
       contacto: "publicaciones@inapi.cl",
@@ -247,7 +247,7 @@ export const mockTramitesUrgent: Solicitud[] = [
       canalPresentacion:
         "Medios de pago y canales oficiales indicados en el oficio de INAPI.",
       referencia:
-        "Etapa MiINAPI: Publicación en Diario Oficial y plazo de oposiciones · Estado IPAS: Aguardando fin de plazo de pago de publicación al Diario Oficial",
+        "Etapa MiINAPI: 3.1 A la espera del pago en el Diario Oficial · Estado IPAS: Aguardando fin de plazo de pago de publicación al Diario Oficial",
     },
   },
   {
@@ -268,9 +268,9 @@ export const mockTramitesUrgent: Solicitud[] = [
     statusIpas: "Registrada",
     etapaIndex: 6,
     etapaAllCompleted: true,
-    etapaLabel: "Pago y registro",
+    etapaLabel: "8.- Solicitud Registrada",
     notificacion: {
-      etapa: "Pago y registro",
+      etapa: "8.- Solicitud Registrada",
       requerimiento: "Trámite concluido — marca vigente",
       plazo: "Renovación según plazo legal del registro",
       contacto: "renovaciones@inapi.cl",
@@ -283,7 +283,7 @@ export const mockTramitesUrgent: Solicitud[] = [
         "Puedes consultar el PDF del registro desde MiINAPI.",
         "Otras gestiones se realizan en los canales oficiales de INAPI.",
       ],
-      referencia: "Etapa MiINAPI: Pago y registro · Estado IPAS: Registrada",
+      referencia: "Etapa MiINAPI: 8.- Solicitud Registrada · Estado IPAS: Registrada",
     },
   }
 ];
@@ -293,13 +293,13 @@ export const mockNotificacionesUrgent: Notification[] = [
     id: "n-eco", 
     tipo: "ACCION_REQUERIDA", 
     urgency: "danger", 
-    titulo: "Estado IPAS: observaciones de forma para Eco-Tech Solutions", 
+    titulo: "2.1 Esperando respuesta a observaciones de forma — Eco-Tech Solutions", 
     cuerpo: "Estado IPAS: Aguardando fin de plazo de observaciones de forma. Última acción: «Resolución de observaciones de forma». Esta gestión se realiza en los canales oficiales de INAPI, no dentro de MiINAPI.", 
     tiempo: "Hace 2h", 
     solicitudId: "1612458",
     cta: null,
     detalle: {
-      etapa: "Revisión de requisitos (Examen de Forma)",
+      etapa: "2.1 Esperando respuesta a observaciones de forma",
       requerimiento: "Resolución de observaciones de forma",
       plazo: "Según expediente IPAS",
       contacto: "forma@inapi.cl"
@@ -309,7 +309,7 @@ export const mockNotificacionesUrgent: Notification[] = [
     id: "n-farma", 
     tipo: "ACCION_REQUERIDA", 
     urgency: "warning", 
-    titulo: "Estado IPAS: observaciones de fondo para FarmaTech Chile", 
+    titulo: "4.1 Esperando respuesta a observaciones de fondo — FarmaTech Chile", 
     cuerpo: "Estado IPAS: Aguardando fin de plazo de observaciones de fondo. Última acción: «Resolución de observaciones de fondo». Esta gestión se realiza en los canales oficiales de INAPI, no dentro de MiINAPI.", 
     tiempo: "Hace 1d", 
     solicitudId: "1623891",
@@ -319,13 +319,13 @@ export const mockNotificacionesUrgent: Notification[] = [
     id: "n-neo", 
     tipo: "ACCION_REQUERIDA", 
     urgency: "danger", 
-    titulo: "Estado IPAS: pago de publicación para NeoGraphix Design", 
+    titulo: "3.1 A la espera del pago en el Diario Oficial — NeoGraphix Design", 
     cuerpo: "Estado IPAS: Aguardando fin de plazo de pago de publicación al Diario Oficial. Última acción: «Resolución de aceptación a trámite de marca». El pago se realiza en los canales oficiales de INAPI, no dentro de MiINAPI.", 
     tiempo: "Hace 3h",
     solicitudId: "1647823",
     cta: null,
     detalle: {
-      etapa: "Publicación en Diario Oficial y plazo de oposiciones",
+      etapa: "3.1 A la espera del pago en el Diario Oficial",
       requerimiento: "Resolución de aceptación a trámite de marca",
       plazo: "Según expediente IPAS",
       contacto: "publicaciones@inapi.cl",
@@ -335,7 +335,7 @@ export const mockNotificacionesUrgent: Notification[] = [
     id: "n-aura", 
     tipo: "CAMBIO_ESTADO", 
     urgency: "info", 
-    titulo: "Estado IPAS: En examen de fondo", 
+    titulo: "4. Revisión legal y de fondo (Examen de Fondo) — Aura Cosmetics", 
     cuerpo: "La solicitud Aura Cosmetics permanece en «En examen de fondo». INAPI continúa el expediente; no hay una gestión ciudadana pendiente en MiINAPI.", 
     tiempo: "Hace 2d", 
     solicitudId: "1634567",
@@ -345,7 +345,7 @@ export const mockNotificacionesUrgent: Notification[] = [
     id: "n-terra", 
     tipo: "FINALIZADA", 
     urgency: "success", 
-    titulo: "Estado IPAS: Registrada — Terra Verde SPA", 
+    titulo: "Solicitud Registrada — Terra Verde SPA", 
     cuerpo: "Estado IPAS: Registrada. La marca Terra Verde SPA (solicitud 1659012) obtuvo registro.", 
     tiempo: "Hace 4d", 
     solicitudId: "1659012",
@@ -359,27 +359,57 @@ export const mockSummaryUrgent = {
   finalizadas: 1,
 };
 
-const trm004NeoGraphix = mockTramitesUrgent.find((s) => s.id === "1647823");
-
-if (trm004NeoGraphix) {
-  mockTramitesNoUrgent.push({ ...trm004NeoGraphix });
-}
+mockTramitesNoUrgent.push({
+  id: "1701101",
+  nombre: "NeoGraphix Design",
+  tipo: "marca",
+  estado: "EN_REVISION",
+  etapa: "EXAMEN",
+  urgency: "info",
+  accion: null,
+  estimacion: "En revisión de requisitos",
+  nizaClass: "35",
+  solicitante: "Juan Díaz",
+  representante: "Juan Díaz",
+  tasa: "3 UTM",
+  fechaPresentacion: "18/02/2026",
+  estadoUnificado: "En Trámite",
+  statusIpas: "En examen de forma",
+  etapaIndex: 1,
+  etapaLabel: "2. Revisión de requisitos (Examen de Forma)",
+  notificacion: {
+    etapa: "2. Revisión de requisitos (Examen de Forma)",
+    requerimiento: "Sin gestión pendiente de tu parte",
+    plazo: "Según expediente IPAS",
+    contacto: "forma@inapi.cl",
+  },
+  accionRequeridaDetalle: {
+    explicacionClara:
+      "Etapa Mi INAPI: 2. Revisión de requisitos (Examen de Forma). INAPI verifica que la solicitud cumpla los requisitos legales y formales. Estado: En Trámite. No hay una gestión ciudadana pendiente en MiINAPI.",
+    pasos: [
+      "La solicitud permanece en examen de forma.",
+      "Te avisaremos en MiINAPI si el estado cambia o si INAPI requiere una gestión posterior.",
+    ],
+    referencia:
+      "Etapa MiINAPI: 2. Revisión de requisitos (Examen de Forma) · Estado IPAS: En examen de forma",
+  },
+});
 
 mockNotificacionesNoUrgent.push({
   id: "notif-neo",
-  tipo: "ACCION_REQUERIDA",
-  urgency: "danger",
-  titulo: "Estado IPAS: pago de publicación para NeoGraphix Design",
+  tipo: "CAMBIO_ESTADO",
+  urgency: "info",
+  titulo: "2. Revisión de requisitos (Examen de Forma) — NeoGraphix Design",
   cuerpo:
-    "Estado IPAS: Aguardando fin de plazo de pago de publicación al Diario Oficial. Última acción: «Resolución de aceptación a trámite de marca». El pago se realiza en los canales oficiales de INAPI, no dentro de MiINAPI.",
+    "La solicitud NeoGraphix Design permanece en examen de forma. INAPI continúa el expediente; no hay una gestión ciudadana pendiente en MiINAPI.",
   tiempo: "Hace 1 día",
-  solicitudId: "1647823",
+  solicitudId: "1701101",
   cta: null,
   detalle: {
-    etapa: "Publicación en Diario Oficial y plazo de oposiciones",
-    requerimiento: "Resolución de aceptación a trámite de marca",
+    etapa: "2. Revisión de requisitos (Examen de Forma)",
+    requerimiento: "Sin gestión pendiente de tu parte",
     plazo: "Según expediente IPAS",
-    contacto: "publicaciones@inapi.cl",
+    contacto: "forma@inapi.cl",
   },
 });
 

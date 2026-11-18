@@ -253,7 +253,8 @@ export default function LoginPage() {
                       </span>
                     )}
                     <span className="block text-foreground">{cuenta.marca}</span>
-                    <span className="block">{cuenta.statusName}</span>
+                    <span className="block">{cuenta.etapaLabel}</span>
+                    <span className="block">{cuenta.estadoMiInapi}</span>
                     {cuenta.accion && (
                       <span className="block font-medium text-foreground">
                         {cuenta.accion}

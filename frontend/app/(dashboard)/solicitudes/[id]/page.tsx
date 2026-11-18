@@ -1,10 +1,11 @@
-import { getSolicitudById, mockSolicitudes } from "@/lib/mockData";
+import { getSolicitudById, mockSolicitudes, mockTramitesNoUrgent } from "@/lib/mockData";
 import { INAPI_TRAMITES } from "@/lib/datosReales";
 import SolicitudDetalleClient from "./SolicitudDetalleClient";
 
 export async function generateStaticParams() {
   const ids = new Set([
     ...mockSolicitudes.map((s) => s.id),
+    ...mockTramitesNoUrgent.map((s) => s.id),
     ...INAPI_TRAMITES.map((s) => s.id),
   ]);
   return Array.from(ids).map((id) => ({ id }));

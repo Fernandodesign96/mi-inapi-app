@@ -401,6 +401,8 @@ export const INAPI_LOGIN_EJEMPLOS = RAW.map((raw) => {
     password: raw.rutNum.slice(-4),
     marca: marcaLabel(raw),
     statusName: raw.statusName,
+    etapaLabel: classified.etapaLabel,
+    estadoMiInapi: classified.estadoUnificado,
     name: raw.name,
     userAction: classified.userAction,
     urgency: classified.urgency,
@@ -465,14 +467,14 @@ export function notificacionesFromTramites(tramites: Solicitud[]): Notification[
     urgency: s.urgency,
     titulo:
       s.estadoUnificado === "Registrada"
-        ? `Estado IPAS: Registrada — ${s.nombre}`
-        : s.statusIpas
-          ? `Estado IPAS: ${s.statusIpas}`
-          : s.etapaLabel ?? s.nombre,
+        ? `Solicitud Registrada — ${s.nombre}`
+        : s.etapaLabel
+          ? `${s.etapaLabel} — ${s.nombre}`
+          : s.nombre,
     cuerpo:
       s.accionRequeridaDetalle?.explicacionClara ??
-      (s.statusIpas
-        ? `Estado IPAS: ${s.statusIpas}. Última acción: «${s.accion ?? "—"}».`
+      (s.etapaLabel
+        ? `Etapa Mi INAPI: ${s.etapaLabel}. Estado: ${s.estadoUnificado ?? "En Trámite"}.`
         : s.nombre),
     tiempo: i === 0 ? "Hace 1d" : "Hace 2d",
     solicitudId: s.id,

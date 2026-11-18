@@ -88,7 +88,7 @@ export default function AccionRequeridaDetalle({
   }
   if (solicitud.estadoUnificado) {
     filasEstado.push({
-      label: "Estado unificado",
+      label: "Estado Mi INAPI",
       value: solicitud.estadoUnificado,
     });
   }
