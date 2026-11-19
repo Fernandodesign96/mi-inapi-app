@@ -1,7 +1,7 @@
 "use client";
 
 import { clsx } from "clsx";
-import { useRef } from "react";
+import useEmblaCarousel from "embla-carousel-react";
 
 interface FilterOption {
   value: string;
@@ -21,45 +21,40 @@ export default function FilterPills({
   onChange,
   className,
 }: FilterPillsProps) {
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  const handleWheel = (e: React.WheelEvent) => {
-    if (scrollRef.current) {
-      // Translate vertical wheel move to horizontal scroll
-      scrollRef.current.scrollLeft += e.deltaY;
-    }
-  };
+  const [emblaRef] = useEmblaCarousel({
+    align: "start",
+    dragFree: true,
+    containScroll: "trimSnaps",
+  });
 
   return (
     <div
-      ref={scrollRef}
+      ref={emblaRef}
       role="tablist"
-      onWheel={handleWheel}
-      className={clsx(
-        "flex items-center gap-2 overflow-x-auto hide-scrollbar py-[2px] select-none touch-pan-x",
-        className
-      )}
+      className={clsx("overflow-hidden py-[2px] select-none", className)}
     >
-      {options.map((opt) => {
-        const isActive = opt.value === activeValue;
-        return (
-          <button
-            key={opt.value}
-            role="tab"
-            aria-selected={isActive}
-            onClick={() => onChange(opt.value)}
-            className={clsx(
-              "flex-shrink-0 min-h-[29px] px-4 py-[6px] rounded-full text-body-sm font-sans transition-all duration-150 outline-none touch-target-chip",
-              "focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-              isActive
-                ? "bg-primary text-primary-foreground font-semibold"
-                : "bg-surface-elevated text-muted-secondary border border-border font-medium hover:bg-border"
-            )}
-          >
-            {opt.label}
-          </button>
-        );
-      })}
+      <div className="flex items-center gap-2">
+        {options.map((opt) => {
+          const isActive = opt.value === activeValue;
+          return (
+            <button
+              key={opt.value}
+              role="tab"
+              aria-selected={isActive}
+              onClick={() => onChange(opt.value)}
+              className={clsx(
+                "flex-shrink-0 min-h-[29px] px-4 py-[6px] rounded-full text-body-sm font-sans transition-all duration-150 outline-none touch-target-chip",
+                "focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                isActive
+                  ? "bg-primary text-primary-foreground font-semibold"
+                  : "bg-surface-elevated text-muted-secondary border border-border font-medium hover:bg-border"
+              )}
+            >
+              {opt.label}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }

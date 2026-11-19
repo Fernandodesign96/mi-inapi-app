@@ -16,6 +16,11 @@ import {
   INAPI_LOGIN_EJEMPLOS,
 } from "@/lib/datosReales";
 import { writeClaveUnicaSession, writeInapiSession } from "@/lib/session";
+import {
+  estadoCiudadano,
+  etapaCiudadanaFromSolicitud,
+  subetapaCiudadana,
+} from "@/lib/etapasMiInapi";
 import { useAppStore } from "@/lib/store";
 
 function digitsOnly(rut: string): string {
@@ -253,8 +258,20 @@ export default function LoginPage() {
                       </span>
                     )}
                     <span className="block text-foreground">{cuenta.marca}</span>
-                    <span className="block">{cuenta.etapaLabel}</span>
-                    <span className="block">{cuenta.estadoMiInapi}</span>
+                    <span className="block">
+                      Estado: {estadoCiudadano(cuenta.estadoMiInapi)}
+                    </span>
+                    <span className="block">
+                      Etapa:{" "}
+                      {etapaCiudadanaFromSolicitud({
+                        etapaLabel: cuenta.etapaLabel,
+                      })}
+                    </span>
+                    {subetapaCiudadana(cuenta.etapaLabel) ? (
+                      <span className="block">
+                        {subetapaCiudadana(cuenta.etapaLabel)}
+                      </span>
+                    ) : null}
                     {cuenta.accion && (
                       <span className="block font-medium text-foreground">
                         {cuenta.accion}

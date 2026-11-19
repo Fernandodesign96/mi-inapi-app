@@ -208,6 +208,68 @@ export function getEtapaIndexFromSolicitud(solicitud: Solicitud): number {
   return LEGACY_ESTADO_TO_INDEX[solicitud.estado]?.index ?? 0;
 }
 
+/** Prefijo de subetapa ciudadana: 2.1, 4.1.-, 6.2, etc. */
+const SUBETAPA_PREFIX = /^\d+\.\d+\.?\-*\s*/;
+
+export function isSubetapaLabel(label: string): boolean {
+  return /^\d+\.\d+/.test(normalizeEtapaLabel(label));
+}
+
+/** Texto de subetapa sin números internos. Null si el label es una etapa principal. */
+export function subetapaCiudadana(label?: string | null): string | null {
+  if (!label) return null;
+  const mapped = normalizeEtapaLabel(label);
+  if (!isSubetapaLabel(mapped)) return null;
+  const stripped = mapped.replace(SUBETAPA_PREFIX, "").replace(/^\.-\s*/, "").trim();
+  return stripped || null;
+}
+
+export function etapaCiudadanaFromSolicitud(
+  solicitud: Pick<Solicitud, "etapaLabel" | "etapaIndex">
+): string {
+  const index =
+    typeof solicitud.etapaIndex === "number"
+      ? solicitud.etapaIndex
+      : stepperIndexFromEtapaLabel(solicitud.etapaLabel ?? "");
+  const fromStepper = ETAPAS_MI_INAPI[index]?.label;
+  if (fromStepper) return fromStepper;
+  const raw = normalizeEtapaLabel(solicitud.etapaLabel ?? "");
+  if (!raw) return "Solicitud recibida";
+  return raw.replace(/^\d+\.?\-*\s*/, "").trim() || raw;
+}
+
+export function estadoCiudadano(estado?: string | null): string {
+  const raw = (estado ?? "En trámite").trim();
+  if (raw.toLowerCase() === "en trámite") return "En trámite";
+  return raw;
+}
+
+export function numeroExpedienteParts(
+  solicitud: Pick<Solicitud, "id" | "estadoUnificado"> & {
+    numeroRegistro?: string;
+  }
+): { label: string; value: string } {
+  if (solicitud.numeroRegistro) {
+    return { label: "Número de registro", value: solicitud.numeroRegistro };
+  }
+  return { label: "Número de solicitud", value: solicitud.id };
+}
+
+export function etiquetaNumeroExpediente(
+  solicitud: Pick<Solicitud, "id" | "estadoUnificado"> & {
+    numeroRegistro?: string;
+  }
+): string {
+  const { label, value } = numeroExpedienteParts(solicitud);
+  return `${label}: ${value}`;
+}
+
+export function tipoDerechoLabel(tipo: Solicitud["tipo"]): string {
+  if (tipo === "marca") return "Marca comercial";
+  if (tipo === "patente") return "Patente";
+  return "Diseño industrial";
+}
+
 export function getStepStatesForSolicitud(solicitud: Solicitud): StepState[] {
   const estado = (solicitud.estadoUnificado ?? "").trim();
   if (

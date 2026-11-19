@@ -40,10 +40,8 @@ import {
 } from "@/lib/sessionData";
 import { getStepStatesForSolicitud } from "@/lib/etapasMiInapi";
 import { LABEL_VER_DETALLE_SOLICITUD } from "@/lib/featureFlags";
-import {
-  badgeLabelForSolicitud,
-  resumenInicio,
-} from "@/lib/tramitePresentacion";
+import { badgeLabelForSolicitud } from "@/lib/tramitePresentacion";
+import TramiteCopyStack from "@/components/ui/TramiteCopyStack";
 import { clsx } from "clsx";
 import React from "react";
 
@@ -250,23 +248,15 @@ export default function InicioPage() {
                       />
                       <span className="text-timestamp">Actualizado hoy</span>
                     </div>
-                    <h2 className="text-h1 text-foreground mb-1">
+                    <h2 className="text-h1 text-foreground mb-3">
                       {heroSolicitud.nombre}
                     </h2>
-                    <p className="text-mono text-muted-secondary mb-2">
-                      #{heroSolicitud.id} ·{" "}
-                      {heroSolicitud.tipo === "marca"
-                        ? "Marca Comercial"
-                        : "Patente"}
-                    </p>
-                    {heroSolicitud.etapaLabel ? (
-                      <p className="text-body-sm text-muted-secondary mb-2">
-                        {heroSolicitud.etapaLabel}
-                      </p>
-                    ) : null}
-                    <p className="text-body-sm text-muted-secondary leading-relaxed mb-4">
-                      {resumenInicio(heroSolicitud)}
-                    </p>
+                    <TramiteCopyStack
+                      solicitud={heroSolicitud}
+                      order="inicio"
+                      showTipo
+                      className="mb-4"
+                    />
                     <StepperProgress
                       stepStates={getStepStatesForSolicitud(heroSolicitud)}
                       urgency={heroUrgency}
@@ -287,23 +277,22 @@ export default function InicioPage() {
                   </SemaphoreCard>
                 )}
 
-                {/* SUMMARY ROW */}
                 <div className="flex gap-2">
-                  <SummaryCard 
-                    count={currentSummary.enProceso} 
-                    label="EN PROCESO" 
-                    variant="info" 
+                  <SummaryCard
+                    count={currentSummary.enProceso}
+                    label="EN PROCESO"
+                    variant="info"
                   />
-                  <SummaryCard 
-                    count={currentSummary.accionRequerida} 
-                    label="ACCIÓN REQ." 
-                    variant={currentSummary.accionRequerida > 0 ? "danger" : "neutral"} 
+                  <SummaryCard
+                    count={currentSummary.accionRequerida}
+                    label="ACCIÓN URGENTE"
+                    variant={currentSummary.accionRequerida > 0 ? "danger" : "neutral"}
                     icon={currentSummary.accionRequerida > 0 ? AlertCircle : undefined}
                   />
-                  <SummaryCard 
-                    count={currentSummary.finalizadas} 
-                    label="FINALIZADAS" 
-                    variant={currentSummary.finalizadas > 0 ? "success" : "neutral"} 
+                  <SummaryCard
+                    count={currentSummary.finalizadas}
+                    label="FINALIZADAS"
+                    variant={currentSummary.finalizadas > 0 ? "success" : "neutral"}
                     icon={currentSummary.finalizadas > 0 ? CheckCircle2 : undefined}
                   />
                 </div>
@@ -368,7 +357,7 @@ function SummaryCard({
 
   return (
     <div className={clsx(
-      "flex-1 flex flex-col items-center justify-center p-3 rounded-lg border border-border shadow-card",
+      "min-w-0 flex-1 flex flex-col items-center justify-center p-3 rounded-xl border border-border shadow-card",
       styles[variant]
     )}>
       <div className="flex items-center gap-1 mb-1">

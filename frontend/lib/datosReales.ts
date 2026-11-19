@@ -1,5 +1,9 @@
 import type { Notification, Solicitud, User } from "@/lib/mockData";
 import {
+  etapaCiudadanaFromSolicitud,
+  subetapaCiudadana,
+} from "@/lib/etapasMiInapi";
+import {
   accionCiudadana,
   buildIpasCopy,
   classifyTramite,
@@ -366,8 +370,8 @@ function toSolicitud(raw: RawTramite): Solicitud {
         ? accionCiudadana(raw.statusName) ?? raw.actionTypeName
         : raw.actionTypeName,
       plazo: classified.userAction
-        ? "Plazo IPAS vigente: debes resolver esta gestión para que el trámite continúe"
-        : "Según expediente IPAS",
+        ? "Debes resolver esta gestión para que el trámite continúe"
+        : "Según el plazo del expediente",
       contacto: "inapi@inapi.cl",
     },
     accionRequeridaDetalle: detalle,
@@ -465,17 +469,10 @@ export function notificacionesFromTramites(tramites: Solicitud[]): Notification[
             ? "FINALIZADA"
             : "CAMBIO_ESTADO",
     urgency: s.urgency,
-    titulo:
-      s.estadoUnificado === "Registrada"
-        ? `Solicitud Registrada — ${s.nombre}`
-        : s.etapaLabel
-          ? `${s.etapaLabel} — ${s.nombre}`
-          : s.nombre,
+    titulo: s.nombre,
     cuerpo:
-      s.accionRequeridaDetalle?.explicacionClara ??
-      (s.etapaLabel
-        ? `Etapa Mi INAPI: ${s.etapaLabel}. Estado: ${s.estadoUnificado ?? "En Trámite"}.`
-        : s.nombre),
+      subetapaCiudadana(s.etapaLabel) ??
+      etapaCiudadanaFromSolicitud(s),
     tiempo: i === 0 ? "Hace 1d" : "Hace 2d",
     solicitudId: s.id,
     cta: null,
