@@ -1,6 +1,8 @@
 import {
   ETAPAS_MI_INAPI,
+  etapaCiudadanaFromSolicitud,
   resolveEtapaFromStatusName,
+  subetapaCiudadana,
   type EtapaTerminal,
 } from "@/lib/etapasMiInapi";
 import { IPAS_CLASIFICACION } from "@/lib/statusNameToEtapa";
@@ -106,10 +108,6 @@ function urgencyForUserAction(kind: UserActionKind): CardUrgency {
   return "warning";
 }
 
-function esEnTramite(estado: string): boolean {
-  return estado.trim().toLowerCase() === "en trámite";
-}
-
 export function classifyTramite(statusName: string): {
   urgency: CardUrgency;
   estado: Solicitud["estado"];
@@ -130,7 +128,7 @@ export function classifyTramite(statusName: string): {
       estado: "FINALIZADA",
       userAction: false,
       estadoUnificado: "Registrada",
-      badgeLabel: "Registrada",
+      badgeLabel: "Notificación de éxito",
       terminal: etapa.terminal,
       etapaLabel: etapa.etapaLabel,
       etapaIndex: etapa.index,
@@ -143,7 +141,7 @@ export function classifyTramite(statusName: string): {
       estado: "FINALIZADA",
       userAction: false,
       estadoUnificado: "Registro no vigente",
-      badgeLabel: "Registro no vigente",
+      badgeLabel: "Notificación informativa",
       terminal: etapa.terminal,
       etapaLabel: etapa.etapaLabel,
       etapaIndex: etapa.index,
@@ -156,7 +154,7 @@ export function classifyTramite(statusName: string): {
       estado: "EN_REVISION",
       userAction: false,
       estadoUnificado: "Finalizada sin registro",
-      badgeLabel: "Finalizada sin registro",
+      badgeLabel: "Notificación informativa",
       terminal: etapa.terminal,
       etapaLabel: etapa.etapaLabel,
       etapaIndex: etapa.index,
@@ -169,7 +167,7 @@ export function classifyTramite(statusName: string): {
       estado: "EN_REVISION",
       userAction: false,
       estadoUnificado: "Modificaciones al registro",
-      badgeLabel: "Modificaciones al registro",
+      badgeLabel: "Notificación informativa",
       terminal: etapa.terminal,
       etapaLabel: etapa.etapaLabel,
       etapaIndex: etapa.index,
@@ -182,7 +180,7 @@ export function classifyTramite(statusName: string): {
       estado: "EN_REVISION",
       userAction: false,
       estadoUnificado: "Proceso de Renovación",
-      badgeLabel: "Proceso de Renovación",
+      badgeLabel: "Notificación informativa",
       terminal: etapa.terminal,
       etapaLabel: etapa.etapaLabel,
       etapaIndex: etapa.index,
@@ -195,7 +193,7 @@ export function classifyTramite(statusName: string): {
       estado: "ACCION_REQUERIDA",
       userAction: true,
       estadoUnificado: "En Trámite",
-      badgeLabel: "Acción requerida",
+      badgeLabel: "Acción urgente",
       terminal: etapa.terminal,
       etapaLabel: etapa.etapaLabel,
       etapaIndex: etapa.index,
@@ -207,7 +205,7 @@ export function classifyTramite(statusName: string): {
     estado: "EN_REVISION",
     userAction: false,
     estadoUnificado: "En Trámite",
-    badgeLabel: "En Trámite",
+    badgeLabel: "Notificación informativa",
     terminal: etapa.terminal,
     etapaLabel: etapa.etapaLabel,
     etapaIndex: etapa.index,
@@ -218,23 +216,22 @@ export function badgeLabelForSolicitud(
   solicitud: Pick<
     Solicitud,
     "estadoUnificado" | "urgency" | "estado" | "statusIpas"
-  >
+  >,
+  surface: "list" | "detail" = "list"
 ): string {
-  if (
-    solicitud.estadoUnificado &&
-    !esEnTramite(solicitud.estadoUnificado)
-  ) {
-    return solicitud.estadoUnificado;
-  }
   if (
     solicitud.estado === "ACCION_REQUERIDA" ||
     solicitud.urgency === "danger" ||
     solicitud.urgency === "warning"
   ) {
-    return "Acción requerida";
+    return "Acción urgente";
   }
-  if (solicitud.urgency === "success") return "Registrada";
-  return solicitud.estadoUnificado ?? "En Trámite";
+  if (solicitud.urgency === "success") {
+    return surface === "detail"
+      ? "Información de éxito"
+      : "Notificación de éxito";
+  }
+  return "Notificación informativa";
 }
 
 export function semaphoreUrgency(
@@ -255,8 +252,9 @@ function copiaAccionCiudadana(args: {
   NonNullable<Solicitud["accionRequeridaDetalle"]>,
   "explicacionClara" | "consecuencia" | "pasos" | "canalPresentacion" | "documentos"
 > {
-  const tarea = args.tarea ?? "Completar la gestión pendiente en los canales oficiales de INAPI";
-  const intro = `Estado IPAS: ${args.statusName}. ${args.descEtapa} Debes ${tarea.charAt(0).toLowerCase()}${tarea.slice(1)} dentro del plazo del expediente. Última acción registrada: «${args.actionTypeName}». Esta gestión no se realiza dentro de MiINAPI.`;
+  const tarea =
+    args.tarea ??
+    "Completar la gestión pendiente en los canales oficiales de INAPI";
 
   const canalPago =
     "Medios de pago y canales oficiales indicados en el oficio o en el portal de INAPI.";
@@ -266,7 +264,7 @@ function copiaAccionCiudadana(args: {
   switch (args.kind) {
     case "pago-concesion":
       return {
-        explicacionClara: intro,
+        explicacionClara: tarea,
         consecuencia:
           "Si el plazo de pago de concesión vence sin acreditar el pago, la solicitud puede abandonarse y no obtener el título de registro.",
         pasos: [
@@ -278,7 +276,7 @@ function copiaAccionCiudadana(args: {
       };
     case "pago-publicacion":
       return {
-        explicacionClara: intro,
+        explicacionClara: tarea,
         consecuencia:
           "Si el plazo vence sin el pago de publicación, la solicitud puede tenerse por no presentada por falta de publicación.",
         pasos: [
@@ -290,7 +288,7 @@ function copiaAccionCiudadana(args: {
       };
     case "observaciones-forma":
       return {
-        explicacionClara: intro,
+        explicacionClara: tarea,
         consecuencia:
           "Si el plazo de observaciones de forma vence sin respuesta, el expediente puede abandonarse o no avanzar a publicación.",
         documentos: [
@@ -307,7 +305,7 @@ function copiaAccionCiudadana(args: {
       };
     case "observaciones-fondo":
       return {
-        explicacionClara: intro,
+        explicacionClara: tarea,
         consecuencia:
           "Si el plazo de observaciones de fondo vence sin respuesta, el expediente puede no continuar hacia el registro.",
         documentos: [
@@ -324,7 +322,7 @@ function copiaAccionCiudadana(args: {
       };
     case "docs-prioridad":
       return {
-        explicacionClara: intro,
+        explicacionClara: tarea,
         consecuencia:
           "Si el plazo vence sin los documentos de prioridad, la reivindicación de prioridad puede no considerarse.",
         documentos: [
@@ -340,7 +338,7 @@ function copiaAccionCiudadana(args: {
       };
     case "respuesta-oposiciones":
       return {
-        explicacionClara: intro,
+        explicacionClara: tarea,
         consecuencia:
           "Si el plazo de respuesta a la oposición vence sin escrito, el expediente puede seguir sin tu contestación.",
         documentos: [
@@ -356,7 +354,7 @@ function copiaAccionCiudadana(args: {
       };
     case "presentacion-copias":
       return {
-        explicacionClara: intro,
+        explicacionClara: tarea,
         consecuencia:
           "Si el plazo vence sin las copias, el expediente puede no continuar según la resolución aplicable.",
         documentos: ["Copias del expediente o de los documentos requeridos en el oficio"],
@@ -368,7 +366,7 @@ function copiaAccionCiudadana(args: {
       };
     case "abandonar":
       return {
-        explicacionClara: intro,
+        explicacionClara: tarea,
         consecuencia:
           "Si no regularizas el expediente a tiempo, INAPI puede declararlo abandonado y el trámite no continúa.",
         pasos: [
@@ -380,7 +378,7 @@ function copiaAccionCiudadana(args: {
       };
     case "no-presentada":
       return {
-        explicacionClara: intro,
+        explicacionClara: tarea,
         consecuencia:
           "Si no se completa la publicación, la solicitud puede tenerse por no presentada y no seguirá en trámite.",
         pasos: [
@@ -392,7 +390,7 @@ function copiaAccionCiudadana(args: {
       };
     case "recurso-apelacion":
       return {
-        explicacionClara: intro,
+        explicacionClara: tarea,
         consecuencia:
           "Si no presentas el recurso dentro del plazo, la resolución de INAPI quedará firme.",
         pasos: [
@@ -402,7 +400,24 @@ function copiaAccionCiudadana(args: {
         ],
         canalPresentacion: canalEscritos,
       };
+    default:
+      return {
+        explicacionClara: tarea,
+        consecuencia:
+          "Si no completas la gestión a tiempo, el expediente puede no continuar.",
+        pasos: [
+          "Revisa la notificación oficial de INAPI.",
+          "Completa la gestión en los canales oficiales dentro del plazo.",
+        ],
+        canalPresentacion: canalEscritos,
+      };
   }
+}
+
+function referenciaCiudadana(etapaLabel: string): string {
+  const etapa = etapaCiudadanaFromSolicitud({ etapaLabel });
+  const sub = subetapaCiudadana(etapaLabel);
+  return sub ? `${etapa}. ${sub}` : etapa;
 }
 
 export function buildIpasCopy(args: {
@@ -420,16 +435,17 @@ export function buildIpasCopy(args: {
   const descEtapa = etapa?.descripcion
     ? `${etapa.descripcion}.`
     : `${args.etapaLabel}.`;
+  const referencia = referenciaCiudadana(args.etapaLabel);
 
   if (args.statusName.toLowerCase() === "registrada") {
     return {
-      explicacionClara: `Estado IPAS: Registrada. La marca ${args.nombre} (solicitud ${args.id}) obtuvo registro. Última acción registrada: «${args.actionTypeName}».`,
+      explicacionClara: `La marca ${args.nombre} obtuvo registro.`,
       pasos: [
         "El trámite concluyó con el registro de la marca.",
         "Puedes consultar el PDF del registro desde MiINAPI.",
         "Otras gestiones (renovación, cambios de titular) se realizan en los canales oficiales de INAPI.",
       ],
-      referencia: `Etapa MiINAPI: ${args.etapaLabel} · Estado IPAS: Registrada`,
+      referencia,
     };
   }
 
@@ -438,12 +454,12 @@ export function buildIpasCopy(args: {
     args.terminal === "registro-no-vigente"
   ) {
     return {
-      explicacionClara: `Estado IPAS: ${args.statusName}. La solicitud ${args.nombre} (${args.id}) no se encuentra vigente como registro. Última acción registrada: «${args.actionTypeName}».`,
+      explicacionClara: `La solicitud ${args.nombre} no se encuentra vigente como registro.`,
       pasos: [
-        `El expediente quedó en el estado «${args.statusName}».`,
+        "El expediente concluyó sin un registro vigente.",
         "MiINAPI permite consultar el detalle; no se reabre ni se completa el trámite desde esta aplicación.",
       ],
-      referencia: `Etapa MiINAPI: ${args.etapaLabel} · Estado IPAS: ${args.statusName}`,
+      referencia,
     };
   }
 
@@ -461,26 +477,16 @@ export function buildIpasCopy(args: {
     });
     return {
       ...copia,
-      referencia: `Etapa MiINAPI: ${args.etapaLabel} · Estado IPAS: ${args.statusName}`,
+      referencia,
     };
   }
 
   return {
-    explicacionClara: `Estado IPAS: ${args.statusName}. ${descEtapa} Última acción registrada: «${args.actionTypeName}». INAPI continúa el expediente; no hay una gestión ciudadana pendiente en MiINAPI.`,
+    explicacionClara: `${descEtapa} INAPI continúa el expediente; no hay una gestión pendiente de tu parte.`,
     pasos: [
-      `La solicitud permanece en «${args.statusName}».`,
-      "Te avisaremos en MiINAPI si el estado cambia o si INAPI requiere una gestión posterior.",
+      "INAPI continúa revisando el expediente.",
+      "Te avisaremos en MiINAPI si el estado cambia o si se requiere una gestión posterior.",
     ],
-    referencia: `Etapa MiINAPI: ${args.etapaLabel} · Estado IPAS: ${args.statusName}`,
+    referencia,
   };
-}
-
-export function resumenInicio(solicitud: Solicitud): string {
-  if (solicitud.accionRequeridaDetalle?.explicacionClara) {
-    return solicitud.accionRequeridaDetalle.explicacionClara;
-  }
-  if (solicitud.statusIpas) {
-    return `Estado IPAS: ${solicitud.statusIpas}.`;
-  }
-  return solicitud.etapaLabel ?? "Consulta el detalle de la solicitud.";
 }

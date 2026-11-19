@@ -12,19 +12,19 @@ interface SemaphoreCardProps {
 const variantStyles: Record<Urgency, { border: string; bg: string }> = {
   danger: {
     border: "border-l-danger",
-    bg: "bg-gradient-to-r from-danger-bg to-surface",
+    bg: "bg-gradient-to-r from-danger-bg/90 to-surface",
   },
   warning: {
     border: "border-l-warning",
-    bg: "bg-gradient-to-r from-warning-bg to-surface",
+    bg: "bg-gradient-to-r from-warning-bg/90 to-surface",
   },
   info: {
     border: "border-l-info",
-    bg: "bg-gradient-to-r from-info-bg to-surface",
+    bg: "bg-gradient-to-r from-info-bg/80 to-surface",
   },
   success: {
     border: "border-l-success",
-    bg: "bg-gradient-to-r from-success-bg to-surface",
+    bg: "bg-gradient-to-r from-success-bg/80 to-surface",
   },
   neutral: {
     border: "border-l-border",
@@ -39,19 +39,20 @@ export default function SemaphoreCard({
   onClick,
 }: SemaphoreCardProps) {
   const styles = variantStyles[urgency];
+  const customBg = className?.includes("bg-");
 
   return (
     <div
       onClick={onClick}
       className={clsx(
-        "rounded-lg border-l-4 shadow-card transition-card",
+        "rounded-2xl border-l-[3px] shadow-card transition-card",
         styles.border,
-        styles.bg,
+        !customBg && styles.bg,
         onClick && "cursor-pointer hover:shadow-elevated active:scale-[0.99]",
         className
       )}
     >
-      <div className="p-4">{children}</div>
+      <div className="p-5">{children}</div>
     </div>
   );
 }

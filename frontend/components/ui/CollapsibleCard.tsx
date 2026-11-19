@@ -1,25 +1,27 @@
 "use client";
 
 import { ChevronDown } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { BadgeVariant as SemaphoreVariant } from "./StatusBadge";
+import { usePrefersReducedMotion } from "@/lib/usePrefersReducedMotion";
 
 const variantStyles: Record<SemaphoreVariant, { border: string; bg: string }> = {
   danger: {
     border: "border-l-danger",
-    bg: "bg-gradient-to-r from-danger-bg to-surface",
+    bg: "bg-gradient-to-r from-danger-bg/90 to-surface",
   },
   warning: {
     border: "border-l-warning",
-    bg: "bg-gradient-to-r from-warning-bg to-surface",
+    bg: "bg-gradient-to-r from-warning-bg/90 to-surface",
   },
   info: {
     border: "border-l-info",
-    bg: "bg-gradient-to-r from-info-bg to-surface",
+    bg: "bg-gradient-to-r from-info-bg/80 to-surface",
   },
   success: {
     border: "border-l-success",
-    bg: "bg-gradient-to-r from-success-bg to-surface",
+    bg: "bg-gradient-to-r from-success-bg/80 to-surface",
   },
   neutral: {
     border: "border-l-border",
@@ -47,11 +49,12 @@ export default function CollapsibleCard({
   className,
 }: CollapsibleCardProps) {
   const styles = variantStyles[variant];
+  const reduced = usePrefersReducedMotion();
 
   return (
     <div
       className={cn(
-        "rounded-lg border-l-4 shadow-card transition-card overflow-hidden",
+        "rounded-2xl border-l-[3px] shadow-card transition-card overflow-hidden",
         styles.border,
         styles.bg,
         className
@@ -61,7 +64,7 @@ export default function CollapsibleCard({
         onClick={onToggle}
         aria-expanded={isOpen}
         className={cn(
-          "w-full text-left p-4 outline-none",
+          "w-full text-left p-5 outline-none",
           "hover:bg-surface/50 transition-colors min-h-[44px]",
           "focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-inset"
         )}
@@ -79,27 +82,26 @@ export default function CollapsibleCard({
         </div>
 
         {!isOpen && preview && (
-          <p className="text-body-sm text-muted-secondary mt-2 line-clamp-2 leading-relaxed">
+          <p className="text-[13px] text-muted-secondary mt-2 line-clamp-2 leading-relaxed">
             {preview}
           </p>
         )}
       </button>
 
-      <div
-        className={cn(
-          "mx-4 border-t border-border transition-opacity duration-200",
-          isOpen ? "opacity-100" : "opacity-0"
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            initial={reduced ? false : { height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={reduced ? undefined : { height: 0, opacity: 0 }}
+            transition={{ duration: reduced ? 0 : 0.22, ease: "easeOut" }}
+            className="overflow-hidden"
+          >
+            <div className="mx-5 border-t border-border" />
+            <div className="p-5 pt-3">{content}</div>
+          </motion.div>
         )}
-      />
-
-      <div
-        className={cn(
-          "transition-all duration-250 ease-in-out overflow-hidden",
-          isOpen ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
-        )}
-      >
-        <div className="p-4 pt-2">{content}</div>
-      </div>
+      </AnimatePresence>
     </div>
   );
 }

@@ -2,29 +2,23 @@
 
 import { useRouter } from "next/navigation";
 import TopBar from "@/components/ui/TopBar";
-import {
-  FileText,
-  AlertCircle,
-  CheckCircle2,
-  Info,
-  ChevronDown,
-} from "lucide-react";
+import { FileText, ChevronDown } from "lucide-react";
 import SemaphoreCard from "@/components/ui/SemaphoreCard";
 import StepperProgress from "@/components/ui/StepperProgress";
 import StatusBadge from "@/components/ui/StatusBadge";
 import AccionRequeridaDetalle from "@/components/ui/AccionRequeridaDetalle";
 import { Solicitud } from "@/lib/mockData";
-import { getStepStatesForSolicitud } from "@/lib/etapasMiInapi";
+import {
+  estadoCiudadano,
+  etapaCiudadanaFromSolicitud,
+  etiquetaNumeroExpediente,
+  getStepStatesForSolicitud,
+  tipoDerechoLabel,
+} from "@/lib/etapasMiInapi";
 import { badgeLabelForSolicitud } from "@/lib/tramitePresentacion";
+import TramiteCopyStack from "@/components/ui/TramiteCopyStack";
+import { InfoGroups } from "@/components/ui/InfoGroups";
 import { clsx } from "clsx";
-
-const getUrgencyIcon = (urgency: string) => {
-  if (urgency === "danger") return <AlertCircle size={18} className="text-danger" />;
-  if (urgency === "warning") return <AlertCircle size={18} className="text-warning" />;
-  if (urgency === "success") return <CheckCircle2 size={18} className="text-success" />;
-  if (urgency === "neutral") return <Info size={18} className="text-muted" />;
-  return <Info size={18} className="text-info" />;
-};
 
 export default function SolicitudDetalleClient({ solicitud }: { solicitud: Solicitud }) {
   const router = useRouter();
@@ -34,7 +28,7 @@ export default function SolicitudDetalleClient({ solicitud }: { solicitud: Solic
       <TopBar
         variant="detail"
         detailTitle={solicitud.nombre}
-        detailSubtitle={`#${solicitud.id}`}
+        detailSubtitle={etiquetaNumeroExpediente(solicitud)}
         onBack={() => router.back()}
       />
 
@@ -45,28 +39,22 @@ export default function SolicitudDetalleClient({ solicitud }: { solicitud: Solic
 
             <SemaphoreCard urgency={solicitud.urgency}>
               <div className="space-y-4">
-                <div className="space-y-1.5">
-                  <div className="flex items-center gap-2">
-                    {getUrgencyIcon(solicitud.urgency)}
-                    <StatusBadge
-                      variant={solicitud.urgency === "neutral" ? "neutral" : solicitud.urgency}
-                      label={badgeLabelForSolicitud(solicitud)}
-                      showIcon={
-                        solicitud.urgency === "danger" || solicitud.urgency === "warning"
-                      }
-                    />
-                  </div>
+                <div className="space-y-3">
+                  <StatusBadge
+                    variant={solicitud.urgency === "neutral" ? "neutral" : solicitud.urgency}
+                    label={badgeLabelForSolicitud(solicitud, "detail")}
+                    showIcon={
+                      solicitud.urgency === "danger" || solicitud.urgency === "warning"
+                    }
+                  />
                   <h2 className="text-h3 font-extrabold text-foreground leading-tight">
                     {solicitud.nombre}
                   </h2>
-                  <p className="text-body-sm text-muted-secondary">
-                    {solicitud.etapaLabel ?? solicitud.etapa}
-                  </p>
-                  {solicitud.statusIpas ? (
-                    <p className="text-body-xs text-muted">
-                      Referencia IPAS: {solicitud.statusIpas}
-                    </p>
-                  ) : null}
+                  <TramiteCopyStack
+                    solicitud={solicitud}
+                    order="inicio"
+                    showTipo
+                  />
                 </div>
 
                 <StepperProgress
@@ -79,27 +67,24 @@ export default function SolicitudDetalleClient({ solicitud }: { solicitud: Solic
 
           <section className="space-y-3">
             <p className="text-label text-muted">NOTIFICACIÓN INAPI</p>
-            <details className="group bg-surface rounded-lg border border-border shadow-sm overflow-hidden">
+            <details className="group bg-background rounded-md border border-border shadow-sm overflow-hidden">
               <summary
                 className={clsx(
                   "flex cursor-pointer list-none items-center justify-between gap-3",
-                  "px-4 py-3 bg-surface-elevated min-h-[44px]",
-                  "hover:bg-surface-elevated/80 transition-colors",
+                  "px-4 py-3 bg-background min-h-[44px]",
+                  "hover:bg-background/80 transition-colors",
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-inset",
                   "[&::-webkit-details-marker]:hidden"
                 )}
               >
                 <div className="flex items-center gap-2 min-w-0">
-                  <div className="w-7 h-7 rounded-lg bg-primary-light flex items-center justify-center text-primary shrink-0">
-                    <FileText size={14} />
-                  </div>
+                  <FileText size={16} className="text-primary shrink-0" aria-hidden />
                   <div className="min-w-0">
-                    <p className="text-body-xs font-bold text-primary">
+                    <p className="text-[14px] font-bold text-foreground">
                       Notificación Oficial INAPI
                     </p>
-                    <p className="text-body-xs text-muted truncate">
-                      {solicitud.statusIpas ??
-                        "Datos equivalentes al correo oficial del expediente"}
+                    <p className="text-[12px] font-medium text-foreground/70 truncate">
+                      {etapaCiudadanaFromSolicitud(solicitud)}
                     </p>
                   </div>
                 </div>
@@ -109,33 +94,97 @@ export default function SolicitudDetalleClient({ solicitud }: { solicitud: Solic
                   aria-hidden
                 />
               </summary>
-              <div className="divide-y divide-border border-t border-border">
-                <InfoRow label="Categoría" value={solicitud.categoria ?? "Marca"} />
-                <InfoRow label="Nombre (Denominación)" value={solicitud.nombre} />
-                <InfoRow
-                  label="Clasificación de Niza"
-                  value={solicitud.nizaClass ? `Clase ${solicitud.nizaClass}` : "—"}
-                />
-                <InfoRow
-                  label="Solicitante"
-                  value={solicitud.solicitante ?? "—"}
-                />
-                <InfoRow
-                  label="Representante"
-                  value={solicitud.representante ?? "—"}
-                />
-                <InfoRow label="Tasa (UTM)" value={solicitud.tasa ?? "—"} />
-                <InfoRow
-                  label="Estado unificado"
-                  value={solicitud.estadoUnificado ?? badgeLabelForSolicitud(solicitud)}
-                />
-                <InfoRow
-                  label="Estado IPAS"
-                  value={solicitud.statusIpas ?? solicitud.etapaLabel ?? "—"}
-                />
-                <InfoRow
-                  label="Fecha de presentación"
-                  value={solicitud.fechaPresentacion ?? "—"}
+              <div className="p-3 border-t border-border">
+                <InfoGroups
+                  groups={[
+                    {
+                      title: "Expediente",
+                      rows: [
+                        { label: "Número de solicitud", value: solicitud.id, mono: true },
+                        { label: "Denominación", value: solicitud.nombre },
+                        {
+                          label: "Clasificación de Niza",
+                          value: solicitud.nizaClass
+                            ? `Clase ${solicitud.nizaClass}`
+                            : "—",
+                        },
+                        {
+                          label: "Tipo de derecho",
+                          value: tipoDerechoLabel(solicitud.tipo),
+                        },
+                        {
+                          label: "Solicitante",
+                          value: solicitud.solicitante ?? "—",
+                        },
+                        {
+                          label: "Representante",
+                          value: solicitud.representante ?? "—",
+                        },
+                      ],
+                    },
+                    {
+                      title: "Situación",
+                      rows: [
+                        {
+                          label: "Etapa",
+                          value: etapaCiudadanaFromSolicitud(solicitud),
+                        },
+                        {
+                          label: "Estado",
+                          value: estadoCiudadano(solicitud.estadoUnificado),
+                        },
+                        ...(solicitud.notificacion?.requerimiento
+                          ? [
+                              {
+                                label: "Acción requerida",
+                                value: solicitud.notificacion.requerimiento,
+                              },
+                            ]
+                          : []),
+                      ],
+                    },
+                    {
+                      title: "Plazos y contacto",
+                      rows: [
+                        ...(solicitud.notificacion?.plazo
+                          ? [
+                              {
+                                label: "Plazo límite",
+                                value: solicitud.notificacion.plazo,
+                              },
+                            ]
+                          : []),
+                        ...(solicitud.estimacion
+                          ? [
+                              {
+                                label: "Estimación INAPI",
+                                value: solicitud.estimacion,
+                              },
+                            ]
+                          : []),
+                        ...(solicitud.notificacion?.contacto
+                          ? [
+                              {
+                                label: "Contacto",
+                                value: solicitud.notificacion.contacto,
+                              },
+                            ]
+                          : []),
+                        {
+                          label: "Fecha de presentación",
+                          value: solicitud.fechaPresentacion ?? "—",
+                        },
+                        ...(solicitud.accionRequeridaDetalle?.referencia
+                          ? [
+                              {
+                                label: "Referencia",
+                                value: solicitud.accionRequeridaDetalle.referencia,
+                              },
+                            ]
+                          : []),
+                      ],
+                    },
+                  ]}
                 />
               </div>
             </details>
@@ -167,25 +216,6 @@ export default function SolicitudDetalleClient({ solicitud }: { solicitud: Solic
           </section>
         </div>
       </div>
-    </div>
-  );
-}
-
-function InfoRow({
-  label,
-  value,
-}: {
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="flex items-start justify-between px-4 py-3 gap-4">
-      <span className="text-body-xs font-medium text-muted-secondary shrink-0 pt-0.5">
-        {label}
-      </span>
-      <span className="text-body-sm font-bold text-foreground text-right max-w-[60%] leading-snug">
-        {value}
-      </span>
     </div>
   );
 }
