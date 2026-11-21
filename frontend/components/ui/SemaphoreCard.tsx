@@ -9,26 +9,26 @@ interface SemaphoreCardProps {
   onClick?: () => void;
 }
 
-const variantStyles: Record<Urgency, { border: string; bg: string }> = {
+const variantStyles: Record<Urgency, { border: string; mesh: string }> = {
   danger: {
     border: "border-l-danger",
-    bg: "bg-gradient-to-r from-danger-bg/90 to-surface",
+    mesh: "ui-card-mesh ui-card-mesh-danger",
   },
   warning: {
     border: "border-l-warning",
-    bg: "bg-gradient-to-r from-warning-bg/90 to-surface",
+    mesh: "ui-card-mesh ui-card-mesh-warning",
   },
   info: {
     border: "border-l-info",
-    bg: "bg-gradient-to-r from-info-bg/80 to-surface",
+    mesh: "ui-card-mesh ui-card-mesh-info",
   },
   success: {
     border: "border-l-success",
-    bg: "bg-gradient-to-r from-success-bg/80 to-surface",
+    mesh: "ui-card-mesh ui-card-mesh-success",
   },
   neutral: {
     border: "border-l-border",
-    bg: "bg-surface",
+    mesh: "ui-card-mesh",
   },
 };
 
@@ -45,14 +45,14 @@ export default function SemaphoreCard({
     <div
       onClick={onClick}
       className={clsx(
-        "rounded-2xl border-l-[3px] shadow-card transition-card",
+        "rounded-xl border-l-[3px] transition-card",
         styles.border,
-        !customBg && styles.bg,
+        !customBg && styles.mesh,
         onClick && "cursor-pointer hover:shadow-elevated active:scale-[0.99]",
         className
       )}
     >
-      <div className="p-5">{children}</div>
+      <div className="relative p-5">{children}</div>
     </div>
   );
 }

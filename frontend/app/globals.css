@@ -117,8 +117,8 @@
   --color-text-secondary: var(--foreground-secondary);
   --color-text-muted: var(--foreground-muted);
 
-  --font-sans: var(--font-sans);
-  --font-slab: var(--font-slab);
+  --font-sans: "Roboto", system-ui, sans-serif;
+  --font-slab: "Roboto Slab", Georgia, serif;
 
   --shadow-card: var(--shadow-card);
   --shadow-elevated: var(--shadow-elevated);
@@ -210,14 +210,195 @@ body {
   padding: 0;
 }
 
-/* === SHELL APP (ancho máximo vía .gob-container) === */
+/* === SHELL APP (grilla GOB: cuerpo 840 / 1040; sin padding extra) === */
+:root {
+  --app-shell-max: 100vw;
+}
+
+@media (min-width: 905px) {
+  :root {
+    --app-shell-max: 840px;
+  }
+}
+
+@media (min-width: 1440px) {
+  :root {
+    --app-shell-max: 1040px;
+  }
+}
+
 .app-frame {
   width: 100%;
-  min-height: 100vh;
-  background: var(--background);
+  max-width: var(--app-shell-max);
+  min-height: 100dvh;
+  margin-inline: auto;
+  padding: 0;
   position: relative;
   display: flex;
   flex-direction: column;
+  background:
+    radial-gradient(
+      90% 55% at 80% -8%,
+      color-mix(in srgb, var(--color-primary) 16%, transparent) 0%,
+      transparent 58%
+    ),
+    radial-gradient(
+      70% 45% at 0% 100%,
+      color-mix(in srgb, var(--semaphore-info) 10%, transparent) 0%,
+      transparent 52%
+    ),
+    var(--background);
+}
+
+@media (min-width: 905px) {
+  .app-frame {
+    box-shadow: var(--elevation-03);
+  }
+}
+
+html.dark .app-frame {
+  background:
+    radial-gradient(
+      80% 50% at 100% 0%,
+      color-mix(in srgb, var(--color-primary) 28%, transparent) 0%,
+      transparent 52%
+    ),
+    radial-gradient(
+      60% 40% at 0% 100%,
+      color-mix(in srgb, var(--semaphore-info) 18%, transparent) 0%,
+      transparent 48%
+    ),
+    var(--background);
+}
+
+/* Cards: malla de degradados con paleta GOB (referencia visual de dashboard) */
+.ui-card-mesh {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      120% 90% at 100% -8%,
+      color-mix(in srgb, var(--color-primary) 20%, transparent) 0%,
+      transparent 56%
+    ),
+    radial-gradient(
+      80% 70% at -8% 108%,
+      color-mix(in srgb, var(--semaphore-info) 12%, transparent) 0%,
+      transparent 50%
+    ),
+    linear-gradient(
+      165deg,
+      color-mix(in srgb, var(--surface) 88%, var(--color-primary) 12%) 0%,
+      var(--surface) 42%,
+      var(--surface) 100%
+    );
+  box-shadow:
+    var(--elevation-02),
+    inset 0 1px 0 color-mix(in srgb, #ffffff 45%, transparent);
+}
+
+html.dark .ui-card-mesh {
+  background:
+    radial-gradient(
+      95% 75% at 100% 0%,
+      color-mix(in srgb, var(--color-primary) 38%, transparent) 0%,
+      transparent 52%
+    ),
+    radial-gradient(
+      70% 55% at 0% 100%,
+      color-mix(in srgb, var(--semaphore-info) 22%, transparent) 0%,
+      transparent 48%
+    ),
+    linear-gradient(180deg, #1a2740 0%, var(--surface) 58%);
+  box-shadow:
+    var(--elevation-03),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.ui-card-mesh-danger {
+  background:
+    radial-gradient(
+      120% 90% at 100% -8%,
+      color-mix(in srgb, var(--semaphore-danger) 22%, transparent) 0%,
+      transparent 56%
+    ),
+    radial-gradient(
+      80% 70% at -8% 108%,
+      color-mix(in srgb, var(--color-accent) 10%, transparent) 0%,
+      transparent 50%
+    ),
+    linear-gradient(
+      165deg,
+      color-mix(in srgb, var(--semaphore-danger-bg) 70%, var(--surface)) 0%,
+      var(--surface) 48%,
+      var(--surface) 100%
+    );
+}
+
+.ui-card-mesh-warning {
+  background:
+    radial-gradient(
+      120% 90% at 100% -8%,
+      color-mix(in srgb, var(--semaphore-warning) 22%, transparent) 0%,
+      transparent 56%
+    ),
+    linear-gradient(
+      165deg,
+      color-mix(in srgb, var(--semaphore-warning-bg) 70%, var(--surface)) 0%,
+      var(--surface) 48%,
+      var(--surface) 100%
+    );
+}
+
+.ui-card-mesh-info {
+  background:
+    radial-gradient(
+      120% 90% at 100% -8%,
+      color-mix(in srgb, var(--semaphore-info) 24%, transparent) 0%,
+      transparent 56%
+    ),
+    linear-gradient(
+      165deg,
+      color-mix(in srgb, var(--semaphore-info-bg) 75%, var(--surface)) 0%,
+      var(--surface) 48%,
+      var(--surface) 100%
+    );
+}
+
+.ui-card-mesh-success {
+  background:
+    radial-gradient(
+      120% 90% at 100% -8%,
+      color-mix(in srgb, var(--semaphore-success) 22%, transparent) 0%,
+      transparent 56%
+    ),
+    linear-gradient(
+      165deg,
+      color-mix(in srgb, var(--semaphore-success-bg) 75%, var(--surface)) 0%,
+      var(--surface) 48%,
+      var(--surface) 100%
+    );
+}
+
+.ui-panel-soft {
+  background:
+    radial-gradient(
+      140% 120% at 0% 0%,
+      color-mix(in srgb, var(--color-primary) 14%, transparent) 0%,
+      transparent 62%
+    ),
+    color-mix(in srgb, var(--surface) 35%, transparent);
+}
+
+html.dark .ui-panel-soft {
+  background:
+    radial-gradient(
+      140% 120% at 0% 0%,
+      color-mix(in srgb, var(--color-primary) 22%, transparent) 0%,
+      transparent 60%
+    ),
+    color-mix(in srgb, var(--surface-elevated) 40%, transparent);
 }
 
 /* === CONTENEDOR GOB === */
@@ -314,9 +495,18 @@ body {
 
 /* Barra inferior: fondo siempre opaco (evita bleed del scroll) */
 .bottom-nav-shell {
+  left: 50%;
+  right: auto;
+  width: min(100vw, var(--app-shell-max));
+  transform: translateX(-50%);
   background-color: var(--surface);
   border-top: 1px solid var(--border);
   box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* FABs anclados al borde interno del shell (no al viewport) */
+.app-shell-end {
+  right: calc((100vw - min(100vw, var(--app-shell-max))) / 2 + 1rem);
 }
 
 html.dark .bottom-nav-shell {

@@ -49,24 +49,18 @@ export default function TramiteCopyStack({
         : Palette;
 
   const numeroBlock = showNumero ? (
-    <div className="flex flex-col gap-0.5 min-w-0">
-      <span className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted">
-        {numero.label}
-      </span>
-      <span className="font-mono text-[15px] font-semibold tabular-nums text-foreground">
-        {numero.value}
-      </span>
+    <div className="flex flex-col gap-0.5 min-w-0 font-sans">
+      <span className="text-label text-muted">{numero.label}</span>
+      <span className="text-mono-lg text-foreground">{numero.value}</span>
     </div>
   ) : null;
 
   const estadoChip = (
-    <div className="flex flex-col gap-0.5 min-w-0">
-      <span className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted">
-        Estado
-      </span>
+    <div className="flex flex-col gap-0.5 min-w-0 font-sans">
+      <span className="text-label text-muted">Estado</span>
       <span
         className={clsx(
-          "inline-flex w-fit items-center rounded-md px-2 py-0.5 text-[13px] font-semibold",
+          "inline-flex w-fit items-center rounded-md px-2 py-0.5 text-body-xs font-bold",
           chipClass
         )}
       >
@@ -75,43 +69,46 @@ export default function TramiteCopyStack({
     </div>
   );
 
-  const etapaBlock = (
-    <div className="flex flex-col gap-0.5 min-w-0">
-      <span className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted">
-        Etapa
-      </span>
-      <span className="text-[15px] font-semibold leading-snug text-foreground">
-        {etapa}
-      </span>
-      {subetapa ? (
-        <span className="text-[13px] font-medium leading-snug text-foreground/80">
-          {subetapa}
-        </span>
-      ) : null}
-    </div>
-  );
+  const metaItems =
+    order === "inicio"
+      ? [numeroBlock, estadoChip]
+      : [estadoChip, numeroBlock];
 
   return (
-    <div className={clsx("rounded-md px-0 py-1 space-y-2.5 w-full", className)}>
-      {showTipo ? (
-        <span className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-0.5 text-[11px] font-semibold text-foreground">
-          <TipoIcon size={12} strokeWidth={2.25} aria-hidden />
-          {tipoDerechoLabel(solicitud.tipo)}
-        </span>
-      ) : null}
-      {order === "inicio" ? (
-        <>
-          {numeroBlock}
-          {estadoChip}
-          {etapaBlock}
-        </>
-      ) : (
-        <>
-          {etapaBlock}
-          {estadoChip}
-          {numeroBlock}
-        </>
+    <div
+      className={clsx(
+        "flex w-full min-w-0 flex-col gap-3 md:flex-row md:items-start md:justify-between",
+        className
       )}
+    >
+      <div className="flex min-w-0 shrink-0 flex-col gap-2.5 order-2 md:order-1 md:max-w-[38%]">
+        {showTipo ? (
+          <span className="inline-flex w-fit items-center gap-1.5 rounded-md border border-border px-2 py-0.5 text-body-xs font-bold font-sans text-foreground">
+            <TipoIcon size={12} strokeWidth={2.25} aria-hidden />
+            {tipoDerechoLabel(solicitud.tipo)}
+          </span>
+        ) : null}
+        {metaItems}
+      </div>
+
+      <section
+        aria-label="Etapa y subetapa del trámite"
+        className={clsx(
+          "ui-panel-soft order-1 md:order-2",
+          "min-w-0 flex-1",
+          "rounded-lg px-1 py-1 md:pl-4 md:pr-0"
+        )}
+      >
+        <span className="text-label font-sans text-muted">Etapa</span>
+        <p className="mt-1 font-slab text-h2 font-medium text-foreground break-words tracking-tight">
+          {etapa}
+        </p>
+        {subetapa ? (
+          <p className="mt-1.5 font-sans text-body font-medium text-foreground break-words">
+            {subetapa}
+          </p>
+        ) : null}
+      </section>
     </div>
   );
 }

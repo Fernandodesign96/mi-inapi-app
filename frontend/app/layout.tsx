@@ -59,7 +59,7 @@ export default function RootLayout({
             __html: `(function(){try{var t=localStorage.getItem('miinapi-theme');if(t==='light'){document.documentElement.classList.remove('dark');}else{document.documentElement.classList.add('dark');}}catch(e){document.documentElement.classList.add('dark');}})();`,
           }}
         />
-        <div className="app-frame gob-container">{children}</div>
+        <div className="app-frame">{children}</div>
 
         {/* --- Trackers & Analytics --- */}
         {/* Google Analytics 4 */}

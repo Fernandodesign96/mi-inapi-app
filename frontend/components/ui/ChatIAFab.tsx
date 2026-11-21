@@ -22,7 +22,7 @@ export default function ChatIAFab({ onClick, className, hasUnread = true }: Chat
     <div
       className={clsx(
         "fixed z-50 transition-all duration-300",
-        "bottom-[calc(var(--bottomnav-height)+env(safe-area-inset-bottom)+16px)] right-4",
+        "app-shell-end bottom-[calc(var(--bottomnav-height)+env(safe-area-inset-bottom)+16px)]",
         className
       )}
     >

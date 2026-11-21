@@ -357,7 +357,7 @@ function SummaryCard({
 
   return (
     <div className={clsx(
-      "min-w-0 flex-1 flex flex-col items-center justify-center p-3 rounded-xl border border-border shadow-card",
+      "ui-card-mesh min-w-0 flex-1 flex flex-col items-center justify-center p-3 rounded-xl",
       styles[variant]
     )}>
       <div className="flex items-center gap-1 mb-1">

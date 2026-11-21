@@ -27,7 +27,7 @@ export default function DashboardLayout({
   const isChatView = pathname === "/chat";
 
   return (
-    <div className="flex flex-col h-dvh overflow-hidden bg-background w-full relative">
+    <div className="flex flex-col h-dvh overflow-hidden w-full relative">
       {/* Contenido scrollable: altura acotada para que el TopBar sticky funcione */}
       <main
         id="dashboard-scroll"
@@ -45,7 +45,7 @@ export default function DashboardLayout({
         <ChatIAFab onClick={() => router.push("/chat")} />
       )}
 
-      {/* BottomNav full-width viewport */}
+      {/* BottomNav al ancho del shell GOB */}
       {!isChatView && <BottomNav />}
 
       {/* Logic State Toggle (Dev Only) — solo ClaveÚnica */}

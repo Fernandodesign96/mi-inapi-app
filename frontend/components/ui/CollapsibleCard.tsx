@@ -6,26 +6,26 @@ import { cn } from "@/lib/utils";
 import { BadgeVariant as SemaphoreVariant } from "./StatusBadge";
 import { usePrefersReducedMotion } from "@/lib/usePrefersReducedMotion";
 
-const variantStyles: Record<SemaphoreVariant, { border: string; bg: string }> = {
+const variantStyles: Record<SemaphoreVariant, { border: string; mesh: string }> = {
   danger: {
     border: "border-l-danger",
-    bg: "bg-gradient-to-r from-danger-bg/90 to-surface",
+    mesh: "ui-card-mesh ui-card-mesh-danger",
   },
   warning: {
     border: "border-l-warning",
-    bg: "bg-gradient-to-r from-warning-bg/90 to-surface",
+    mesh: "ui-card-mesh ui-card-mesh-warning",
   },
   info: {
     border: "border-l-info",
-    bg: "bg-gradient-to-r from-info-bg/80 to-surface",
+    mesh: "ui-card-mesh ui-card-mesh-info",
   },
   success: {
     border: "border-l-success",
-    bg: "bg-gradient-to-r from-success-bg/80 to-surface",
+    mesh: "ui-card-mesh ui-card-mesh-success",
   },
   neutral: {
     border: "border-l-border",
-    bg: "bg-surface",
+    mesh: "ui-card-mesh",
   },
 };
 
@@ -54,9 +54,9 @@ export default function CollapsibleCard({
   return (
     <div
       className={cn(
-        "rounded-2xl border-l-[3px] shadow-card transition-card overflow-hidden",
+        "rounded-xl border-l-[3px] transition-card overflow-hidden",
         styles.border,
-        styles.bg,
+        styles.mesh,
         className
       )}
     >
