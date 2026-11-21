@@ -45,7 +45,7 @@ export default function ScrollToTopFab({
       className={clsx(
         "fixed z-50 flex h-[52px] w-[52px] items-center justify-center rounded-full",
         "bg-primary text-primary-foreground shadow-elevated",
-        "bottom-[calc(var(--bottomnav-height)+env(safe-area-inset-bottom)+16px)] right-4",
+        "app-shell-end bottom-[calc(var(--bottomnav-height)+env(safe-area-inset-bottom)+16px)]",
         "transition-all hover:bg-primary-dark active:scale-95",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         className

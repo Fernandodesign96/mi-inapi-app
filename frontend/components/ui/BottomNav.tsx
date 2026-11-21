@@ -74,11 +74,11 @@ export default function BottomNav() {
       role="navigation"
       aria-label="Navegación principal"
       className={clsx(
-        "bottom-nav-shell fixed bottom-0 inset-x-0 w-full z-[100]",
+        "bottom-nav-shell fixed bottom-0 z-[100] bg-surface",
         "pb-[env(safe-area-inset-bottom)]"
       )}
     >
-      <div className="flex items-stretch h-bottomnav w-full max-w-gob-xl mx-auto bg-surface">
+      <div className="flex items-stretch h-bottomnav w-full">
         {navItems.map((item) => {
           const isActive = pathname === item.path;
           const Icon = item.icon;

@@ -71,8 +71,8 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ["var(--font-roboto)", "Roboto", "system-ui", "sans-serif"],
-        slab: ["var(--font-roboto-slab)", "Roboto Slab", "Georgia", "serif"],
+        sans: ["Roboto", "system-ui", "sans-serif"],
+        slab: ["Roboto Slab", "Georgia", "serif"],
       },
       fontSize: {
         display: ["32px", { lineHeight: "1.5", fontWeight: "400" }],
